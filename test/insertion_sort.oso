@@ -1,0 +1,23 @@
+<3 Insertion sort
+
+buscar_menor(cueva_elem,min,max) => polar;
+
+cambiar(cueva_elem, i, j) => extinto;
+
+oso
+{
+  cueva elementos[5] de polar;
+
+  <3 Falta llenar el arreglo;
+
+  para i en <0,5>
+  {
+    polar ind = buscar_menor(elementos,i,5);
+    cambiar(elementos, i, ind);
+  }
+
+  escribir("El arreglo ordenado \n");
+
+  para i en <0,5> escribir(a_hormiguero(elementos[i]) ++ '\n');
+}
+

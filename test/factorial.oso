@@ -1,0 +1,17 @@
+oso
+{
+  <3 Recibimos por entrada estadar el valor que queremos obtener el factorial.
+
+  escribir("Por favor, introduzca el numero al que \n desea calcularle el factorial");
+  leer (N);
+  polar original = N;
+  polar acc = 1;
+
+  mientras(N > 0)
+  {
+    acc = acc * N;
+    N = N - 1;
+  }
+  
+  <3 Retornamos el resultado.
+  escribir("El factorial de " ++ a_hormiguero(Original) ++ " es " ++ a_hormiguero(acc) ++ '\n');
