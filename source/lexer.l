@@ -24,7 +24,7 @@ CHAR     [a-zA-Z0-9]
                     atof( yytext ) );
             }
 
-'(\\.|[^\\\"])?'   { printf("Un caracter %s \n", yytext); }
+'.'   { printf("Un caracter %s \n", yytext); }
 
 oso|panda|negro|blanco|polar|kodiak|hormiguero|cueva|de|pardo|grizzli|malayo|extinto|leer|escribir|si|entonces|fin|sino|no|lon|a_kodiak|a_polar|a_malayo|a_hormiguero|roloePea|fondoBlanco|vomita|mientras {
             printf( "A keyword: %s\n", yytext );
