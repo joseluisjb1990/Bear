@@ -53,7 +53,6 @@ fondoBlanco
 )
 ,
 =>
-retorna
                      
 
 
@@ -70,3 +69,8 @@ A_?
 545451
 5154,878
 "Esto es un string 4451512 $#$%#%^7 {}/. \n"
+'C'
+''
+
+a_hormiguero
+vomita
