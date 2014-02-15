@@ -24,7 +24,7 @@ CHAR     [a-zA-Z0-9]
                     atof( yytext ) );
             }
 
-'{CHAR}'|'\\n'|'\x20'|'\x21'|'\x22'|'\x23'|'\x24'|'\x25'|'\x26'|'\x27'|'\x28'|'\x29'|'\x2A'|'\x2B'|'\x2C'|'\x2D'|'\x2E'|'\x2F'|'\x3A'|'\x3B'|'\x3C'|'\x3D'|'\x3E'|'\x3F'|'\x40'|'\x5B'|'\x5C'|'\x5D'|'\x5E'|'\x5F'|'\x60'|'\x7B'|'\x7C'|'\x7E'|'\x7F' { printf("Un caracter %s \n", yytext); }
+'(\\.|[^\\\"])?'   { printf("Un caracter %s \n", yytext); }
 
 oso|panda|negro|blanco|polar|kodiak|hormiguero|cueva|de|pardo|grizzli|malayo|extinto|leer|escribir|si|entonces|fin|sino|no|lon|a_kodiak|a_polar|a_malayo|a_hormiguero|roloePea|fondoBlanco|vomita|mientras {
             printf( "A keyword: %s\n", yytext );
