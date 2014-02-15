@@ -1,0 +1,4 @@
+oso
+{
+  escribir("¡Hola, Mundo!");
+}
