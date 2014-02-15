@@ -10,7 +10,9 @@ ID       [a-zA-Z][a-zA-Z0-9\?!_]*
 
 %%
 
-"<3".* { printf ("Comentario : %s \n" , yytext); }  /* eat up one-line comments */
+"<3".* { printf("Comentario : %s \n" , yytext); }  /* eat up one-line comments */
+
+'[a-zA-Z0-9]?'    { printf("Caracter: %s\n", yytext); }
 
 {DIGIT}+    {
             printf( "An integer: %s (%d)\n", yytext,
@@ -22,7 +24,7 @@ ID       [a-zA-Z][a-zA-Z0-9\?!_]*
                     atof( yytext ) );
             }
 
-oso|panda|negro|blanco|polar|kodiak|hormiguero|cueva|de|pardo|grizzli|malayo|extinto|leer|escribir|si|entonces|fin|sino|no|lon|a_kodiak|a_polar|a_malayo|roloePea|fondoBlanco|retorna|mientras {
+oso|panda|negro|blanco|polar|kodiak|hormiguero|cueva|de|pardo|grizzli|malayo|extinto|leer|escribir|si|entonces|fin|sino|no|lon|a_kodiak|a_polar|a_malayo|a_hormiguero|roloePea|fondoBlanco|vomita|mientras {
             printf( "A keyword: %s\n", yytext );
             }
 
@@ -32,17 +34,17 @@ oso|panda|negro|blanco|polar|kodiak|hormiguero|cueva|de|pardo|grizzli|malayo|ext
 
 "["        printf("Abre corchete\n");
 "]"        printf("Cierra corchete\n");
-"("         printf("Abre parentesis\n");
-")"         printf("Cierra parentesis\n");
+"("        printf("Abre parentesis\n");
+")"        printf("Cierra parentesis\n");
 "{"        printf("Abre llaves\n");
 "}"        printf("Cierra llaves\n");
-"=>"        printf("Flecha doble\n");
-"="         printf("Asignacion\n");
+"=>"       printf("Flecha doble\n");
+"="        printf("Asignacion\n");
 "."        printf("Punto\n");
-";"         printf("Punto y coma\n");
-":"         printf("Dos puntos\n");
-"->"        printf("Flecha simple\n");
-","         printf("Coma\n");
+";"        printf("Punto y coma\n");
+":"        printf("Dos puntos\n");
+"->"       printf("Flecha simple\n");
+","        printf("Coma\n");
 "?"        printf("Signo de interrogacion\n");
 
 "+"|"-"|"*"|"/"|"%"|"++"|"&"|"|"|"<"|">"|"=<"|">="|"=="|"=/="   printf( "An operator: %s\n", yytext );
