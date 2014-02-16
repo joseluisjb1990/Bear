@@ -22,9 +22,9 @@ ID       [a-zA-Z][a-zA-Z0-9\?!_]*
 
 <comentario>{
   "<3->"   { cout << "Fin del comentario " << YYText() << " " << num_linea << " " << num_columna << '\n'; num_columna += YYLeng(); BEGIN(INITIAL); }
-  [^<\n]+  { cout << YYText(); num_columna += YYLeng(); }
-  "<"      { cout << YYText(); num_columna += YYLeng(); }
-  \n       { cout << YYText(); num_linea   += YYLeng(); num_columna = 1; }
+  [^<\n]+  { cout << "Comentario multiple " << YYText() << '\n'; num_columna += YYLeng(); }
+  "<"      { cout << "Comentario < " << YYText() << '\n'; num_columna += YYLeng(); }
+  \n       { cout << "Salto de linea " << YYText(); num_linea   += 1; num_columna = 1; }
   <<EOF>>  { cout << "Comentario sin terminar :(\n"; yyterminate(); }
 }
 
