@@ -1,67 +1,67 @@
 %{
-
+#include<iostream>
+#include<fstream>
+using namespace std;
+int num_linea = 1;
+int num_columna = 1;
 %}
 
 DIGIT    [0-9]
 ID       [a-zA-Z][a-zA-Z0-9\?!_]*
-CHAR     [a-zA-Z0-9]
+
 
 %option noyywrap
 
 %%
 
-"<3".* { printf("Comentario : %s \n" , yytext); }  /* eat up one-line comments */
 
-{DIGIT}+    {
-            printf( "An integer: %s (%d)\n", yytext,
-                    atoi( yytext ) );
-            }
+"<3".*   { cout << "Comentario " << YYText() << " " << num_linea << " " << num_columna << '\n'; num_columna += YYLeng(); };
 
-{DIGIT}+","{DIGIT}*        {
-            printf( "A float: %s (%g)\n", yytext,
-                    atof( yytext ) );
-            }
+{DIGIT}+  { cout << "Entero " << YYText() << " " << num_linea << " " << num_columna << '\n'; num_columna += YYLeng(); }
 
-'.'|'\\n'   { printf("Un caracter %s \n", yytext); }
+{DIGIT}+","{DIGIT}*  { cout << "Flotante " << YYText() << " " << num_linea << " " << num_columna << '\n'; num_columna += YYLeng(); }
 
-oso|panda|negro|blanco|polar|kodiak|hormiguero|cueva|de|pardo|grizzli|malayo|extinto|leer|escribir|si|entonces|fin|sino|no|lon|a_kodiak|a_polar|a_malayo|a_hormiguero|roloePea|fondoBlanco|vomita|mientras {
-            printf( "A keyword: %s\n", yytext );
-            }
+'.'|'\\n'   { cout << "Caracter " << YYText() << " " << num_linea << '\n'; num_columna += YYLeng(); }
 
-{ID}        printf( "An identifier: %s\n", yytext );
 
-\"(\\.|[^\\\"])*\"  printf( "Un string: %s \n", yytext);
+en|para|oso|panda|negro|blanco|polar|kodiak|hormiguero|cueva|de|pardo|grizzli|malayo|extinto|leer|escribir|si|entonces|fin|sino|no|lon|a_kodiak|a_polar|a_malayo|a_hormiguero|roloePea|fondoBlanco|vomita|mientras { cout << "Palabra Reservada " << YYText() << " " << num_linea << " " << num_columna << '\n'; num_columna += YYLeng(); }
 
-"["        printf("Abre corchete\n");
-"]"        printf("Cierra corchete\n");
-"("        printf("Abre parentesis\n");
-")"        printf("Cierra parentesis\n");
-"{"        printf("Abre llaves\n");
-"}"        printf("Cierra llaves\n");
-"=>"       printf("Flecha doble\n");
-"="        printf("Asignacion\n");
-"."        printf("Punto\n");
-";"        printf("Punto y coma\n");
-":"        printf("Dos puntos\n");
-"->"       printf("Flecha simple\n");
-","        printf("Coma\n");
-"?"        printf("Signo de interrogacion\n");
+{ID}     { cout << "ID " << YYText() << " " << num_linea << " " << num_columna << '\n'; num_columna += YYLeng(); } 
 
-"+"|"-"|"*"|"/"|"%"|"++"|"&"|"|"|"<"|">"|"=<"|">="|"=="|"=/="   printf( "An operator: %s\n", yytext );
+\"(\\.|[^\\\"])*\"  { cout << "String " << YYText() << " " << num_linea << " " << num_columna << '\n'; num_columna += YYLeng(); }
 
-[ \t\n]+          /* eat up whitespace */
+"["        { cout << "[ " << YYText() << " " << num_linea << " " << num_columna << '\n'; num_columna += YYLeng(); }
+"]"        { cout << "] " << YYText() << " " << num_linea << " " << num_columna << '\n'; num_columna += YYLeng(); }
+"("        { cout << "( " << YYText() << " " << num_linea << " " << num_columna << '\n'; num_columna += YYLeng(); }
+")"        { cout << ") " << YYText() << " " << num_linea << " " << num_columna << '\n'; num_columna += YYLeng(); }
+"{"        { cout << "{ " << YYText() << " " << num_linea << " " << num_columna << '\n'; num_columna += YYLeng(); }
+"}"        { cout << "} " << YYText() << " " << num_linea << " " << num_columna << '\n'; num_columna += YYLeng(); }
+"=>"       { cout << "=> " << YYText() << " " << num_linea << " " << num_columna << '\n'; num_columna += YYLeng(); } 
+"="        { cout << "= " << YYText() << " " << num_linea << " " << num_columna << '\n'; num_columna += YYLeng(); } 
+"."        { cout << ". " << YYText() << " " << num_linea << " " << num_columna << '\n'; num_columna += YYLeng(); }
+";"        { cout << "; " << YYText() << " " << num_linea << " " << num_columna << '\n'; num_columna += YYLeng(); }
+":"        { cout << ": " << YYText() << " " << num_linea << " " << num_columna << '\n'; num_columna += YYLeng(); }
+"->"       { cout << "-> " << YYText() << " " << num_linea << " " << num_columna << '\n'; num_columna += YYLeng(); }
+","        { cout << ", " << YYText() << " " << num_linea << " " << num_columna << '\n'; num_columna += YYLeng(); }
+"?"        { cout << "? " << YYText() << " " << num_linea << " " << num_columna << '\n'; num_columna += YYLeng(); }
 
-.           printf( "Unrecognized character: %s\n", yytext );
+"+"|"-"|"*"|"/"|"%"|"++"|"&"|"|"|"<"|">"|"=<"|">="|"=="|"=/="   { cout << "Operador " << YYText() << " " << YYLeng() << " " << num_linea << '\n'; num_columna += YYLeng(); }
+
+[\n]  { num_linea++; num_columna = 1; }
+
+[ \t]+ num_columna += YYLeng();          /* eat up whitespace */
+
+.           { cout << "Caracter no reconocido " << YYText() << " " << YYLeng() << " " << num_linea << '\n'; num_columna += YYLeng(); }
 
 %%
 
-int main( int argc, char **argv )
-    {
-    ++argv, --argc;  /* skip over program name */
-    if ( argc > 0 )
-            yyin = fopen( argv[0], "r" );
-    else
-            yyin = stdin;
-
-    yylex();
-    }
+int main( int argc, char** argv )
+{
+  std::filebuf fb;
+  fb.open (argv[1],std::ios::in);
+  std::istream input(&fb);
+  FlexLexer* lexer = new yyFlexLexer(&input);
+  while(lexer->yylex() != 0)
+          ;
+  return 0;
+}
