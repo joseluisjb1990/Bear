@@ -25,6 +25,7 @@ ID       [a-zA-Z][a-zA-Z0-9\?!_]*
   [^<\n]+  { cout << YYText(); num_columna += YYLeng(); }
   "<"      { cout << YYText(); num_columna += YYLeng(); }
   \n       { cout << YYText(); num_linea   += YYLeng(); num_columna = 1; }
+  <<EOF>>  { cout << "Comentario sin terminar :(\n"; yyterminate(); }
 }
 
 {DIGIT}+  { cout << "Entero " << YYText() << " " << num_linea << " " << num_columna << '\n'; num_columna += YYLeng(); }
