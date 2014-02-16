@@ -12,10 +12,20 @@ ID       [a-zA-Z][a-zA-Z0-9\?!_]*
 
 %option noyywrap
 
+%x comentario
 %%
 
 
 "<3".*   { cout << "Comentario " << YYText() << " " << num_linea << " " << num_columna << '\n'; num_columna += YYLeng(); };
+
+"--<3"   { cout << "Comentario Bloque " << YYText() << " " << num_linea << " " << num_columna << '\n'; num_columna += YYLeng(); BEGIN(comentario); }
+
+<comentario>{
+  "<3->"   { cout << "Fin del comentario " << YYText() << " " << num_linea << " " << num_columna << '\n'; num_columna += YYLeng(); BEGIN(INITIAL); }
+  [^<\n]+  { cout << YYText(); num_columna += YYLeng(); }
+  "<"      { cout << YYText(); num_columna += YYLeng(); }
+  \n       { cout << YYText(); num_linea   += YYLeng(); num_columna = 1; }
+}
 
 {DIGIT}+  { cout << "Entero " << YYText() << " " << num_linea << " " << num_columna << '\n'; num_columna += YYLeng(); }
 
@@ -24,26 +34,29 @@ ID       [a-zA-Z][a-zA-Z0-9\?!_]*
 '.'|'\\n'   { cout << "Caracter " << YYText() << " " << num_linea << '\n'; num_columna += YYLeng(); }
 
 
-en|para|oso|panda|negro|blanco|polar|kodiak|hormiguero|cueva|de|pardo|grizzli|malayo|extinto|leer|escribir|si|entonces|fin|sino|no|lon|a_kodiak|a_polar|a_malayo|a_hormiguero|roloePea|fondoBlanco|vomita|mientras { cout << "Palabra Reservada " << YYText() << " " << num_linea << " " << num_columna << '\n'; num_columna += YYLeng(); }
+en|para|oso|panda|negro|blanco|polar|kodiak|hormiguero |
+cueva|de|pardo|grizzli|malayo|extinto|leer|escribir    |
+si|entonces|fin|sino|no|lon|a_kodiak|a_polar|a_malayo  |
+a_hormiguero|roloePea|fondoBlanco|vomita|mientras      { cout << "Palabra Reservada " << YYText() << " " << num_linea << " " << num_columna << '\n'; num_columna += YYLeng(); }
 
-{ID}     { cout << "ID " << YYText() << " " << num_linea << " " << num_columna << '\n'; num_columna += YYLeng(); } 
+{ID}     { cout << "ID " << YYText() << " " << num_linea << " " << num_columna << '\n'; num_columna += YYLeng(); }
 
 \"(\\.|[^\\\"])*\"  { cout << "String " << YYText() << " " << num_linea << " " << num_columna << '\n'; num_columna += YYLeng(); }
 
-"["        { cout << "[ " << YYText() << " " << num_linea << " " << num_columna << '\n'; num_columna += YYLeng(); }
-"]"        { cout << "] " << YYText() << " " << num_linea << " " << num_columna << '\n'; num_columna += YYLeng(); }
-"("        { cout << "( " << YYText() << " " << num_linea << " " << num_columna << '\n'; num_columna += YYLeng(); }
-")"        { cout << ") " << YYText() << " " << num_linea << " " << num_columna << '\n'; num_columna += YYLeng(); }
-"{"        { cout << "{ " << YYText() << " " << num_linea << " " << num_columna << '\n'; num_columna += YYLeng(); }
-"}"        { cout << "} " << YYText() << " " << num_linea << " " << num_columna << '\n'; num_columna += YYLeng(); }
-"=>"       { cout << "=> " << YYText() << " " << num_linea << " " << num_columna << '\n'; num_columna += YYLeng(); } 
-"="        { cout << "= " << YYText() << " " << num_linea << " " << num_columna << '\n'; num_columna += YYLeng(); } 
-"."        { cout << ". " << YYText() << " " << num_linea << " " << num_columna << '\n'; num_columna += YYLeng(); }
-";"        { cout << "; " << YYText() << " " << num_linea << " " << num_columna << '\n'; num_columna += YYLeng(); }
-":"        { cout << ": " << YYText() << " " << num_linea << " " << num_columna << '\n'; num_columna += YYLeng(); }
+"["        { cout << "[ "  << YYText() << " " << num_linea << " " << num_columna << '\n'; num_columna += YYLeng(); }
+"]"        { cout << "] "  << YYText() << " " << num_linea << " " << num_columna << '\n'; num_columna += YYLeng(); }
+"("        { cout << "( "  << YYText() << " " << num_linea << " " << num_columna << '\n'; num_columna += YYLeng(); }
+")"        { cout << ") "  << YYText() << " " << num_linea << " " << num_columna << '\n'; num_columna += YYLeng(); }
+"{"        { cout << "{ "  << YYText() << " " << num_linea << " " << num_columna << '\n'; num_columna += YYLeng(); }
+"}"        { cout << "} "  << YYText() << " " << num_linea << " " << num_columna << '\n'; num_columna += YYLeng(); }
+"=>"       { cout << "=> " << YYText() << " " << num_linea << " " << num_columna << '\n'; num_columna += YYLeng(); }
+"="        { cout << "= "  << YYText() << " " << num_linea << " " << num_columna << '\n'; num_columna += YYLeng(); }
+"."        { cout << ". "  << YYText() << " " << num_linea << " " << num_columna << '\n'; num_columna += YYLeng(); }
+";"        { cout << "; "  << YYText() << " " << num_linea << " " << num_columna << '\n'; num_columna += YYLeng(); }
+":"        { cout << ": "  << YYText() << " " << num_linea << " " << num_columna << '\n'; num_columna += YYLeng(); }
 "->"       { cout << "-> " << YYText() << " " << num_linea << " " << num_columna << '\n'; num_columna += YYLeng(); }
-","        { cout << ", " << YYText() << " " << num_linea << " " << num_columna << '\n'; num_columna += YYLeng(); }
-"?"        { cout << "? " << YYText() << " " << num_linea << " " << num_columna << '\n'; num_columna += YYLeng(); }
+","        { cout << ", "  << YYText() << " " << num_linea << " " << num_columna << '\n'; num_columna += YYLeng(); }
+"?"        { cout << "? "  << YYText() << " " << num_linea << " " << num_columna << '\n'; num_columna += YYLeng(); }
 
 "+"|"-"|"*"|"/"|"%"|"++"|"&"|"|"|"<"|">"|"=<"|">="|"=="|"=/="   { cout << "Operador " << YYText() << " " << YYLeng() << " " << num_linea << '\n'; num_columna += YYLeng(); }
 

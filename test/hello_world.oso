@@ -1,4 +1,7 @@
+--<3 Este programa se encarga de imprimir en la
+     salida estándar "¡Hola, Mundo! <3"
+<3->
 oso
 {
-  escribir("¡Hola, Mundo!");
+  escribir("¡Hola, Mundo! <3");
 }
