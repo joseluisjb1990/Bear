@@ -5,9 +5,9 @@ Proyecto de CI4721 - Lenguajes de Programación II de Gabriela Limonta (10-10385
 Bear
 ===================
 
-## Palabras reservadas
+## Consideraciones Léxicas
 
-Las siguientes son palabras reservadas del lenguaje, no pueden ser redefinidas ni utilizadas como identificadores.
+Las siguientes son palabras reservadas del lenguaje, no pueden ser redefinidas ni utilizadas como identificadores (de variables, funciones, etc).
 
 --------------   ----------   -------------   ----------   -------   ----------
 `a_hormiguero`   `cueva   `   `fin        `   `leer    `   `no   `   `vomita  `
@@ -16,6 +16,36 @@ Las siguientes son palabras reservadas del lenguaje, no pueden ser redefinidas n
 `a_polar     `   `escribir`   `hormiguero `   `mientras`   `pardo`   `sino    `
 `blanco      `   `extinto `   `kodiak     `   `negro   `   `polar`
 --------------   ----------   -------------   ----------   -------   -----------
+
+Los identificadores son secuencias de caracteres alfanuméricos, el símbolo underscore (`_`), el símbolo de interrogación (`?`) y/o el símbolo de exclamación (`!`), y deben comenzar por una letra en minúscula o mayúscula.
+
+Los identificadores son sensibles a mayúsculas; es decir, los nombres foo, Foo, FOO y FoO son todos identificadores diferentes.
+
+Existen dos maneras de hacer comentarios en Bear.
+
+1) Comentarios de una línea.
+
+        <3 Este es un programa en el lenguaje Bear
+        <3 definitivamente este es mi lenguaje favorito.
+        <3 porque mira que lindos se ven estos comentarios
+        <3 con muuuuuuuuchos corazones. Así puedo hacer
+        <3 un código lleno de amor.
+
+Toda línea que comience por `<3` es un comentario en el lenguaje Bear.
+
+2) Comentarios por bloque.
+
+        --<3 Este es un programa en el lenguaje Bear
+             definitivamente este es mi lenguaje favorito.
+             porque puedo poner mis comentarios llenos de amor
+             hacia el código y cuando lo hago en bloques puedo
+             incluso flechar a los lectores de mi codigo
+             wow such comment very programmer <3->
+
+Todo bloque de texto que comience en `--<3` y termine en `<3->` es un comentario en el lenguaje Bear.
+
+En Bear los comentarios se realizan con corazones ya que comentar tu código es hacerlo con mucho amor.
+Al no comentar demuestras poco amor hacia el código y hacia la futura persona que pueda leerlo :(.
 
 
 ## Estructura de un programa
@@ -219,8 +249,20 @@ Esto es equivalente a hacer:
 
 Se ejecuta la `<instrucción>` mientras la `<condición>` sea negro.
 
+### Incremento
 
-### Declaraciones
+    <variable>++
+
+Es el equivalente de hacer <variable> = <variable> + 1.
+
+### Decremento
+
+    <variable>--
+
+Es el equivalente de hacer <variable> = <variable> - 1.
+
+
+## Declaraciones
 
     <declaración1>;
     <declaración2>;
@@ -277,7 +319,7 @@ Las declaraciones para el tipo `malayo` se hacen de la siguiente manera:
 
 Las declaraciones para el tipo `hormiguero` se hacen de la siguiente manera:
 
-    hormiguero <identificador> 
+    hormiguero <identificador>
 
 **6) Cueva**
 
@@ -364,14 +406,12 @@ La precedencia de los operadores relacionales (de mayor a menor) es la siguiente
 ### 2) Expresiones con polares
 
 Una expresion de `polar` está formada por números naturales (secuencias de dígitos del 0 al 9), llamadas a funciones, variables y operaciones con polares.
-Se consideran como operadores aritméticos la suma (`+`), la resta (`-`), el incremento (`++`), el decremento (`--`) la división entera (`/`), la multiplicación (`*`), el módulo (`%`) y el inverso (`-` unario).
-Los operadores binarios usan operacion infija, el inverso utiliza notación prefija y por último el incremento y decremento utilizan notación postfija.
+Se consideran como operadores aritméticos la suma (`+`), la resta (`-`), la división entera (`/`), la multiplicación (`*`), el módulo (`%`) y el inverso (`-` unario).
+Los operadores binarios usan operacion infija y el inverso utiliza notación prefija.
 
 La precedencia de los operadores (de mayor a menor) es la siguiente:
 
 * `-` (unario)
-
-* `++`, `--`
 
 * `*`, `/`, `%`
 
@@ -422,32 +462,3 @@ Bear provee las siguientes funciones para convertir tipos:
 * `a_malayo(x)` : convierte la expresión x de tipo `polar` a un `malayo`.
 
 * `a_hormiguero(x)` : convierte la expresión x de tipo `polar` a un `hormiguero`.
-
-
-## Comentarios
-
-Existen dos maneras de hacer comentarios en Bear.
-
-1) Comentarios de una línea.
-
-        <3 Este es un programa en el lenguaje Bear
-        <3 definitivamente este es mi lenguaje favorito.
-        <3 porque mira que lindos se ven estos comentarios
-        <3 con muuuuuuuuchos corazones. Así puedo hacer
-        <3 un código lleno de amor.
-
-Toda línea que comience por `<3` es un comentario en el lenguaje Bear.
-
-2) Comentarios por bloque.
-
-        --<3 Este es un programa en el lenguaje Bear
-             definitivamente este es mi lenguaje favorito.
-             porque puedo poner mis comentarios llenos de amor
-             hacia el código y cuando lo hago en bloques puedo
-             incluso flechar a los lectores de mi codigo
-             wow such comment very programmer <3->
-
-Todo bloque de texto que comience en `--<3` y termine en `<3->` es un comentario en el lenguaje Bear.
-
-En Bear los comentarios se realizan con corazones ya que comentar tu código es hacerlo con mucho amor.
-Al no comentar demuestras poco amor hacia el código y hacia la futura persona que pueda leerlo :(.
