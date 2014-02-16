@@ -43,7 +43,7 @@ El tipo de dato `kodiak` representa a los números de punto flotante de 32 bits.
 ### 4. Malayo
 
 El tipo de dato `malayo` representa a un caracter ASCII.
-Se escriben utilizando comillas simples ( ' ' ).
+Se escriben utilizando comillas simples ( \' \' ).
 
 Por ejemplo: 'A','F','i', etc.
 
@@ -51,7 +51,7 @@ Por ejemplo: 'A','F','i', etc.
 ### 5. Hormiguero
 
 El tipo de dato `hormiguero` representa a una cadena de caracteres.
-Se escriben utilizando comillas dobles ("").
+Se escriben utilizando comillas dobles (\" \").
 
 Por ejemplo: "Hola esto es un hormiguero!", "y esto tambien lo es", etc.
 
@@ -59,15 +59,10 @@ Por ejemplo: "Hola esto es un hormiguero!", "y esto tambien lo es", etc.
 ### 6. Cueva
 
 El tipo de dato `cueva` representa arreglos multidimensionales con índices de base cero.
-Para acceder a los contenidos en una posicion determinada de la cueva se utilizan los '[]':
+Para acceder a los contenidos en una posicion determinada de la cueva se utilizan los `'[]'`:
 
 
 *Cueva unidimensional:
-
-La declaración de una cueva unidimensional se hace de la siguiente manera:
-
-    cueva <identificador> [<número>] de <tipo>;
-
 
 El acceso a una cueva unidimensional se hace de la siguiente manera:
 
@@ -76,10 +71,6 @@ El acceso a una cueva unidimensional se hace de la siguiente manera:
 
 *Cueva bidimensional:
 
-La declaración de una cueva bidimensional se hace de la siguiente manera:
-
-    cueva <identificador> [<número>] de cueva [<numero>] de <tipo>;
-
 El acceso a una cueva bidimensional se hace de la siguiente manera:
 
     cueva[<número>][<número>]
@@ -87,10 +78,6 @@ El acceso a una cueva bidimensional se hace de la siguiente manera:
 ...
 
 *Cueva n-dimensional:
-
-La declaración de una cueva n-dimensional se hace de la siguiente manera:
-
-    cueva <identificador> [<número>] de cueva [<numero>] de cueva [<numero>] (...) de <tipo>;
 
 El acceso a una cueva n-dimensional se hace de la siguiente manera:
 
@@ -101,15 +88,6 @@ El acceso a una cueva n-dimensional se hace de la siguiente manera:
 
 El tipo de dato `pardo` representa estructuras arbitrariamente anidadas.
 
-La declaración de un pardo se hace de la siguiente manera:
-
-    pardo <identificador> {
-      <tipo> <identificador>;
-      <tipo> <identificador>;
-      ...
-      <tipo> <identificador>;
-    }
-
 Para acceder a un campo del pardo se utiliza el operador `->` seguido del nombre del campo al que se quiere acceder.
 
 
@@ -117,16 +95,11 @@ Para acceder a un campo del pardo se utiliza el operador `->` seguido del nombre
 
 El tipo de dato `grizzli` representa uniones arbitrariamente anidadas.
 
-La declaración de un grizzli se hace de la siguiente manera:
-
-    grizzli <identificador> {
-      <tipo> <identificador>;
-      <tipo> <identificador>;
-      ...
-      <tipo> <identificador>;
-    }
-
 Para acceder a un campo del pardo se utiliza el operador `.` seguido del nombre del campo al que se quiere acceder.
+
+### 9. Extinto
+
+El tipo de dato `extinto` representa al vacio (void).
 
 
 ## Instrucciones
@@ -207,41 +180,142 @@ Si se cumple la `<condición>` se ejecuta la `<instrucción>`
 
 3) Condicional if-then-else simplificado:
 
-        <condición> ? <instrucción1> : <instrucción2>
+        <condición> ? <expresión1> : <expresión2>
 
-Si se cumple la `<condición>` se ejecuta la `<instrucción1>`, en caso contrario se ejecuta la `<instrucción2>`.
-Las instrucciones 1 y 2 deben ser instrucciones simples; es decir, no pueden ser bloques que contengan mas instrucciones.
+Si se cumple la `<condición>` se ejecuta la `<expresión1>`, en caso contrario se ejecuta la `<expresión2>`.
 
 
 ### Iteracion acotada
 
-        para <variable> en <<número1>, <número2>> <instrucción>
+Existen dos tipos de iteración acotada.
 
-Se ejecuta la `<instrucción>` desde el `<número1>` hasta el `<número2>` incrementando en una unidad la variable por cada iteración.
+1) Iteración acotada con salto
+
+        para <variable> en ( <expresión1>, <expresión2>, <expresión3> ) hacer <instrucción>
+
+Se ejecuta la `<instrucción>` desde `<expresión1>` hasta `<expresión3>` incrementando en `<expresión3>` la variable por cada iteración.
+
+2) Iteración acotada con salto predefinido 1
+
+        para <variable> en ( <expresión1>, <expresión2> ) hacer <instrucción>
+
+Se ejecuta la `<instrucción>` desde `<expresión1>` hasta `<expresión2>` incrementando por defecto en una unidad la variable por cada iteración.
+Esto es equivalente a hacer:
+
+        para <variable> en ( <expresión1>, 1, <expresión2> ) hacer <instrucción>
+
+
 (Falta ver si se puede hacer lo del paso para poder tener iteraciones que vayan de dos en dos, de tres en tres y asi...)
 
 
 ### Iteracion indeterminada
 
-    mientras <condición> <instrucción>
+    mientras <condición> hacer <instrucción>
 
 Se ejecuta la `<instrucción>` mientras la `<condición>` sea negro.
 
 
 ### Declaraciones
 
-    <tipo1> <identificador1>;
-    <tipo2> <identificador2>;
+    <declaración1>;
+    <declaración2>;
     ...
-    <tipoN> <identificadorN>;
+    <declaraciónN>;
 
-Las declaraciones se hacen indicando el tipo de la variable y luego el nombre de la misma. Se pueden declarar varias variables de un mismo tipo en una sola línea.
+donde cada `<declaración>` tiene la siguiente forma:
+
+    <tipo> <identificador>
+
+o
+
+    <tipo> <identificadores>
+
+Se pueden tener una o mas declaraciónes en el código.
+Toda declaración va seguida de un `;` que funciona como terminador.
+Se pueden declarar varias variables de un mismo tipo en una sola línea si se coloca una lista de identificadores separados por comas.
 
 Por ejemplo:
 
-    panda jose, gaby;
+    <tipo> foo;
+    <tipo> bar, baz;
 
 Se puede inicializar la variable al momento de declararla.
+(falta profundizar en esto, como se inicializan?)
+
+A continuación se presenta como se hacen las declaraciones para cada tipo diferente del lenguaje:
+
+**1) Panda**
+
+Las declaraciones para el tipo `panda` se hacen de la siguiente manera:
+
+    panda <identificador>
+
+**2) Polar**
+
+Las declaraciones para el tipo `polar` se hacen de la siguiente manera:
+
+    polar <identificador>
+
+**3) Kodiak**
+
+Las declaraciones para el tipo `kodiak` se hacen de la siguiente manera:
+
+    kodiak <identificador>
+
+**4) Malayo**
+
+Las declaraciones para el tipo `malayo` se hacen de la siguiente manera:
+
+    malayo <identificador>
+
+**5) Hormiguero**
+
+Las declaraciones para el tipo `hormiguero` se hacen de la siguiente manera:
+
+    hormiguero <identificador> 
+
+**6) Cueva**
+
+La declaración de una cueva **unidimensional** se hace de la siguiente manera:
+
+    cueva [<número>] de <tipo> <identificador>;
+
+La declaración de una cueva **bidimensional** se hace de la siguiente manera:
+
+    cueva [<número>] de cueva [<numero>] de <tipo> <identificador>;
+
+La declaración de una cueva **n-dimensional** se hace de la siguiente manera:
+
+    cueva [<número>] de cueva [<numero>] de cueva [<numero>] (...) de <tipo> <identificador>;
+
+
+**7) Pardo**
+
+La declaración de un `pardo` se hace de la siguiente manera:
+
+    pardo <identificador> {
+      <tipo> <identificador>;
+      <tipo> <identificador>;
+      ...
+      <tipo> <identificador>
+    } <identificador>
+
+Los campos del `pardo` se encuentran separados por `;`.
+
+**8) Grizzli**
+
+La declaración de un `grizzli` se hace de la siguiente manera:
+
+    grizzli <identificador> {
+      <tipo> <identificador>;
+      <tipo> <identificador>;
+      ...
+      <tipo> <identificador>
+    } <identificador>
+
+Los campos del `grizzli` se encuentran separados por `;`.
+
+**9) Funciones**
 
 Las declaraciones de funciones se hacen de la siguiente manera:
 
@@ -254,15 +328,15 @@ Las declaraciones de funciones se hacen de la siguiente manera:
 
 ### 1) Expresiones con pandas
 
-Una expresión de `panda` está formada por las constantes `blanco` y `negro`, variables, llamadas a funciones y operadores booleanos.
+Una expresión de `panda` está formada por las constantes `blanco` y `negro`, variables, llamadas a funciones y operaciones con pandas.
 Se consideran los operadores `&`, `|` y `no` para las operaciones and, or y not respectivamente.
 Se utiliza notación infija para el `&` y `|` y prefija para el `no`. La precedencia de los operadores (de mayor a menor) es la siguiente:
 
-*`no`
-
-*`&`
-
-*`|`
+* `no`
+  
+* `&`
+  
+* `|`
 
 
 Los operandos de `&`, `|` y `no` deben ser de tipo `panda` al igual que su resultado.
@@ -284,16 +358,15 @@ La precedencia de los operadores relacionales (de mayor a menor) es la siguiente
 
 ### 2) Expresiones con polares
 
-Una expresion de `polar` está formada por números naturales (secuencias de dígitos del 0 al 9), llamadas a funciones, variables y operadores aritméticos.
+Una expresion de `polar` está formada por números naturales (secuencias de dígitos del 0 al 9), llamadas a funciones, variables y operaciones con polares.
 Se consideran como operadores aritméticos la suma (`+`), la resta (`-`), el incremento (`++`), el decremento (`--`) la división entera (`/`), la multiplicación (`*`), el módulo (`%`) y el inverso (`-` unario).
-Se considera también como operador la longitud de un `hormiguero` o `cueva` (`lon`).
-Los operadores binarios usan operacion infija, el inverso y `lon` utilizan notación prefija y por último el incremento y decremento utilizan notación postfija.
+Los operadores binarios usan operacion infija, el inverso utiliza notación prefija y por último el incremento y decremento utilizan notación postfija.
 
 La precedencia de los operadores (de mayor a menor) es la siguiente:
 
 * `-` (unario)
 
-* `lon`, `++`, `--`
+* `++`, `--`
 
 * `*`, `/`, `%`
 
@@ -307,33 +380,30 @@ El operando de `++` y `--` debe ser una variable de tipo `polar`.
 
 ### 3) Expresiones con hormigueros
 
-Una expresión de `hormiguero` está formada por una cadena de malayos denotada por "" que puede contener cualquier caracter, llamadas a funciones, variables, y operadores de hormigueros.
-Se consideran como operadores de hormigueros la concatenación (`++`) y la longitud (`lon`).
-La concatenación utiliza notación infija y la longitud utiliza notación prefija.
-
-La precedencia de los operadores (de mayor a menor) es la siguiente:
-
-* `lon`
-
-* `++`
-
-Los operandos de `++` deben ser ambos de tipo `hormiguero` y su resultado es de tipo `hormiguero` también.
+Una expresión de `hormiguero` está formada por una cadena de malayos denotada por comillas dobles (\" \") que puede contener cualquier caracter, llamadas a funciones, variables, y operaciones con hormigueros.
 
 
 
-
-
+-------------------------------------------------------------------
 
 
 *debemos explicar las expresiones con los demas tipos de datos???*
-donde ponemos las funciones en este documento??
 
 
-
+--------------------------------------------------------------------
 
 
 
 ## Reglas de alcance de variables
+
+En Bear existe alcance estático.
+
+## Funciones predefinidas
+
+Bear provee las siguientes funciones predefinidas:
+
+* `lon(x)` : toma un `hormiguero` o una `cueva` y devuelve un `polar` indicando la longitud del `hormiguero` o `cueva` según sea el caso.
+* `concat(x,y)` : ambos argumentos son de tipo `hormiguero` y devuelve un nuevo elemento de tipo `hormiguero` que contiene la concatenación de los argumentos.
 
 
 ## Conversiones explicitas
@@ -351,11 +421,28 @@ Bear provee las siguientes funciones para convertir tipos:
 
 ## Comentarios
 
-    <3 Este es un programa en el lenguaje Bear
-    <3 definitivamente este es mi lenguaje favorito.
-    <3 porque mira que lindos se ven estos comentarios
-    <3 con muuuuuuuuchos corazones. Así puedo hacer
-    <3 un código lleno de amor.
+Existen dos maneras de hacer comentarios en Bear.
+
+1) Comentarios de una línea.
+
+        <3 Este es un programa en el lenguaje Bear
+        <3 definitivamente este es mi lenguaje favorito.
+        <3 porque mira que lindos se ven estos comentarios
+        <3 con muuuuuuuuchos corazones. Así puedo hacer
+        <3 un código lleno de amor.
 
 Toda línea que comience por `<3` es un comentario en el lenguaje Bear.
-Solo hay comentarios de una línea, no existen comentarios por bloques.
+
+2) Comentarios por bloque.
+
+        --<3 Este es un programa en el lenguaje Bear
+             definitivamente este es mi lenguaje favorito.
+             porque puedo poner mis comentarios llenos de amor
+             hacia el código y cuando lo hago en bloques puedo
+             incluso flechar a los lectores de mi codigo
+             wow such comment very programmer <3->
+
+Todo bloque de texto que comience en `--<3` y termine en `<3->` es un comentario en el lenguaje Bear.
+
+En Bear los comentarios se realizan con corazones ya que comentar tu código es hacerlo con mucho amor.
+Al no comentar demuestras poco amor hacia el código y hacia la futura persona que pueda leerlo :(.
