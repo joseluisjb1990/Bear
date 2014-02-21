@@ -1,20 +1,20 @@
 S -> def 'oso' inst
 
 inst ->
-	  '{' listaDef listaInst '}'
-	| 'para' ID 'en' '(' Expresion ',' Expresion ')' 'hacer' inst
-	| 'para' ID 'en' '(' Expresion ',' Expresion ',' Expresion ')' 'hacer' inst
-	| listaID = listaExpresiones
-	| 'leer' '(' ID ')'
-	| escribir '(' Expresion ')'
-	| iteraionIndeter
-	| 'vomita'
-	| 'vomita' ID
-	| 'fondoBlanco'
-	| 'fondoBlanco' ID
-	| 'roloePea'
-	| 'roloePea' ID
-	
+    '{' listaDef listaInst '}'
+  | 'para' ID 'en' '(' Expresion ',' Expresion ')' 'hacer' inst
+  | 'para' ID 'en' '(' Expresion ',' Expresion ',' Expresion ')' 'hacer' inst
+  | listaID = listaExpresiones
+  | 'leer' '(' ID ')'
+  | escribir '(' Expresion ')'
+  | iteraionIndeter
+  | 'vomita'
+  | 'vomita' ID
+  | 'fondoBlanco'
+  | 'fondoBlanco' ID
+  | 'roloePea'
+  | 'roloePea' ID
+
 Expresion ->
     Entero
   | Flotante
@@ -33,7 +33,7 @@ expresionAritmetica ->
   | '-' Expresion
   | ID++
   | ID--
-  
+
 expresionBooleana ->
     True
   | False
@@ -46,76 +46,74 @@ expresionBooleana ->
   | Expresion '|' Expresion
   | Expresion '&' Expresion
   | 'no' Expresion
-  
-Funcion ->
-  ID '(' parametros ')'
-  
+
+Funcion ->  ID '(' parametros ')'
+
 parametros ->
-  /* Vacio *\  
-  | listaID 
-	 
+  /* Vacio *\
+  | listaID
+
 iteracionIndeter ->
   | ID ':' 'mientras' '(' expresionBooleana ')' 'hacer' inst
   | 'mientras' '(' expresionBooleana ')' 'hacer' inst
 
 def ->
-	/* Vacio *\
-	| listaDefGlob
+  /* Vacio *\
+  | listaDefGlob
 
 listaDefGlob ->
-	  defGlob;
-	| listaDefGlob defGlob;
- 
+    defGlob;
+  | listaDefGlob defGlob;
+
 defGlob ->
-	  defConstante
-	| defVariable
-	| defFuncion
+    defConstante
+  | defVariable
+  | defFuncion
 
 defFuncion ->
-	  ID '(' listaParam ')' '=>' TIPO
-	| ID '(' listaParam ')' '=>' TIPO inst
+    ID '(' listaParam ')' '=>' TIPO
+  | ID '(' listaParam ')' '=>' TIPO inst
 
 listaParam ->
-	  Paramatero
-	| listaParam, Parametro
+    Paramatero
+  | listaParam, Parametro
 
 Parametro ->
-	  TIPO ID
-	| paramCueva TIPO ID
- 
+    TIPO ID
+  | paramCueva TIPO ID
+
 paramCueva
-	  cueva [] 'de'  
-	| paramCueva cueva '[' Num ']' 'de' 
+    cueva [] 'de'
+  | paramCueva cueva '[' Num ']' 'de'
 
 defConstante ->
-	  'const' TIPO ListaID = ListaExpresiones
+    'const' TIPO ListaID = ListaExpresiones
 
 listaDef ->
-	  defVariable;
-	| listaDef defVariable;
+    defVariable;
+  | listaDef defVariable;
 
 defVariable ->
-	  TIPO ListaID = ListaExpresiones
-	| TIPO ListaID
-	| defCueva
-	| defCompleja
+    TIPO ListaID = ListaExpresiones
+  | TIPO ListaID
+  | defCueva
+  | defCompleja
 
 defCompleja ->
-	  'pardo'   '{' listaDef '}'
-	| 'pardo'   '{' listaDef '}' listaID
-	| 'grizzli' '{' listaDef '}'
+    'pardo'   '{' listaDef '}'
+  | 'pardo'   '{' listaDef '}' listaID
+  | 'grizzli' '{' listaDef '}'
 
-defCueva ->
-	  cuevas TIPO ID
+defCueva ->  cuevas TIPO ID
 
 cuevas ->
-	 'cueva' '[' Num ']' 'de'
-	| cuevas 'cueva' '[' Num ']'  'de'
+   'cueva' '[' Num ']' 'de'
+  | cuevas 'cueva' '[' Num ']'  'de'
 
 ListaID ->
-	  ID
-	| ListaID, ID
+    ID
+  | ListaID, ID
 
 ListaExpresiones ->
-	  Expresion
-	| ListaExpresiones, Expresion
+    Expresion
+  | ListaExpresiones, Expresion
