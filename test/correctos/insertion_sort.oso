@@ -1,8 +1,24 @@
 <3 Insertion sort
 
-buscar_menor(cueva_elem,min,max) => polar;
+buscar_menor(cueva [] cueva_elem de polar, polar min, polar max) => polar
 
-cambiar(cueva_elem, i, j) => extinto;
+cambiar(cueva [] cueva_elem de polar, polar i, polar j) => extinto;
+
+buscar_menor(cueva [] cueva_elem de polar, polar min, polar max) => polar
+{
+  min = cueva_elem[min];
+
+  para i en (min + 1, max) hacer
+    si (cueva_elem[i]) < min) entonces
+      min = cueva_elem[i];
+}
+
+cambiar(cueva [] cueva_elem de polar, i, j) => extinto;
+{
+  polar inter = cueva_elem[i];
+  cueva_elem[i] = cueva_elem[j];
+  cueva_elem[j] = cueva_elem[i];
+}
 
 oso
 {
@@ -10,9 +26,9 @@ oso
 
   <3 Falta llenar el arreglo;
 
-  para i en <0,5>
+  para i en (0,4) hacer
   {
-    polar ind = buscar_menor(elementos,i,5);
+    polar ind = buscar_menor(elementos,i44);
     cambiar(elementos, i, ind);
   }
 

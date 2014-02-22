@@ -8,6 +8,7 @@ inst ->
   | 'leer' '(' ID ')'
   | escribir '(' Expresion ')'
   | iteraionIndeter
+  | 'si' '(' expresionBooleana ')' 'entonces' isnt
   | 'vomita'
   | 'vomita' ID
   | 'fondoBlanco'
@@ -16,20 +17,21 @@ inst ->
   | 'roloePea' ID
 
 Expresion ->
-    Entero
-  | Flotante
-  | Funcion
+    Funcion
   | expresionBooleana
   | expresionAritmetica
   | String
   | Char
+  | '(' Expresion ')'
 
 expresionAritmetica ->
-    Expresion '+' Expresion
-  | Expresion '-' Expresion
-  | Expresion '**' Expresion
-  | Expresion '*' Expresion
-  | Expresion '/' Expresion
+    Entero
+  | Flotante
+  | Expresion   '+'   Expresion
+  | Expresion   '-'   Expresion
+  | Expresion   '**'  Expresion
+  | Expresion   '*'   Expresion
+  | Expresion   '/'   Expresion
   | '-' Expresion
   | ID++
   | ID--
@@ -37,17 +39,22 @@ expresionAritmetica ->
 expresionBooleana ->
     True
   | False
-  | Expresion '<' Expresion
-  | Expresion '<=' Expresion
-  | Expresion '>' Expresion
-  | Expresion '>=' Expresion
-  | Expresion '==' Expresion
-  | Expresion '=/=' Expresion
-  | Expresion '|' Expresion
-  | Expresion '&' Expresion
+  | Expresion   '<'   Expresion
+  | Expresion   '<='  Expresion
+  | Expresion   '>'   Expresion
+  | Expresion   '>='  Expresion
+  | Expresion   '=='  Expresion
+  | Expresion   '=/=' Expresion
+  | Expresion   '|'   Expresion
+  | Expresion   '&'   Expresion
   | 'no' Expresion
 
-Funcion ->  ID '(' parametros ')'
+Funcion ->
+    ID '(' parametros ')'
+  | 'a_hormiguero'  '(' Expresion')'
+  | 'a_polar'       '(' Expresion ')'
+  | 'a_malayo'      '(' Expresion ')'
+  | 'a_polar'       '(' Expresion ')'
 
 parametros ->
   /* Vacio *\
