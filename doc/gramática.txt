@@ -13,16 +13,19 @@ inst -> '{' listaDef listaInst '}'
      |  'fondoBlanco' ID
      |  'roloePea'
      |  'roloePea' ID
+     |  'si' ExpresionBooleana 'entonces' inst 'sino' inst 'fin'
+     |  'si' ExpresionBooleana 'entonces' inst 'fin'
 
 Expresion -> Entero
           |  Flotante
           |  Funcion
-          |  expresionBooleana
-          |  expresionAritmetica
+          |  ExpresionBooleana
+          |  ExpresionAritmetica
           |  String
           |  Char
+          |  ExpresionBooleana '?' Expresion ':' Expresion
 
-expresionAritmetica -> Expresion '+' Expresion
+ExpresionAritmetica -> Expresion '+' Expresion
   | Expresion '-' Expresion
   | Expresion '**' Expresion
   | Expresion '*' Expresion
@@ -31,7 +34,7 @@ expresionAritmetica -> Expresion '+' Expresion
   | ID++
   | ID--
 
-expresionBooleana -> True
+ExpresionBooleana -> True
   | False
   | Expresion '<' Expresion
   | Expresion '<=' Expresion
@@ -48,8 +51,8 @@ Funcion ->  ID '(' parametros ')'
 parametros -> listaID
            |
 
-iteracionIndeter -> ID ':' 'mientras' '(' expresionBooleana ')' 'hacer' inst
-                 |  'mientras' '(' expresionBooleana ')' 'hacer' inst
+iteracionIndeter -> ID ':' 'mientras' '(' ExpresionBooleana ')' 'hacer' inst
+                 |  'mientras' '(' ExpresionBooleana ')' 'hacer' inst
 
 def -> listaDefGlob
     |
