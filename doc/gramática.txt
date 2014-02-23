@@ -6,7 +6,7 @@ inst -> '{' listaDef listaInst '}'
      |  listaID = listaExpresiones
      |  'leer' '(' ID ')'
      |  escribir '(' Expresion ')'
-     |  iteraionIndeter
+     |  iteracionIndeter
      |  'vomita'
      |  'vomita' ID
      |  'fondoBlanco'
