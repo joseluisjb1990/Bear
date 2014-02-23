@@ -25,37 +25,42 @@ Expresion -> Entero
           |  Char
           |  ExpresionBooleana '?' Expresion ':' Expresion
 
-ExpresionAritmetica -> Expresion '+' Expresion
-  | Expresion '-' Expresion
-  | Expresion '**' Expresion
-  | Expresion '*' Expresion
-  | Expresion '/' Expresion
-  | '-' Expresion
-  | ID++
-  | ID--
+<<<<<<< HEAD
+expresionAritmetica -> Expresion '+' Expresion
+                    |  Expresion '-' Expresion
+                    |  Expresion '**' Expresion
+                    |  Expresion '*' Expresion
+                    |  Expresion '/' Expresion
+                    |  '-' Expresion
+                    |  ID++
+                    |  ID--
 
-ExpresionBooleana -> True
-  | False
-  | Expresion '<' Expresion
-  | Expresion '<=' Expresion
-  | Expresion '>' Expresion
-  | Expresion '>=' Expresion
-  | Expresion '==' Expresion
-  | Expresion '=/=' Expresion
-  | Expresion '|' Expresion
-  | Expresion '&' Expresion
-  | 'no' Expresion
+expresionBooleana -> True
+                  |  False
+                  |  Expresion   '<'   Expresion
+                  |  Expresion   '<='  Expresion
+                  |  Expresion   '>'   Expresion
+                  |  Expresion   '>='  Expresion
+                  |  Expresion   '=='  Expresion
+                  |  Expresion   '=/=' Expresion
+                  |  Expresion   '|'   Expresion
+                  |  Expresion   '&'   Expresion
+                  |  'no' Expresion
 
-Funcion ->  ID '(' parametros ')'
+Funcion -> ID '(' parametros ')'
+        | 'a_hormiguero'  '(' Expresion')'
+        | 'a_polar'       '(' Expresion ')'
+        | 'a_malayo'      '(' Expresion ')'
+        | 'a_polar'       '(' Expresion ')'
 
 parametros -> listaID
-           |
+           | /* Vacio *\
 
 iteracionIndeter -> ID ':' 'mientras' '(' ExpresionBooleana ')' 'hacer' inst
                  |  'mientras' '(' ExpresionBooleana ')' 'hacer' inst
 
 def -> listaDefGlob
-    |
+    | /* Vacio *\
 
 listaDefGlob -> defGlob ';'
              |  listaDefGlob defGlob ';'
