@@ -1,4 +1,4 @@
-Programa -> def 'oso' inst
+Programa -> def 'oso' '(' ')' '=>' 'extinto' inst
 
 inst -> '{' listaDef listaInst '}'
      |  'para' ID 'en' '(' Expresion ',' Expresion ')' 'hacer' inst
@@ -25,8 +25,7 @@ Expresion -> Entero
           |  Char
           |  ExpresionBooleana '?' Expresion ':' Expresion
 
-<<<<<<< HEAD
-expresionAritmetica -> Expresion '+' Expresion
+ExpresionAritmetica -> Expresion '+' Expresion
                     |  Expresion '-' Expresion
                     |  Expresion '**' Expresion
                     |  Expresion '*' Expresion
@@ -35,7 +34,7 @@ expresionAritmetica -> Expresion '+' Expresion
                     |  ID++
                     |  ID--
 
-expresionBooleana -> True
+ExpresionBooleana -> True
                   |  False
                   |  Expresion   '<'   Expresion
                   |  Expresion   '<='  Expresion
@@ -48,7 +47,7 @@ expresionBooleana -> True
                   |  'no' Expresion
 
 Funcion -> ID '(' parametros ')'
-        | 'a_hormiguero'  '(' Expresion')'
+        | 'a_panda'       '(' Expresion ')'
         | 'a_polar'       '(' Expresion ')'
         | 'a_malayo'      '(' Expresion ')'
         | 'a_polar'       '(' Expresion ')'
