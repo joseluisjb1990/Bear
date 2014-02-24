@@ -39,10 +39,11 @@ ID       [a-zA-Z][a-zA-Z0-9\?!_]*
 '.'|'\\n'   { cout << "Caracter " << YYText() << " " << num_linea << '\n'; num_columna += YYLeng(); }
 
 
-en|para|oso|panda|negro|blanco|polar|kodiak|hormiguero  |
-cueva|de|pardo|grizzli|malayo|extinto|leer|escribir     |
-si|entonces|fin|sino|no|lon|a_kodiak|a_polar|a_malayo   |
-a_hormiguero|roloePea|fondoBlanco|vomita|mientras|const       { cout << "Palabra Reservada " << YYText() << " " << num_linea << " " << num_columna << '\n'; num_columna += YYLeng(); }
+a_kodiak|a_malayo|a_panda|a_polar|blanco|const|cueva   |
+de|entonces|escribir|extinto|fondoBlanco|grizzli      |
+hormiguero|kodiak|leer|lon|malayo|mientras|negro|no   |
+oso|panda|pardo|polar|vomita|roloePea|si|sino         { cout << "Palabra Reservada " << YYText() << " " << num_linea << " " << num_columna << '\n'; num_columna += YYLeng(); }
+
 
 {ID}     { cout << "ID " << YYText() << " " << num_linea << " " << num_columna << '\n'; num_columna += YYLeng(); }
 
