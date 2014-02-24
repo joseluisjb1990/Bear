@@ -5,13 +5,13 @@
 
 Las siguientes son palabras reservadas del lenguaje, no pueden ser redefinidas ni utilizadas como identificadores (de variables, funciones, etc).
 
---------------   ----------   -------------   ----------   -------   ----------
-`a_kodiak    `   `cueva   `   `fin        `   `leer    `   `no   `   `vomita  `
-`a_malayo    `   `de      `   `fondoBlanco`   `lon     `   `oso  `   `roloePea`
-`a_panda     `   `entonces`   `grizzli    `   `malayo  `   `panda`   `si      `
-`a_polar     `   `escribir`   `hormiguero `   `mientras`   `pardo`   `sino    `
-`blanco      `   `extinto `   `kodiak     `   `negro   `   `polar`
---------------   ----------   -------------   ----------   -------   -----------
+--------------   ----------   -------------   ----------   --------  ----------
+`a_kodiak    `   `cueva   `   `fondoBlanco`   `lon     `   `oso   `   `roloePea`
+`a_malayo    `   `de      `   `grizzli    `   `malayo  `   `panda `   `si      `
+`a_panda     `   `entonces`   `hormiguero `   `mientras`   `pardo `   `sino    `
+`a_polar     `   `escribir`   `kodiak     `   `negro   `   `polar `
+`blanco      `   `extinto `   `leer       `   `no      `   `vomita`
+--------------   ----------   -------------   ----------   --------  -----------
 
 Los identificadores son secuencias de caracteres alfanuméricos, el símbolo underscore (`_`), el símbolo de interrogación (`?`) y/o el símbolo de exclamación (`!`), y deben comenzar por una letra en minúscula o mayúscula.
 
@@ -298,6 +298,7 @@ También es posible utilizar una función como una instrucción, cuando las mism
 
 La asignación tiene el efecto de almacenar simultaneamente en las variables a0 .. aN el resultado de evaluar las expresiones e0 .. eN.
 Los tipos de la variables y de las expresiones deben coincidir y en caso contrario se debe arrojar un error.
+La cantidad de variables a asignar y la cantidad de expresiones que se les asigna debe ser la misma, en caso de no serlo se debe arrojar un error.
 
 
 ## Entrada
