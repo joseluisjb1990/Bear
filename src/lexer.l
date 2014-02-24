@@ -62,6 +62,7 @@ a_hormiguero|roloePea|fondoBlanco|vomita|mientras|const       { cout << "Palabra
 "->"       { cout << "-> " << YYText() << " " << num_linea << " " << num_columna << '\n'; num_columna += YYLeng(); }
 ","        { cout << ", "  << YYText() << " " << num_linea << " " << num_columna << '\n'; num_columna += YYLeng(); }
 "?"        { cout << "? "  << YYText() << " " << num_linea << " " << num_columna << '\n'; num_columna += YYLeng(); }
+"^"        { cout << "^ "  << YYText() << " " << num_linea << " " << num_columna << '\n'; num_columna += YYLeng(); }
 
 "+"|"-"|"*"|"/"|"%"|"++"|"&"|"|"|"<"|">"|"=<"|">="|"=="|"=/="   { cout << "Operador " << YYText() << " " << YYLeng() << " " << num_linea << '\n'; num_columna += YYLeng(); }
 
