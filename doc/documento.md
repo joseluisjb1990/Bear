@@ -5,13 +5,13 @@
 
 Las siguientes son palabras reservadas del lenguaje, no pueden ser redefinidas ni utilizadas como identificadores (de variables, funciones, etc).
 
---------------   ----------   -------------   ----------   --------  ----------
-`a_kodiak    `   `cueva   `   `fondoBlanco`   `lon     `   `oso   `   `roloePea`
-`a_malayo    `   `de      `   `grizzli    `   `malayo  `   `panda `   `si      `
-`a_panda     `   `entonces`   `hormiguero `   `mientras`   `pardo `   `sino    `
-`a_polar     `   `escribir`   `kodiak     `   `negro   `   `polar `
-`blanco      `   `extinto `   `leer       `   `no      `   `vomita`
---------------   ----------   -------------   ----------   --------  -----------
+----------------------------------------------------------------------------
+    a_kodiak    const     extinto     leer      no      vomita
+    a_malayo    cueva     fondoBlanco lon       oso     roloePea
+    a_panda     de        grizzli     malayo    panda   si
+    a_polar     entonces  hormiguero  mientras  pardo   sino
+    blanco      escribir  lodiak      negro     polar
+---------------------------------------------------------------------------
 
 Los identificadores son secuencias de caracteres alfanuméricos, el símbolo underscore (`_`), el símbolo de interrogación (`?`) y/o el símbolo de exclamación (`!`), y deben comenzar por una letra en minúscula o mayúscula.
 
@@ -232,6 +232,12 @@ Esto se hace de la siguiente manera:
 
 La lista de identificadores y de expresiones debe ser de la misma longitud.
 Si la cantidad de variables y de expresiones no coincide se genera un error.
+
+Opcionalmente las variables pueden ser declaradas como constantes agregando la palabra reservada `const`.
+Esta variable pasa a ser inmutable durante la ejecución del programa luego de ser declarada.
+Por ejemplo:
+
+    const panda falso = blanco; <3 declaración de una constante llamada falso que siempre tendrá valor blanco.
 
 La declaración de una cueva se hace de la siguiente manera:
 
