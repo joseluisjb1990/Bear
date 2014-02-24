@@ -1,28 +1,39 @@
-Programa -> def 'oso' '(' ')' '=>' 'extinto' inst
+Programa -> Definiciones 'oso' '(' ')' '=>' 'extinto' ListaInstrucciones
 
-inst -> '{' listaDef listaInst '}'
-     |  'para' ID 'en' '(' Expresion ',' Expresion ')' 'hacer' inst
-     |  'para' ID 'en' '(' Expresion ',' Expresion ',' Expresion ')' 'hacer' inst
-     |  listaID = listaExpresiones
-     |  'leer' '(' ID ')'
-     |  escribir '(' Expresion ')'
-     |  iteracionIndeter
-     |  'vomita'
-     |  'vomita' ID
-     |  'fondoBlanco'
-     |  'fondoBlanco' ID
-     |  'roloePea'
-     |  'roloePea' ID
-     |  'si' ExpresionBooleana 'entonces' inst 'sino' inst 'fin'
-     |  'si' ExpresionBooleana 'entonces' inst 'fin'
+ListaInstrucciones -> Instruccion ';'
+                   |  ListaInstrucciones Instruccion ';'
 
-Expresion -> Entero
-          |  Flotante
+Instruccion -> ListaIdentificadores '=' ListaExpresiones
+            |  'leer' '(' ID ')'
+            |  'escribir' '(' Expresion ')'
+            |  Funcion
+            |  'si' ExpresionBooleana 'entonces' '{' ListaInstrucciones '}'
+            |  'si' ExpresionBooleana 'entonces' '{' ListaInstrucciones '}' sino '{' ListaInstrucciones '}'
+            |  'para' ID 'en' '(' Expresion ',' Expresion ')' '{' ListaInstrucciones '}'
+            |  'para' ID 'en' '(' Expresion ',' Expresion ',' Expresion ')' '{' ListaInstrucciones '}'
+            |  'para' ID 'en' ID '{' ListaInstrucciones '}'
+            |  IteracionIndeterminada
+            |  ID '++'
+            |  ID '--'
+            |  'vomita'
+            |  'vomita' ID
+            |  'fondoBlanco'
+            |  'fondoBlanco' ID
+            |  'roloePea'
+            |  'roloePea' ID
+
+Expresion -> POLAR
+          |  KODIAK
+          |  HORMIGUERO
+          |  MALAYO
+          |  ID
           |  Funcion
+          |  FuncionPredef
+          |  Cueva
+          |  ID '->' Expresion
+          |  ID '.' Expresion
           |  ExpresionBooleana
           |  ExpresionAritmetica
-          |  String
-          |  Char
           |  ExpresionBooleana '?' Expresion ':' Expresion
 
 ExpresionAritmetica -> Expresion '+' Expresion
@@ -31,11 +42,9 @@ ExpresionAritmetica -> Expresion '+' Expresion
                     |  Expresion '*' Expresion
                     |  Expresion '/' Expresion
                     |  '-' Expresion
-                    |  ID++
-                    |  ID--
 
-ExpresionBooleana -> True
-                  |  False
+ExpresionBooleana -> BLANCO
+                  |  NEGRO
                   |  Expresion   '<'   Expresion
                   |  Expresion   '<='  Expresion
                   |  Expresion   '>'   Expresion
@@ -46,61 +55,80 @@ ExpresionBooleana -> True
                   |  Expresion   '&'   Expresion
                   |  'no' Expresion
 
-Funcion -> ID '(' parametros ')'
-        | 'a_panda'       '(' Expresion ')'
-        | 'a_polar'       '(' Expresion ')'
-        | 'a_malayo'      '(' Expresion ')'
-        | 'a_polar'       '(' Expresion ')'
+Funcion -> ID '(' Parametros ')'
 
-parametros -> listaID
-           | /* Vacio *\
+Parametros -> ListaParametros
+           |  /* Vacio *\
 
-iteracionIndeter -> ID ':' 'mientras' '(' ExpresionBooleana ')' 'hacer' inst
-                 |  'mientras' '(' ExpresionBooleana ')' 'hacer' inst
+ListaParametros -> Parametro
+                |  ListaParametros ',' Parametro
 
-def -> listaDefGlob
-    | /* Vacio *\
+Parametro -> ID
+          |  Expresion
 
-listaDefGlob -> defGlob ';'
-             |  listaDefGlob defGlob ';'
+FuncionPredef -> 'a_panda'  '(' Expresion ')'
+              |  'a_polar'  '(' Expresion ')'
+              |  'a_malayo' '(' Expresion ')'
+              |  'a_polar'  '(' Expresion ')'
+              |  'lon'      '(' Expresion ')'
 
-defGlob -> defConstante
-        |  defVariable
-        |  defFuncion
+Cueva -> ID '[' NUM ']'
+      |  Cueva '[' NUM ']'
 
-defFuncion -> ID '(' listaParam ')' '=>' TIPO
-           |  ID '(' listaParam ')' '=>' TIPO inst
+IteracionIndeterminada -> ID ':' 'mientras' '(' ExpresionBooleana ')' '{' ListaInstrucciones '}'
+                       |  'mientras' '(' ExpresionBooleana ')' '{' ListaInstrucciones '}'
 
-listaParam -> Paramatero
-           |  listaParam, Parametro
+Definiciones -> ListaDefGlobales
+             |  /* Vacio *\
 
-Parametro -> TIPO ID
-          |  paramCueva TIPO ID
+ListaDefGlobales -> DefinicionGlobal ';'
+                 |  ListaDefGlobales DefinicionGlobal ';'
 
-paramCueva -> cueva [] 'de'
-           |  paramCueva cueva '[' Num ']' 'de'
+DefinicionGlobal -> DefConstante
+                 |  DefVariable
+                 |  DefFuncion
 
-defConstante -> 'const' TIPO ListaID = ListaExpresiones
+DefConstante -> 'const' Tipo ListaIdentificadores '=' ListaExpresiones
 
-listaDef -> defVariable;
-         |  listaDef defVariable;
-
-defVariable -> TIPO ListaID = ListaExpresiones
-            |  TIPO ListaID
-            |  defCueva
-            |  defCompleja
-
-defCompleja -> 'pardo'   '{' listaDef '}'
-            |  'pardo'   '{' listaDef '}' listaID
-            |  'grizzli' '{' listaDef '}'
-
-defCueva ->  cuevas TIPO ID
-
-cuevas -> 'cueva' '[' Num ']' 'de'
-       |  cuevas 'cueva' '[' Num ']'  'de'
-
-ListaID -> ID
-        |  ListaID, ID
+ListaIdentificadores -> ID
+                     |  ListaIdentificadores ',' ID
 
 ListaExpresiones -> Expresion
-                 |  ListaExpresiones, Expresion
+                 |  ListaExpresiones ',' Expresion
+
+DefVariable -> Tipo ListaIdentificadores '=' ListaExpresiones
+            |  Tipo ListaIdentificadores
+            |  DefCueva
+            |  DefCompleja
+
+DefCueva -> Cuevas Tipo ID
+
+Cuevas -> 'cueva' '[' NUM ']' 'de'
+       |  Cuevas 'cueva' '[' NUM ']' 'de'
+
+DefCompleja -> 'pardo'   ID '{' Campos '}'
+            |  'grizzli' ID '{' Campos '}'
+
+Campos -> Tipo ID ';'
+       |  Campos Tipo ID ';'
+
+DefFuncion -> ID '(' DefParametros ')' '=>' Tipo
+           |  ID '(' DefParametros ')' '=>' Tipo '{' ListaInstrucciones '}'
+
+DefParametros -> DefParametro
+              |  DefParametros ',' DefParametro
+
+DefParametro -> Tipo ID
+          |  '^' Tipo ID
+          |  ParametroCueva Tipo ID
+
+ParametroCueva -> 'cueva' '[' ']' 'de'
+               |  ParametroCueva 'cueva' '[' NUM ']' 'de'
+
+Tipo -> ID
+     |  'panda'
+     |  'polar'
+     |  'kodiak'
+     |  'malayo'
+     |  'hormiguero'
+     |  'extinto'

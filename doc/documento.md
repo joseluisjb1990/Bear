@@ -363,7 +363,7 @@ Si se cumple la `<condición>` se ejecuta la lista de `<instrucciones>`
 
 Si se cumple la `<condición>` se ejecuta la lista de `<instrucciones1>`, en caso contrario se ejecuta la lista de `<instrucciones2>`.
 
-### Iteracion acotada
+### Iteración acotada
 
     para <variable> en ( <expresión1>, <expresión2>, <expresión3> ) {
       <instrucciones>
@@ -396,7 +396,7 @@ En cada iteración `<variable>` toma el valor de la posición correspondiente de
 
 Es posible modificar los elementos de las cuevas, ya que `<variable>` no es de solo lectura.
 
-### Iteracion indeterminada
+### Iteración indeterminada
 
     mientras <condición> {
       <instrucciones>
