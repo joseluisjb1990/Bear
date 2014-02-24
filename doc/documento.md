@@ -479,12 +479,6 @@ La precedencia de los operadores relacionales (de mayor a menor) es la siguiente
 
 * `==`, `=/=`
 
-Ademas es posible tener un selector que dada una `<condición>` de tipo `panda` si es `negro` corresponde entonces a la `<expresión1>` y si es `blanco` corresponde a la `<expresión2>`
-
-        <condición> ? <expresión1> : <expresión2>
-
-donde `<expresión1>` y `<expresión2>` son de tipo `panda`.
-
 
 ### 2) Expresiones con polares
 
