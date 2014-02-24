@@ -10,7 +10,7 @@ Las siguientes son palabras reservadas del lenguaje, no pueden ser redefinidas n
     a_malayo    cueva     fondoBlanco lon       oso     roloePea
     a_panda     de        grizzli     malayo    panda   si
     a_polar     entonces  hormiguero  mientras  pardo   sino
-    blanco      escribir  lodiak      negro     polar
+    blanco      escribir  kodiak      negro     polar
 ---------------------------------------------------------------------------
 
 Los identificadores son secuencias de caracteres alfanuméricos, el símbolo underscore (`_`), el símbolo de interrogación (`?`) y/o el símbolo de exclamación (`!`), y deben comenzar por una letra en minúscula o mayúscula.
