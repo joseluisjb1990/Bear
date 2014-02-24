@@ -9,13 +9,13 @@ Bear
 
 Las siguientes son palabras reservadas del lenguaje, no pueden ser redefinidas ni utilizadas como identificadores (de variables, funciones, etc).
 
---------------   ----------   -------------   ----------   -------   ----------
-`a_kodiak    `   `cueva   `   `fin        `   `leer    `   `no   `   `vomita  `
-`a_malayo    `   `de      `   `fondoBlanco`   `lon     `   `oso  `   `roloePea`
-`a_panda     `   `entonces`   `grizzli    `   `malayo  `   `panda`   `si      `
-`a_polar     `   `escribir`   `hormiguero `   `mientras`   `pardo`   `sino    `
-`blanco      `   `extinto `   `kodiak     `   `negro   `   `polar`
---------------   ----------   -------------   ----------   -------   -----------
+----------------------------------------------------------------------------
+    a_kodiak    const     extinto     leer      no      vomita
+    a_malayo    cueva     fondoBlanco lon       oso     roloePea
+    a_panda     de        grizzli     malayo    panda   si
+    a_polar     entonces  hormiguero  mientras  pardo   sino
+    blanco      escribir  kodiak      negro     polar
+---------------------------------------------------------------------------
 
 Los identificadores son secuencias de caracteres alfanuméricos, el símbolo underscore (`_`), el símbolo de interrogación (`?`) y/o el símbolo de exclamación (`!`), y deben comenzar por una letra en minúscula o mayúscula.
 
@@ -60,12 +60,14 @@ Al no comentar demuestras poco amor hacia el código y hacia la futura persona q
 
 Todo programa escrito en Bear tiene la siguiente estructura:
 
-    [definiciones] oso() => extinto <instrucción>
+    [definiciones] oso() => extinto {
+      <instrucciones>
+    }
 
 El punto de entrada del programa es la función principal `oso` que no toma parametros y tiene retorno `extinto`.
 Anterior a la misma es posible hacer la declaración de constantes, variables y funciones que se desee.
 Los corchetes (`[ ]`) indican que estas definiciones son opcionales.
-Por último tenemos el cuerpo de nuestra función principal `oso` que puede ser una instrucción o un bloque de instrucciones.
+Por último tenemos el cuerpo de nuestra función principal `oso` que es una lista de instrucciones.
 
 
 ## Reglas de alcance de variables
@@ -193,10 +195,14 @@ Para acceder a un campo del pardo se utiliza el operador `.` seguido del nombre 
 El tipo de dato `hormiguero` representa a una secuencia de caracteres ASCII inmutable.
 Al momento de declaración deben ser inicializados y su valor es constante durante la ejecución del programa.
 Se escriben utilizando comillas dobles (`" "`).
-(falta decir que tipo de caracter no pueden contener, por ahora se pueden escribir strings en lineas diferentes)
+Pueden contener cualquier caracter exceptuando el `\n`; es decir, el texto de un hormiguero no puede saltar a la linea siguiente.
+Por ejemplo:
 
+    hormiguero foo = "Hola esto es un hormiguero!";        <3 hormiguero declarado correctamente.
+    hormiguero bar = "Si yo intento poner texto aqui
+                      y continuar en esta siguiente linea  <3 Error: el texto del hormiguero
+                      y en esta voy a tener un error";     <3 contiene caracteres de salto de linea
 
-Por ejemplo: "Hola esto es un hormiguero!", "y esto tambien lo es", etc.
 
 **2. Extinto**
 
@@ -222,7 +228,7 @@ El tipo puede ser cualquier tipo escalar, `hormiguero`, o nombre de `pardo` o `g
 
 Las variables de tipo `hormiguero` deben ser inicializadas siempre.
 
-(que pasa si no se inicializan las variables? se ponen valores por defecto?)
+Si el usuario no inicializa las variables estas no se inicializan con algún valor predeterminado, de modo que no se puede garantizar que valor tendrán.
 
 El tipo de `<expresión>` y `<tipo>` deben coincidir.
 
@@ -232,7 +238,14 @@ Esto se hace de la siguiente manera:
     panda foo, bar, baz;                 <3 lista de variables declaradas, sin inicializar
     polar qux, quux, corge = 42, 27, 32; <3 lista de variables declaradas e inicializadas
 
-(que pasa si tengo listas de diferente longitud entre los identificadores y las expresiones. Se inicializan unas si y otras no ? que pasa si faltan variables y sobran expresiones? )
+La lista de identificadores y de expresiones debe ser de la misma longitud.
+Si la cantidad de variables y de expresiones no coincide se genera un error.
+
+Opcionalmente las variables pueden ser declaradas como constantes agregando la palabra reservada `const`.
+Esta variable pasa a ser inmutable durante la ejecución del programa luego de ser declarada.
+Por ejemplo:
+
+    const panda falso = blanco; <3 declaración de una constante llamada falso que siempre tendrá valor blanco.
 
 La declaración de una cueva se hace de la siguiente manera:
 
@@ -264,6 +277,11 @@ Para cualquier función que no tenga como tipo de retorno `extinto` es obligator
 Si el tipo de retorno es `extinto` entonces si aparece la instrucción `vomita` no puede estar acompañada de alguna expresión.
 
 El pasaje de parámetros para los tipos escalares y hormigueros se hace por valor, para los tipos compuestos y los definidos por el usuario se hace por referencia.
+El usuario tiene la opción de utilizar el símbolo reservado `^` antes del tipo del argumento y esto permite pasar tipos escalares por referencia. Por ejemplo:
+
+    foo(^polar bar, ^panad baz) => extinto {
+      ...
+    }
 
 (Permitimos un mecanismo para pasar tipos escalares por referencia?)
 
@@ -294,21 +312,8 @@ También es posible utilizar una función como una instrucción, cuando las mism
 
 La asignación tiene el efecto de almacenar simultaneamente en las variables a0 .. aN el resultado de evaluar las expresiones e0 .. eN.
 Los tipos de la variables y de las expresiones deben coincidir y en caso contrario se debe arrojar un error.
+La cantidad de variables a asignar y la cantidad de expresiones que se les asigna debe ser la misma, en caso de no serlo se debe arrojar un error.
 
-------------------------------------------------------------------
-## Bloque
-(Por ahora vamos a dejar esto de los bloques por aca hasta que decidamos si se van o se quedan.)
-
-    {
-    <instrucción1>;
-    <instrucción2>;
-    ...
-    <instrucciónN>;
-    }
-
-Los bloques van encerrados entre llaves y contienen un conjunto de instrucciones a ejecutar.
-(Aun no decidimos como manejar las declaraciones, si serán todas obligatorias al inicio o si se pueden hacer en cualquier lugar del programa.)
-------------------------------------------------------------------
 
 ## Entrada
 
@@ -346,27 +351,29 @@ Existen dos tipos de selectores en el lenguaje:
 
 1) Condicional if-then:
 
-        si <condición> entonces
-          <instrucción>
-        fin;
+        si <condición> entonces {
+          <instrucciones>
+        }
 
-Si se cumple la `<condición>` se ejecuta la `<instrucción>`
+Si se cumple la `<condición>` se ejecuta la lista de `<instrucciones>`
 
 2) Condicional if-then-else:
 
-        si <condición> entonces <instrucción1>
-                       sino     <instrucción2>
-                       fin;
-
-Si se cumple la `<condición>` se ejecuta la `<instrucción1>`, en caso contrario se ejecuta la `<instrucción2>`.
-
-### Iteracion acotada
-
-        para <variable> en ( <expresión1>, <expresión2>, <expresión3> ) hacer {
-          <instrucción>
+        si <condición> entonces {
+          <instrucciones1>
+        } sino {
+          <instrucciones2>
         }
 
-Se ejecuta la `<instrucción>` desde `<expresión1>` hasta `<expresión3>` incrementando en `<expresión2>` la variable por cada iteración.
+Si se cumple la `<condición>` se ejecuta la lista de `<instrucciones1>`, en caso contrario se ejecuta la lista de `<instrucciones2>`.
+
+### Iteración acotada
+
+    para <variable> en ( <expresión1>, <expresión2>, <expresión3> ) {
+      <instrucciones>
+    }
+
+Se ejecuta el conjunto de `<instrucciones>` desde `<expresión1>` hasta `<expresión3>` incrementando en `<expresión2>` la variable por cada iteración.
 
 * La `<variable>` se declara automáticamente de tipo `polar` y solo es visible dentro del bloque de la iteración.
 
@@ -380,23 +387,36 @@ Se ejecuta la `<instrucción>` desde `<expresión1>` hasta `<expresión3>` incre
 
 * `<expresión2>` es opcional, en caso de omitirla toma como valor por defecto el numero entero uno (1).
 
+Adicionalmente se puede iterar sobre cuevas unidimensionales con una variante de esta estructura.
 
-### Iteracion indeterminada
-
-    mientras <condición> hacer {
-      <instrucción>
+    para <variable> en <cueva> {
+      <instrucciones>
     }
 
-Se ejecuta la `<instrucción>` mientras la `<condición>` sea `negro`.
+La `<variable>` se declara automaticamente del tipo contenido por la cueva.
+
+El ciclo de instrucciones se ejecuta una vez por cada elemento de la cueva.
+En cada iteración `<variable>` toma el valor de la posición correspondiente de la cueva.
+
+Es posible modificar los elementos de las cuevas, ya que `<variable>` no es de solo lectura.
+
+### Iteración indeterminada
+
+    mientras <condición> {
+      <instrucciones>
+    }
+
+Se ejecuta el conjunto de `<instrucciones>` mientras la `<condición>` sea `negro`.
 `<condición>` debe ser de tipo `panda`.
+
 La `<condición>` se verifica al inicio de cada ciclo.
 
 ### Etiquetas, roloePea, fondoBlanco
 
 Cualquier iteración indeterminada puede ser etiquetada. Por ejemplo:
 
-    <etiqueta>: mientras <condición> hacer {
-      <instrucción>
+    <etiqueta>: mientras <condición> {
+      <instrucciones>
     }
 
 Es posible anidar iteraciónes etiquetadas mientras los nombres de las etiquetas sean distintos.
@@ -405,8 +425,8 @@ Dentro de una iteración es posible utilizar la instrucción `roloePea` para fin
 Por defecto un `roloePea` rompe la iteración mas interna (cercana al `roloePea`).
 Opcionalmente se puede hacer un `roloePea` con etiqueta, en este caso se rompe la iteración que tenga esa etiqueta. Por ejemplo:
 
-    externa: mientras negro hacer {
-      interna: mientras negro hacer {
+    externa: mientras negro {
+      interna: mientras negro {
         ...
         roloePea;         <3 rompe la iteración interna.
         ...
@@ -441,9 +461,9 @@ Se consideran los operadores `&`, `|` y `no` para las operaciones and, or y not 
 Se utiliza notación infija para el `&` y `|` y prefija para el `no`. La precedencia de los operadores (de mayor a menor) es la siguiente:
 
 * `no`
-  
+
 * `&`
-  
+
 * `|`
 
 
@@ -462,12 +482,6 @@ La precedencia de los operadores relacionales (de mayor a menor) es la siguiente
 * `>`, `>=`, `<`, `=<`
 
 * `==`, `=/=`
-
-Ademas es posible tener un selector que dada una `<condición>` de tipo `panda` si es `negro` corresponde entonces a la `<expresión1>` y si es `blanco` corresponde a la `<expresión2>`
-
-        <condición> ? <expresión1> : <expresión2>
-
-donde `<expresión1>` y `<expresión2>` son de tipo `panda`.
 
 
 ### 2) Expresiones con polares
@@ -523,8 +537,6 @@ donde `<expresión1>` y `<expresión2>` son de cualquier tipo.
 Bear provee las siguientes funciones predefinidas:
 
 * `lon(x)` : toma un `hormiguero` o una `cueva` y devuelve un `polar` indicando la longitud del `hormiguero` o `cueva` según sea el caso.
-
-* `sqrt(x)` : toma un `kodiak` y calcula la raiz cuadrada del mismo.
 
 ## Conversiones explicitas
 
