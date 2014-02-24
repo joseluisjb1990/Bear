@@ -191,10 +191,14 @@ Para acceder a un campo del pardo se utiliza el operador `.` seguido del nombre 
 El tipo de dato `hormiguero` representa a una secuencia de caracteres ASCII inmutable.
 Al momento de declaración deben ser inicializados y su valor es constante durante la ejecución del programa.
 Se escriben utilizando comillas dobles (`" "`).
-(falta decir que tipo de caracter no pueden contener, por ahora se pueden escribir strings en lineas diferentes)
+Pueden contener cualquier caracter exceptuando el `\n`; es decir, el texto de un hormiguero no puede saltar a la linea siguiente.
+Por ejemplo:
 
+    hormiguero foo = "Hola esto es un hormiguero!";        <3 hormiguero declarado correctamente.
+    hormiguero bar = "Si yo intento poner texto aqui
+                      y continuar en esta siguiente linea  <3 Error: el texto del hormiguero
+                      y en esta voy a tener un error";     <3 contiene caracteres de salto de linea
 
-Por ejemplo: "Hola esto es un hormiguero!", "y esto tambien lo es", etc.
 
 **2. Extinto**
 
