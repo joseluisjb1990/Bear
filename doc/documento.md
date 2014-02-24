@@ -490,9 +490,9 @@ Los operadores binarios usan operacion infija y el inverso utiliza notación pre
 
 La precedencia de los operadores (de mayor a menor) es la siguiente:
 
-* `-` (unario)
-
 * `**`
+
+* `-` (unario)
 
 * `*`, `/`, `%`
 
