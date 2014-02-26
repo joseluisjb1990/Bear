@@ -30,8 +30,8 @@ Expresion -> POLAR
           |  Funcion
           |  FuncionPredef
           |  Cueva
-          |  ID '->' Expresion
-          |  ID '.' Expresion
+          |  Expresion '->' Expresion
+          |  Expresion '.' Expresion
           |  ExpresionBooleana
           |  ExpresionAritmetica
           |  ExpresionBooleana '?' Expresion ':' Expresion
