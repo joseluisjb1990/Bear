@@ -22,7 +22,7 @@ Los identificadores son sensibles a mayúsculas; es decir, los nombres `foo`, `F
 Los números enteros solamente pueden escribirse en base decimal. Los números en base decimal son cualquier secuencia de dígitos entre 0 y 9.
 
 Los números con parte fraccionaria de igual manera solo pueden ser escritos en base decimal.
-Estos se constituyen por una secuencia no vacía de dígitos entre 0 y 9, seguida de un punto (`.`) y otra secuencia no vacía de dígitos entre 0 y 9.
+Estos se constituyen por una secuencia no vacía de dígitos entre 0 y 9, seguida de una coma (`,`) y otra secuencia no vacía de dígitos entre 0 y 9.
 También es posible agregar el exponente escribiendo "`e`" seguido de uno o mas dígitos entre 0 y 9.
 Al mismo tiempo se puede especificar el signo del exponente agregando un `+` o `-` antes del exponente.
 El exponente indica que el número antes del mismo se multiplica por diez (10) elevado al número indicado como exponente.
@@ -157,6 +157,21 @@ La declaración de un pardo se hace de la siguiente manera:
     }
 
 Las variables dentro de un pardo pueden ser de cualquier tipo exceptuando `extinto`, `hormiguero` o el mismo `pardo` que se esta definiendo para evitar una recursión infinita.
+Al mismo tiempo, no es posible declarar un nuevo pardo dentro del mismo.
+
+No es posible declarar un tipo `pardo` y en la misma linea crear variables de este tipo; es decir:
+
+    pardo foo {
+    ...
+    } bar, baz;
+
+Esto debe hacerse separado. La manera correcta es la siguiente:
+
+    pardo foo {
+    ...
+    }
+
+    foo bar, baz;
 
 Para acceder a un campo del pardo se utiliza el operador `->` seguido del nombre del campo al que se quiere acceder.
 
@@ -177,6 +192,23 @@ La declaración de un grizzli se hace de la siguiente manera:
       ...
       <tipo> <identificador>;
 }
+
+Las variables dentro de un grizzli pueden ser de cualquier tipo exceptuando `extinto`, `hormiguero` o el mismo `grizzli` que se esta definiendo para evitar una recursión infinita.
+Al mismo tiempo, no es posible declarar un nuevo grizzli dentro del mismo.
+
+No es posible declarar un tipo `grizzli` y en la misma linea crear variables de este tipo; es decir:
+
+    grizzli foo {
+    ...
+    } bar, baz;
+
+Esto debe hacerse separado. La manera correcta es la siguiente:
+
+    grizzli foo {
+    ...
+    }
+
+    foo bar, baz;
 
 Debido a su semejanza física mucha gente suele confundir a los osos pardos y grizzli.
 Dado que la declaración de un pardo y un grizzli en bear es semejante (solo varían en la palabra clave `pardo` y `grizzli`) podría ocurrir lo mismo que pasa con estos osos en la vida real.
