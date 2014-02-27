@@ -35,6 +35,7 @@ class bear_driver;
 %define api.token.prefix {TOK_}
 %token
   END  0  "end of file"
+/*
   ASSIGN  ":="
   MINUS   "-"
   PLUS    "+"
@@ -42,16 +43,42 @@ class bear_driver;
   SLASH   "/"
   LPAREN  "("
   RPAREN  ")"
+*/
 ;
 #line 11275 "./doc/bison.texi"
-%token <std::string> IDENTIFIER "identifier"
-%token <int> NUMBER "number"
-%type  <int> exp
+%token <std::string> ID
+%token <std::string> CONSTPOLAR
+%token <std::string> CONSTKODIAK
+%token <std::string> CONSTHORMIGUERO
+%token <std::string> CONSTMALAYO
+%token <std::string> BLANCO
+%token <std::string> NEGRO
+%type  <std::string> Programa
+%type  <std::string> Expresiones
+%type  <std::string> Expresion
 #line 11288 "./doc/bison.texi"
-%printer { yyoutput << $$; } <*>;
+/* %printer { yyoutput << $$; } <*>; */
 #line 11297 "./doc/bison.texi"
 %%
-%start unit;
+%start Programa;
+
+Programa: Expresiones       { $$ = $1; std::cout << $$; }
+        ;
+
+Expresiones: Expresion             { $$ = $1; }
+           | Expresiones Expresion { $$ = std::string($1) + $2; }
+           ;
+
+Expresion: ID               { $$ = $1; std::cout << $$ << "\n"; }
+         | CONSTPOLAR       { $$ = $1; std::cout << $$ << "\n"; }
+         | CONSTKODIAK      { $$ = $1; std::cout << $$ << "\n"; }
+         | CONSTHORMIGUERO  { $$ = $1; std::cout << $$ << "\n"; }
+         | CONSTMALAYO      { $$ = $1; std::cout << $$ << "\n"; }
+         | BLANCO           { $$ = $1; std::cout << $$ << "\n"; }
+         | NEGRO            { $$ = $1; std::cout << $$ << "\n"; }
+         ;
+
+/*
 unit: assignments exp  { driver.result = $2; };
 
 assignments:
@@ -71,6 +98,8 @@ exp:
 | "(" exp ")"   { std::swap ($$, $2); }
 | "identifier"  { $$ = driver.variables[$1]; }
 | "number"      { std::swap ($$, $1); };
+*/
+
 %%
 #line 11327 "./doc/bison.texi"
 void
