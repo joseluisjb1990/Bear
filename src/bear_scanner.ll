@@ -9,8 +9,6 @@
 #include "bear_parser.tab.hh"
 
 using namespace std;
-int num_linea = 1;
-int num_columna = 1;
 
 # undef yywrap
 # define yywrap() 1
@@ -40,44 +38,46 @@ ID       [a-zA-Z][a-zA-Z0-9\?!_]*
   loc.step ();
 %}
 
-{DIGIT}+  { printf("Entero: %s %d %d\n", yytext, num_linea, num_columna); num_columna += yyleng; return yy::bear_parser::make_CONSTPOLAR(yytext, loc); }
+{DIGIT}+  { return yy::bear_parser::make_CONSTPOLAR(yytext, loc); }
 
-{DIGIT}+,{DIGIT}*  { printf("Flotante: %s %d %d\n", yytext, num_linea, num_columna); num_columna += yyleng; return yy::bear_parser::make_CONSTKODIAK(yytext, loc); }
+{DIGIT}+,{DIGIT}*  { return yy::bear_parser::make_CONSTKODIAK(yytext, loc); }
 
-{DIGIT}+(,{DIGIT})?e-?{DIGIT}+  { printf("Flotante: %s %d %d\n", yytext, num_linea, num_columna); num_columna += yyleng; return yy::bear_parser::make_CONSTKODIAK(yytext, loc);}
+{DIGIT}+(,{DIGIT})?e-?{DIGIT}+  { return yy::bear_parser::make_CONSTKODIAK(yytext, loc);}
 
-'.'|'\\n'   { printf("Caracter: %s %d %d\n", yytext, num_linea, num_columna); num_columna += yyleng; return yy::bear_parser::make_CONSTMALAYO(yytext, loc);}
+'.'|'\\n'   { return yy::bear_parser::make_CONSTMALAYO(yytext, loc);}
 
-\"(\\.|[^\\\"])*\"  { printf("String: %s %d %d\n", yytext, num_linea, num_columna); num_columna += yyleng; return yy::bear_parser::make_CONSTHORMIGUERO(yytext, loc); }
+\"(\\.|[^\\\"])*\"  { return yy::bear_parser::make_CONSTHORMIGUERO(yytext, loc); }
 
-blanco { printf("palabra reservada: %s %d %d\n", yytext, num_linea, num_columna); num_columna += yyleng; return yy::bear_parser::make_BLANCO(yytext, loc); }
-negro  { printf("palabra reservada: %s %d %d\n", yytext, num_linea, num_columna); num_columna += yyleng; return yy::bear_parser::make_NEGRO(yytext, loc); }
-no  { printf("palabra reservada: %s %d %d\n", yytext, num_linea, num_columna); num_columna += yyleng; return yy::bear_parser::make_NO(loc); }
+blanco { return yy::bear_parser::make_BLANCO(yytext, loc); }
+negro  { return yy::bear_parser::make_NEGRO(yytext, loc); }
+no  { return yy::bear_parser::make_NO(loc); }
 
-{ID}   { printf("identificador: %s %d %d\n", yytext, num_linea, num_columna); num_columna += yyleng; return yy::bear_parser::make_ID(yytext, loc); }
+{ID}   { return yy::bear_parser::make_ID(yytext, loc); }
 
-[\n]  { num_linea++; num_columna = 1; }
+[\n]  { loc.lines(1); loc.step (); }
 
-[ \t]+ { num_columna += yyleng; }
+[ \t]+ { loc.step (); }
 
 
-"("   { printf("%s %d %d\n", yytext, num_linea, num_columna); num_columna += yyleng; return yy::bear_parser::make_PARENTESISI(loc); }
-")"   { printf("%s %d %d\n", yytext, num_linea, num_columna); num_columna += yyleng; return yy::bear_parser::make_PARENTESISD(loc); }
-":"   { printf("%s %d %d\n", yytext, num_linea, num_columna); num_columna += yyleng; return yy::bear_parser::make_DOSPUNTOS(loc); }
-"?"   { printf("%s %d %d\n", yytext, num_linea, num_columna); num_columna += yyleng; return yy::bear_parser::make_INTERROGACION(loc); }
-"+"   { printf("%s %d %d\n", yytext, num_linea, num_columna); num_columna += yyleng; return yy::bear_parser::make_SUMA(loc); }
-"-"   { printf("%s %d %d\n", yytext, num_linea, num_columna); num_columna += yyleng; return yy::bear_parser::make_MENOS(loc); }
-"*"   { printf("%s %d %d\n", yytext, num_linea, num_columna); num_columna += yyleng; return yy::bear_parser::make_MULTIPLICACION(loc); }
-"/"   { printf("%s %d %d\n", yytext, num_linea, num_columna); num_columna += yyleng; return yy::bear_parser::make_DIVISION(loc); }
-"%"   { printf("%s %d %d\n", yytext, num_linea, num_columna); num_columna += yyleng; return yy::bear_parser::make_MODULO(loc); }
-"&"   { printf("%s %d %d\n", yytext, num_linea, num_columna); num_columna += yyleng; return yy::bear_parser::make_AND(loc); }
-"|"   { printf("%s %d %d\n", yytext, num_linea, num_columna); num_columna += yyleng; return yy::bear_parser::make_OR(loc); }
-"<"   { printf("%s %d %d\n", yytext, num_linea, num_columna); num_columna += yyleng; return yy::bear_parser::make_MENOR(loc); }
-">"   { printf("%s %d %d\n", yytext, num_linea, num_columna); num_columna += yyleng; return yy::bear_parser::make_MAYOR(loc); }
-"=<"   { printf("%s %d %d\n", yytext, num_linea, num_columna); num_columna += yyleng; return yy::bear_parser::make_MENORIGUAL(loc); }
-">="   { printf("%s %d %d\n", yytext, num_linea, num_columna); num_columna += yyleng; return yy::bear_parser::make_MAYORIGUAL(loc); }
-"=="   { printf("%s %d %d\n", yytext, num_linea, num_columna); num_columna += yyleng; return yy::bear_parser::make_IGUALDAD(loc); }
-"=/="   { printf("%s %d %d\n", yytext, num_linea, num_columna); num_columna += yyleng; return yy::bear_parser::make_DIFERENCIA(loc); }
+"("   { return yy::bear_parser::make_PARENTESISI(loc); }
+")"   { return yy::bear_parser::make_PARENTESISD(loc); }
+":"   { return yy::bear_parser::make_DOSPUNTOS(loc); }
+"?"   { return yy::bear_parser::make_INTERROGACION(loc); }
+"+"   { return yy::bear_parser::make_SUMA(loc); }
+"-"   { return yy::bear_parser::make_MENOS(loc); }
+"*"   { return yy::bear_parser::make_MULTIPLICACION(loc); }
+"**"  { return yy::bear_parser::make_POTENCIA(loc); }
+"/"   { return yy::bear_parser::make_DIVISION(loc); }
+"%"   { return yy::bear_parser::make_MODULO(loc); }
+"&"   { return yy::bear_parser::make_AND(loc); }
+"|"   { return yy::bear_parser::make_OR(loc); }
+"<"   { return yy::bear_parser::make_MENOR(loc); }
+">"   { return yy::bear_parser::make_MAYOR(loc); }
+"=<"  { return yy::bear_parser::make_MENORIGUAL(loc); }
+">="  { return yy::bear_parser::make_MAYORIGUAL(loc); }
+"=="  { return yy::bear_parser::make_IGUALDAD(loc); }
+"=/=" { return yy::bear_parser::make_DIFERENCIA(loc); }
+";"   { return yy::bear_parser::make_PUNTOCOMA(loc); }
 
 
 <<EOF>>    return yy::bear_parser::make_END(loc);

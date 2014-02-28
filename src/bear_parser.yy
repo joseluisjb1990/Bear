@@ -54,6 +54,7 @@ class bear_driver;
   AND "&"
   OR "|"
   NO "no"
+  PUNTOCOMA ";"
 ;
 #line 11275 "./doc/bison.texi"
 %token <std::string> ID
@@ -77,18 +78,18 @@ class bear_driver;
 Programa: Expresiones       { $$ = $1; std::cout << $$; }
         ;
 
-Expresiones: Expresion             { $$ = $1; }
-           | Expresiones Expresion { $$ = std::string($1) + $2; }
+Expresiones: Expresion ";"             { $$ = $1; }
+           | Expresiones Expresion ";" { $$ = std::string($1) + $2; }
            ;
 
-Expresion: ID               { $$ = $1; std::cout << $$ << "\n"; }
-         | CONSTPOLAR       { $$ = $1; std::cout << $$ << "\n"; }
-         | CONSTKODIAK      { $$ = $1; std::cout << $$ << "\n"; }
-         | CONSTHORMIGUERO  { $$ = $1; std::cout << $$ << "\n"; }
-         | CONSTMALAYO      { $$ = $1; std::cout << $$ << "\n"; }
-         | ExpresionBooleana { $$ = $1; std::cout << $$ << "\n"; }
-         | ExpresionAritmetica { $$ = $1; std::cout << $$ << "\n"; }
-         | "(" Expresion ")"  { $$ = "(" + $2 + ")"; }
+Expresion: ID                   { $$ = $1; std::cout << $$ << " " << @$ << '\n'; }
+         | CONSTPOLAR           { $$ = $1; std::cout << $$ << " " << @$ << '\n'; }
+         | CONSTKODIAK          { $$ = $1; std::cout << $$ << " " << @$ << '\n'; }
+         | CONSTHORMIGUERO      { $$ = $1; std::cout << $$ << " " << @$ << '\n'; }
+         | CONSTMALAYO          { $$ = $1; std::cout << $$ << " " << @$ << '\n'; }
+         | ExpresionBooleana    { $$ = $1; std::cout << $$ << " " << @$ << '\n'; }
+         | ExpresionAritmetica  { $$ = $1; std::cout << $$ << " " << @$ << '\n'; }
+         | "(" Expresion ")"    { $$ = "(" + $2 + ")"; std::cout << $$ << " " << @$ << '\n'; }
          ;
 
 %left "==" "=/=";
@@ -97,11 +98,11 @@ Expresion: ID               { $$ = $1; std::cout << $$ << "\n"; }
 %left "*" "/";
 %left "&";
 %left "|";
-%right "no";
-%right UNARIO;
+%nonassoc "no";
+%nonassoc UNARIO;
 %right "**";
-ExpresionBooleana: BLANCO           { $$ = $1; std::cout << $$ << "\n"; }
-                 | NEGRO            { $$ = $1; std::cout << $$ << "\n"; }
+ExpresionBooleana: BLANCO                      { $$ = $1; std::cout << @$ << $$ << "\n"; std::cout << $$ << " " << @$ << '\n'; }
+                 | NEGRO                       { $$ = $1; std::cout << $$ << "\n"; std::cout << $$ << " " << @$ << '\n'; }
                  | Expresion   "<"   Expresion { $$ = $1 + "<" + $3; }
                  | Expresion   "=<"  Expresion { $$ = $1 + "=<" + $3; }
                  | Expresion   ">"   Expresion { $$ = $1 + ">" + $3; }
@@ -110,15 +111,15 @@ ExpresionBooleana: BLANCO           { $$ = $1; std::cout << $$ << "\n"; }
                  | Expresion   "=/=" Expresion { $$ = $1 + "=/=" + $3; }
                  | Expresion   "|"   Expresion { $$ = $1 + "|" + $3; }
                  | Expresion   "&"   Expresion { $$ = $1 + "&" + $3; }
-                 | "no" Expresion  { $$ = "no" + $2; }
+                 | "no" Expresion              { $$ = "no" + $2; }
                  ;
 
-ExpresionAritmetica: Expresion "+" Expresion  { $$ = $1 + "+" + $3; }
-                   | Expresion "-" Expresion  { $$ = $1 + "-" + $3; }
-                   | Expresion "**" Expresion { $$ = $1 + "**" + $3; }
-                   | Expresion "*" Expresion  { $$ = $1 + "*" + $3; }
-                   | Expresion "/" Expresion  { $$ = $1 + "/" + $3; }
-                   | "-" Expresion %prec UNARIO     { $$ = "-" + $2; }
+ExpresionAritmetica: Expresion "+"  Expresion       { $$ = $1 + "+" + $3;   }
+                   | Expresion "-"  Expresion       { $$ = $1 + "-" + $3;   }
+                   | Expresion "**" Expresion       { $$ = $1 + "**" + $3;  }
+                   | Expresion "*"  Expresion       { $$ = $1 + "*" + $3;   }
+                   | Expresion "/"  Expresion       { $$ = $1 + "/" + $3;   }
+                   | "-" Expresion %prec UNARIO     { $$ = "-" + $2;        }
                    ;
 
 /*
