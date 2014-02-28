@@ -1,9 +1,9 @@
-Programa -> Definiciones 'oso' '(' ')' '=>' 'extinto' ListaInstrucciones
+Programa -> Definiciones 'oso' '(' ')' '=>' 'extinto' '{' ListaInstrucciones '}'
 
 ListaInstrucciones -> Instruccion ';'
                    |  ListaInstrucciones Instruccion ';'
 
-Instruccion -> ListaIdentificadores '=' ListaExpresiones
+Instruccion -> ListaLValues '=' ListaExpresiones
             |  'leer' '(' ID ')'
             |  'escribir' '(' Expresion ')'
             |  Funcion
@@ -22,16 +22,22 @@ Instruccion -> ListaIdentificadores '=' ListaExpresiones
             |  'roloePea'
             |  'roloePea' ID
 
+ListaLValues -> LValue
+             |  ListaLValue ',' LValue
+
+LValue -> ID
+       |  LValue '->' LValue
+       |  LValue '.' LValue
+
+
 Expresion -> POLAR
           |  KODIAK
           |  HORMIGUERO
           |  MALAYO
-          |  ID
+          |  LValue
           |  Funcion
           |  FuncionPredef
           |  Cueva
-          |  Expresion '->' Expresion
-          |  Expresion '.' Expresion
           |  ExpresionBooleana
           |  ExpresionAritmetica
           |  ExpresionBooleana '?' Expresion ':' Expresion
