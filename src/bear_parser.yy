@@ -35,15 +35,25 @@ class bear_driver;
 %define api.token.prefix {TOK_}
 %token
   END  0  "end of file"
-/*
-  ASSIGN  ":="
-  MINUS   "-"
-  PLUS    "+"
-  STAR    "*"
-  SLASH   "/"
-  LPAREN  "("
-  RPAREN  ")"
-*/
+  MENOS   "-"
+  SUMA            "+"
+  MULTIPLICACION  "*"
+  POTENCIA  "**"
+  DIVISION   "/"
+  MENOR   "<"
+  MENORIGUAL "=<"
+  MAYOR  ">"
+  MAYORIGUAL ">="
+  IGUALDAD   "=="
+  DIFERENCIA "=/="
+  PARENTESISD ")"
+  PARENTESISI "("
+  DOSPUNTOS ":"
+  INTERROGACION "?"
+  MODULO "%"
+  AND "&"
+  OR "|"
+  NO "no"
 ;
 #line 11275 "./doc/bison.texi"
 %token <std::string> ID
@@ -56,6 +66,8 @@ class bear_driver;
 %type  <std::string> Programa
 %type  <std::string> Expresiones
 %type  <std::string> Expresion
+%type  <std::string> ExpresionBooleana
+%type  <std::string> ExpresionAritmetica
 #line 11288 "./doc/bison.texi"
 /* %printer { yyoutput << $$; } <*>; */
 #line 11297 "./doc/bison.texi"
@@ -74,9 +86,40 @@ Expresion: ID               { $$ = $1; std::cout << $$ << "\n"; }
          | CONSTKODIAK      { $$ = $1; std::cout << $$ << "\n"; }
          | CONSTHORMIGUERO  { $$ = $1; std::cout << $$ << "\n"; }
          | CONSTMALAYO      { $$ = $1; std::cout << $$ << "\n"; }
-         | BLANCO           { $$ = $1; std::cout << $$ << "\n"; }
-         | NEGRO            { $$ = $1; std::cout << $$ << "\n"; }
+         | ExpresionBooleana { $$ = $1; std::cout << $$ << "\n"; }
+         | ExpresionAritmetica { $$ = $1; std::cout << $$ << "\n"; }
+         | "(" Expresion ")"  { $$ = "(" + $2 + ")"; }
          ;
+
+%left "==" "=/=";
+%nonassoc "<" "=<" ">" ">=";
+%left "+" "-";
+%left "*" "/";
+%left "&";
+%left "|";
+%right "no";
+%right UNARIO;
+%right "**";
+ExpresionBooleana: BLANCO           { $$ = $1; std::cout << $$ << "\n"; }
+                 | NEGRO            { $$ = $1; std::cout << $$ << "\n"; }
+                 | Expresion   "<"   Expresion { $$ = $1 + "<" + $3; }
+                 | Expresion   "=<"  Expresion { $$ = $1 + "=<" + $3; }
+                 | Expresion   ">"   Expresion { $$ = $1 + ">" + $3; }
+                 | Expresion   ">="  Expresion { $$ = $1 + ">=" + $3; }
+                 | Expresion   "=="  Expresion { $$ = $1 + "==" + $3; }
+                 | Expresion   "=/=" Expresion { $$ = $1 + "=/=" + $3; }
+                 | Expresion   "|"   Expresion { $$ = $1 + "|" + $3; }
+                 | Expresion   "&"   Expresion { $$ = $1 + "&" + $3; }
+                 | "no" Expresion  { $$ = "no" + $2; }
+                 ;
+
+ExpresionAritmetica: Expresion "+" Expresion  { $$ = $1 + "+" + $3; }
+                   | Expresion "-" Expresion  { $$ = $1 + "-" + $3; }
+                   | Expresion "**" Expresion { $$ = $1 + "**" + $3; }
+                   | Expresion "*" Expresion  { $$ = $1 + "*" + $3; }
+                   | Expresion "/" Expresion  { $$ = $1 + "/" + $3; }
+                   | "-" Expresion %prec UNARIO     { $$ = "-" + $2; }
+                   ;
 
 /*
 unit: assignments exp  { driver.result = $2; };
