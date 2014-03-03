@@ -1,62 +1,62 @@
-#line 11154 "./doc/bison.texi"
 %skeleton "lalr1.cc" /* -*- C++ -*- */
 %require "3.0.2"
 %defines
 %define parser_class_name {bear_parser}
-#line 11170 "./doc/bison.texi"
 %define api.token.constructor
 %define api.value.type variant
 %define parse.assert
-#line 11187 "./doc/bison.texi"
 %code requires
 {
 # include <string>
 class bear_driver;
 }
-#line 11201 "./doc/bison.texi"
 // The parsing context.
 %param { bear_driver& driver }
-#line 11213 "./doc/bison.texi"
 %locations
 %initial-action
 {
   // Initialize the initial location.
   @$.begin.filename = @$.end.filename = &driver.file;
 };
-#line 11228 "./doc/bison.texi"
 %define parse.trace
 %define parse.error verbose
-#line 11239 "./doc/bison.texi"
 %code
 {
 # include "bear_driver.hh"
 }
-#line 11255 "./doc/bison.texi"
 %define api.token.prefix {TOK_}
 %token
-  END  0  "end of file"
-  MENOS   "-"
-  SUMA            "+"
-  MULTIPLICACION  "*"
-  POTENCIA  "**"
-  DIVISION   "/"
-  MENOR   "<"
-  MENORIGUAL "=<"
-  MAYOR  ">"
-  MAYORIGUAL ">="
-  IGUALDAD   "=="
-  DIFERENCIA "=/="
-  PARENTESISD ")"
-  PARENTESISI "("
-  DOSPUNTOS ":"
-  INTERROGACION "?"
-  MODULO "%"
-  AND "&"
-  OR "|"
-  NO "no"
-  PUNTOCOMA ";"
+  END  0            "fin del programa"
+  MENOS             "-"
+  SUMA              "+"
+  MULTIPLICACION    "*"
+  POTENCIA          "**"
+  DIVISION          "/"
+  MENOR             "<"
+  MENORIGUAL        "=<"
+  MAYOR             ">"
+  MAYORIGUAL        ">="
+  IGUALDAD          "=="
+  DIFERENCIA        "=/="
+  CIERRAPARENTESIS  ")"
+  ABREPARENTESIS    "("
+  CIERRALLAVE       "}"
+  ABRELLAVE         "{"
+  CIERRACORCHETE    "]"
+  ABRECORCHETE      "["
+  DOSPUNTOS         ":"
+  INTERROGACION     "?"
+  MODULO            "%"
+  AND               "&"
+  OR                "|"
+  NO                "no"
+  PUNTOCOMA         ";"
+  ASIGNACION        "="
+  OSO               "oso"
+  FLECHARETORNO     "=>"
+  COMA              ","
 ;
-#line 11275 "./doc/bison.texi"
+
 %token <std::string> ID
 %token <std::string> CONSTPOLAR
 %token <std::string> CONSTKODIAK
@@ -64,32 +64,120 @@ class bear_driver;
 %token <std::string> CONSTMALAYO
 %token <std::string> BLANCO
 %token <std::string> NEGRO
+%token <std::string> PANDA
+%token <std::string> POLAR
+%token <std::string> KODIAK
+%token <std::string> MALAYO
+%token <std::string> HORMIGUERO
+%token <std::string> EXTINTO
+%token <std::string> CONST
+%token <std::string> CUEVA
+%token <std::string> DE
 %type  <std::string> Programa
-%type  <std::string> Expresiones
 %type  <std::string> Expresion
+%type  <std::string> Expresiones
 %type  <std::string> ExpresionBooleana
 %type  <std::string> ExpresionAritmetica
-#line 11288 "./doc/bison.texi"
+%type  <std::string> Instrucciones
+%type  <std::string> Instruccion
+%type  <std::string> LValue
+%type  <std::string> LValues
+%type  <std::string> Definiciones
+%type  <std::string> ListaDefGlobales
+%type  <std::string> DefinicionGlobal
+%type  <std::string> DefConstante
+%type  <std::string> DefVariable
+%type  <std::string> DefCueva
+%type  <std::string> Cuevas
+%type  <std::string> Identificadores
+%type  <std::string> Tipo
+
 /* %printer { yyoutput << $$; } <*>; */
-#line 11297 "./doc/bison.texi"
+
 %%
 %start Programa;
 
-Programa: Expresiones       { $$ = $1; std::cout << $$; }
+Programa: Definiciones "oso" "(" ")" "=>" EXTINTO "{" Instrucciones "}" { $$ = $1 + $8; std::cout << $1 << "Funcion principal oso:" << std::endl << $8; }
         ;
 
-Expresiones: Expresion ";"             { $$ = $1; }
-           | Expresiones Expresion ";" { $$ = std::string($1) + $2; }
+Definiciones: %empty /* Vacio */
+            | ListaDefGlobales   { $$ = "Definiciones:\n" + $1; }
+            ;
+
+ListaDefGlobales: DefinicionGlobal ";"                  { $$ = $1 + ";\n";      }
+                | ListaDefGlobales DefinicionGlobal ";" { $$ = $1 + $2 + ";\n"; }
+                ;
+
+DefinicionGlobal: DefConstante  { $$ = $1; }
+                | DefVariable   { $$ = $1; }
+/*                | DefFuncion*/
+                ;
+
+DefConstante: CONST Tipo ID "=" Expresion { $$ = "Declaración de constante:\nTipo: " + $2 + ". Nombre: " + $3 + ". Valor: " + $5; }
+            ;
+
+DefVariable: Tipo Identificadores "=" Expresiones { $$ = "Declaración de variable con inicialización:\nTipo: " + $1 + ".\nIdentificadores: " + $2 + ".\nExpresiones: " + $4; }
+           | Tipo Identificadores                 { $$ = "Declaración de variable sin inicialización:\nTipo: " + $1 + ".\nIdentificadores: " + $2;                           }
+           | DefCueva                             { $$ = "Declaración de cueva:\n" + $1;                                                                                     }
+/*           | DefCompleja*/
            ;
 
-Expresion: ID                   { $$ = $1; std::cout << $$ << " " << @$ << '\n'; }
-         | CONSTPOLAR           { $$ = $1; std::cout << $$ << " " << @$ << '\n'; }
-         | CONSTKODIAK          { $$ = $1; std::cout << $$ << " " << @$ << '\n'; }
-         | CONSTHORMIGUERO      { $$ = $1; std::cout << $$ << " " << @$ << '\n'; }
-         | CONSTMALAYO          { $$ = $1; std::cout << $$ << " " << @$ << '\n'; }
-         | ExpresionBooleana    { $$ = $1; std::cout << $$ << " " << @$ << '\n'; }
-         | ExpresionAritmetica  { $$ = $1; std::cout << $$ << " " << @$ << '\n'; }
-         | "(" Expresion ")"    { $$ = "(" + $2 + ")"; std::cout << $$ << " " << @$ << '\n'; }
+Identificadores: ID                     { $$ = $1;             }
+               | Identificadores "," ID { $$ = $1 + ", " + $3; }
+               ;
+
+DefCueva: Cuevas Tipo ID { $$ = $1 + $2 + ". Nombre: " + $3; }
+        ;
+
+Cuevas: CUEVA "[" CONSTPOLAR "]" DE          { $$ = $1 + " [" + $3 + "] " + $5 + " ";      }
+       |  Cuevas CUEVA "[" CONSTPOLAR "]" DE { $$ = $1 + $2 + " [" + $4 + "] " + $6 + " "; }
+       ;
+
+/*
+DefCompleja -> 'pardo'   ID '{' Campos '}'
+            |  'grizzli' ID '{' Campos '}'
+
+Campos -> Tipo ID ';'
+       |  Campos Tipo ID ';'
+*/
+
+Tipo: ID          { $$ = $1; }
+    | PANDA       { $$ = $1; }
+    | POLAR       { $$ = $1; }
+    | KODIAK      { $$ = $1; }
+    | MALAYO      { $$ = $1; }
+    | HORMIGUERO  { $$ = $1; }
+    | EXTINTO     { $$ = $1; }
+    ;
+
+Instrucciones: Instruccion ";"               { $$ = $1 + ";\n";      }
+             | Instrucciones Instruccion ";" { $$ = $1 + $2 + ";\n"; }
+             ;
+
+/* Aqui hay el problema de que hay que asegurar que la cantidad de lvalues y de expresiones sea la misma, no tengo manera de hacerlo ahorita */
+
+Instruccion: LValues "=" Expresiones { $$ = "Asignación:\nl-values: " + $1 + "\n" + ". r-values:  " + $3; }
+           ;
+
+LValues: LValue             { $$ = $1;             }
+       | LValues "," LValue { $$ = $1 + ", " + $3; }
+       ;
+
+LValue: ID { $$ = $1; }
+      ;
+
+Expresiones: Expresion                 { $$ = $1 ;            }
+           | Expresiones "," Expresion { $$ = $1 + ", " + $3; }
+           ;
+
+Expresion: CONSTPOLAR           { $$ = $1;             }
+         | CONSTKODIAK          { $$ = $1;             }
+         | CONSTHORMIGUERO      { $$ = $1;             }
+         | CONSTMALAYO          { $$ = $1;             }
+         | LValue               { $$ = $1;             }
+         | ExpresionBooleana    { $$ = $1;             }
+         | ExpresionAritmetica  { $$ = $1;             }
+         | "(" Expresion ")"    { $$ = "(" + $2 + ")"; }
          ;
 
 %left "==" "=/=";
@@ -101,51 +189,29 @@ Expresion: ID                   { $$ = $1; std::cout << $$ << " " << @$ << '\n';
 %nonassoc "no";
 %nonassoc UNARIO;
 %right "**";
-ExpresionBooleana: BLANCO                      { $$ = $1; std::cout << @$ << $$ << "\n"; std::cout << $$ << " " << @$ << '\n'; }
-                 | NEGRO                       { $$ = $1; std::cout << $$ << "\n"; std::cout << $$ << " " << @$ << '\n'; }
-                 | Expresion   "<"   Expresion { $$ = $1 + "<" + $3; }
-                 | Expresion   "=<"  Expresion { $$ = $1 + "=<" + $3; }
-                 | Expresion   ">"   Expresion { $$ = $1 + ">" + $3; }
-                 | Expresion   ">="  Expresion { $$ = $1 + ">=" + $3; }
-                 | Expresion   "=="  Expresion { $$ = $1 + "==" + $3; }
+ExpresionBooleana: BLANCO                      { $$ = $1;              }
+                 | NEGRO                       { $$ = $1;              }
+                 | Expresion   "<"   Expresion { $$ = $1 + "<" + $3;   }
+                 | Expresion   "=<"  Expresion { $$ = $1 + "=<" + $3;  }
+                 | Expresion   ">"   Expresion { $$ = $1 + ">" + $3;   }
+                 | Expresion   ">="  Expresion { $$ = $1 + ">=" + $3;  }
+                 | Expresion   "=="  Expresion { $$ = $1 + "==" + $3;  }
                  | Expresion   "=/=" Expresion { $$ = $1 + "=/=" + $3; }
-                 | Expresion   "|"   Expresion { $$ = $1 + "|" + $3; }
-                 | Expresion   "&"   Expresion { $$ = $1 + "&" + $3; }
-                 | "no" Expresion              { $$ = "no" + $2; }
+                 | Expresion   "|"   Expresion { $$ = $1 + "|" + $3;   }
+                 | Expresion   "&"   Expresion { $$ = $1 + "&" + $3;   }
+                 | "no" Expresion              { $$ = "no " + $2;      }
                  ;
 
-ExpresionAritmetica: Expresion "+"  Expresion       { $$ = $1 + "+" + $3;   }
-                   | Expresion "-"  Expresion       { $$ = $1 + "-" + $3;   }
-                   | Expresion "**" Expresion       { $$ = $1 + "**" + $3;  }
-                   | Expresion "*"  Expresion       { $$ = $1 + "*" + $3;   }
-                   | Expresion "/"  Expresion       { $$ = $1 + "/" + $3;   }
-                   | "-" Expresion %prec UNARIO     { $$ = "-" + $2;        }
+ExpresionAritmetica: Expresion "+"  Expresion       { $$ = $1 + "+" + $3;  }
+                   | Expresion "-"  Expresion       { $$ = $1 + "-" + $3;  }
+                   | Expresion "**" Expresion       { $$ = $1 + "**" + $3; }
+                   | Expresion "*"  Expresion       { $$ = $1 + "*" + $3;  }
+                   | Expresion "/"  Expresion       { $$ = $1 + "/" + $3;  }
+                   | "-" Expresion %prec UNARIO     { $$ = "-" + $2;       }
                    ;
 
-/*
-unit: assignments exp  { driver.result = $2; };
-
-assignments:
-  %empty                 {}
-| assignments assignment {};
-
-assignment:
-  "identifier" ":=" exp { driver.variables[$1] = $3; };
-
-%left "+" "-";
-%left "*" "/";
-exp:
-  exp "+" exp   { $$ = $1 + $3; }
-| exp "-" exp   { $$ = $1 - $3; }
-| exp "*" exp   { $$ = $1 * $3; }
-| exp "/" exp   { $$ = $1 / $3; }
-| "(" exp ")"   { std::swap ($$, $2); }
-| "identifier"  { $$ = driver.variables[$1]; }
-| "number"      { std::swap ($$, $1); };
-*/
-
 %%
-#line 11327 "./doc/bison.texi"
+
 void
 yy::bear_parser::error (const location_type& l,
                           const std::string& m)
