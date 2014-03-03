@@ -3,6 +3,7 @@ oso() => extinto
   <3 Recibimos por entrada estadar el valor que queremos obtener el factorial.
 
   escribir("Por favor, introduzca el numero al que \n desea calcularle el factorial");
+  polar N;
   leer (N);
   polar original = N;
   polar acc = 1;
