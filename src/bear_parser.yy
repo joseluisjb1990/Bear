@@ -116,6 +116,8 @@ DefinicionGlobal: DefConstante  { $$ = $1; }
 DefConstante: CONST Tipo ID "=" Expresion { $$ = "Declaración de constante:\nTipo: " + $2 + ". Nombre: " + $3 + ". Valor: " + $5; }
             ;
 
+/* Aqui hay el problema de que hay que asegurar que la cantidad de lvalues y de expresiones sea la misma, no tengo manera de hacerlo ahorita */
+
 DefVariable: Tipo Identificadores "=" Expresiones { $$ = "Declaración de variable con inicialización:\nTipo: " + $1 + ".\nIdentificadores: " + $2 + ".\nExpresiones: " + $4; }
            | Tipo Identificadores                 { $$ = "Declaración de variable sin inicialización:\nTipo: " + $1 + ".\nIdentificadores: " + $2;                           }
            | DefCueva                             { $$ = "Declaración de cueva:\n" + $1;                                                                                     }
