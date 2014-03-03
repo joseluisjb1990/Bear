@@ -1,4 +1,3 @@
-#line 11104 "./doc/bison.texi"
 #include "bear_driver.hh"
 #include "bear_parser.tab.hh"
 
