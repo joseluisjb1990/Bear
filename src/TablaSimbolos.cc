@@ -3,11 +3,11 @@
 #include <string>
 #include <stack>
 #include <vector>
-#include "Contenido.cc"
+#include "Contenedor.cc"
 
 using namespace std;
 
-typedef std::multimap<std::string, Contenido> Diccionario;
+typedef std::multimap<std::string, Contenido*> Diccionario;
 typedef std::vector<unsigned int> Stack;
 
 class TablaSimbolos
@@ -22,13 +22,22 @@ public:
 
     TablaSimbolos();
     unsigned int add_symbol (string nombre, Tipos tipo, Categorias categoria, unsigned int linea, unsigned int columna);
+    unsigned int add_container (string nombre, Tipos tipo, Categorias categoria, unsigned int linea, unsigned int columna, unsigned int alcanceCampos);
     friend inline std::ostream& operator<<(std::ostream& os, TablaSimbolos &ts);
     unsigned int enter_scope();
     unsigned int exit_scope();
     bool check_scope(string nombre);
     Contenido* find_symbol(string nombre);
 };
-;
+
+unsigned int TablaSimbolos::add_container (string nombre, Tipos tipo, Categorias categoria, unsigned int linea, unsigned int columna, unsigned int alcanceCampos)
+{
+  Contenido *cont;
+  cont = new  Contenedor(tipo, categoria,_alcance, linea, columna, alcanceCampos);
+  _dicc.insert(std::make_pair(nombre,cont)); 
+  return _alcance;
+}
+
 TablaSimbolos::TablaSimbolos ()
   :_alcance( 0 )
   { _pila.push_back( 0 ); }
@@ -43,7 +52,7 @@ Contenido* TablaSimbolos::find_symbol(string nombre)
   {
     if (it->first == nombre)
     {
-      e = &(it->second);
+      e = it->second;
       if ( e->getAlcance() == 0 ) { constante = e; }
       else
       {
@@ -68,7 +77,7 @@ bool TablaSimbolos::check_scope(string nombre)
 
   for(Diccionario::iterator it = _dicc.lower_bound(nombre); it != _dicc.upper_bound(nombre); ++it)
   {
-    cont = &(it->second);
+    cont = it->second;
     if(cont->getAlcance() == topePila) { return true; }
   }
   return false;
@@ -76,6 +85,7 @@ bool TablaSimbolos::check_scope(string nombre)
 unsigned int TablaSimbolos::exit_scope()
 {
   _pila.pop_back();
+  _pila.back();
 }
 unsigned int TablaSimbolos::enter_scope()
 {
@@ -87,7 +97,7 @@ std::ostream& operator<<(std::ostream& os, TablaSimbolos &ts)
 {
   for (Diccionario::iterator pos = ts._dicc.begin(); pos != ts._dicc.end(); ++pos)
   {
-    os << pos->first << " : " << pos->second << '\n';
+    os << pos->first << " : " << pos->second->to_string() << '\n';
   }
   os << ts._alcance << '\n';
 
@@ -101,6 +111,7 @@ std::ostream& operator<<(std::ostream& os, TablaSimbolos &ts)
 }
 unsigned int TablaSimbolos::add_symbol (string nombre, Tipos tipo, Categorias categoria, unsigned int linea, unsigned int columna)
 {
-  _dicc.insert(std::make_pair(nombre, Contenido(tipo, categoria,_alcance, linea, columna)));
+  Contenido *cont = new Contenido(tipo, categoria,_alcance, linea, columna);
+  _dicc.insert(std::make_pair(nombre,cont)); 
   return _alcance;
 }

@@ -18,7 +18,7 @@ public:
 
     ~Contenido(){};
 
-    friend inline std::ostream& operator<<(std::ostream& os, const Contenido &cont);
+    virtual std::string to_string();
 
     unsigned int getAlcance();
 };
@@ -33,8 +33,7 @@ Contenido::Contenido (Tipos tipo, Categorias categoria, unsigned int alcance, un
 
 unsigned int Contenido::getAlcance() { return _alcance; }
 
-std::ostream& operator<<(std::ostream& os, const Contenido& cont)
+std::string Contenido::to_string()
 {
-  os << cont._tipo << " " << cont._categoria << " " << cont._alcance << " " << cont._linea<< " " << cont._columna << '\n';
-  return os;
+  return std::to_string(_tipo) + " " + std::to_string(_categoria) + " " + std::to_string(_alcance) + " " + std::to_string(_linea) + " " + std::to_string(_columna);
 }
