@@ -3,7 +3,7 @@ Programa -> Definiciones 'oso' '(' ')' '=>' 'extinto' '{' ListaInstrucciones '}'
 ListaInstrucciones -> Instruccion ';'
                    |  ListaInstrucciones Instruccion ';'
 
-Instruccion -> ListaLValues '=' ListaExpresiones
+Instruccion -> ListaLValues '=' Expresiones
             |  'leer' '(' ID ')'
             |  'escribir' '(' Expresion ')'
             |  Funcion
@@ -95,16 +95,16 @@ DefinicionGlobal -> DefConstante
                  |  DefVariable
                  |  DefFuncion
 
-DefConstante -> 'const' Tipo ListaIdentificadores '=' ListaExpresiones
+DefConstante -> 'const' Tipo Identificadores '=' Expresiones
 
-ListaIdentificadores -> ID
-                     |  ListaIdentificadores ',' ID
+Identificadores -> ID
+                |  Identificadores ',' ID
 
-ListaExpresiones -> Expresion
-                 |  ListaExpresiones ',' Expresion
+Expresiones -> Expresion
+                 |  Expresiones ',' Expresion
 
-DefVariable -> Tipo ListaIdentificadores '=' ListaExpresiones
-            |  Tipo ListaIdentificadores
+DefVariable -> Tipo Identificadores '=' Expresiones
+            |  Tipo Identificadores
             |  DefCueva
             |  DefCompleja
 
