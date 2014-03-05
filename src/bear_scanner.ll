@@ -58,14 +58,23 @@ ID       [a-zA-Z][a-zA-Z0-9\?!_]*
 
 \"(\\.|[^\\\"])*\"  { return yy::bear_parser::make_CONSTHORMIGUERO(yytext, loc); }
 
-blanco  { return yy::bear_parser::make_BLANCO(yytext, loc);  }
-negro   { return yy::bear_parser::make_NEGRO(yytext, loc);   }
-no      { return yy::bear_parser::make_NO(loc);              }
-oso     { return yy::bear_parser::make_OSO(loc);             }
-extinto { return yy::bear_parser::make_EXTINTO(yytext, loc); }
-const   { return yy::bear_parser::make_CONST(yytext, loc);   }
-cueva   { return yy::bear_parser::make_CUEVA(yytext, loc);   }
-de      { return yy::bear_parser::make_DE(yytext, loc);      }
+blanco   { return yy::bear_parser::make_BLANCO(yytext, loc);   }
+negro    { return yy::bear_parser::make_NEGRO(yytext, loc);    }
+no       { return yy::bear_parser::make_NO(loc);               }
+oso      { return yy::bear_parser::make_OSO(loc);              }
+extinto  { return yy::bear_parser::make_EXTINTO(yytext, loc);  }
+const    { return yy::bear_parser::make_CONST(yytext, loc);    }
+cueva    { return yy::bear_parser::make_CUEVA(yytext, loc);    }
+de       { return yy::bear_parser::make_DE(yytext, loc);       }
+pardo    { return yy::bear_parser::make_PARDO(yytext, loc);    }
+grizzli  { return yy::bear_parser::make_GRIZZLI(yytext, loc);  }
+leer     { return yy::bear_parser::make_LEER(yytext, loc);     }
+escribir { return yy::bear_parser::make_ESCRIBIR(yytext, loc); }
+si       { return yy::bear_parser::make_SI(yytext, loc);       }
+entonces { return yy::bear_parser::make_ENTONCES(yytext, loc); }
+sino     { return yy::bear_parser::make_SINO(yytext, loc);     }
+para     { return yy::bear_parser::make_PARA(yytext, loc);     }
+en       { return yy::bear_parser::make_EN(yytext, loc);       }
 
 {ID}   { return yy::bear_parser::make_ID(yytext, loc); }
 
@@ -100,6 +109,9 @@ de      { return yy::bear_parser::make_DE(yytext, loc);      }
 ","   { return yy::bear_parser::make_COMA(loc);             }
 "="   { return yy::bear_parser::make_ASIGNACION(loc);       }
 "=>"  { return yy::bear_parser::make_FLECHARETORNO(loc);    }
+"->"  { return yy::bear_parser::make_FLECHA(loc);           }
+"."   { return yy::bear_parser::make_PUNTO(loc);            }
+"^"   { return yy::bear_parser::make_TECHO(loc);            }
 
 
 <<EOF>>    return yy::bear_parser::make_END(loc);
