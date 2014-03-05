@@ -20,10 +20,10 @@ estructura struct;
 cueva [34] de cueva [7] de polar matriz;
 
 oso() => extinto {
---<3
+
   foo(numero, bool, arreglo, struct);
   bar(matriz, bool);
-<3->
+
   numero = 42;
   leer(numero);
   escribir("Holis");

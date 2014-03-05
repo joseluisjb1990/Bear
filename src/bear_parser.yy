@@ -28,7 +28,9 @@ class bear_driver;
 %token
   END  0            "fin del programa"
   MENOS             "-"
+  DECREMENTO        "--"
   SUMA              "+"
+  INCREMENTO        "++"
   MULTIPLICACION    "*"
   POTENCIA          "**"
   DIVISION          "/"
@@ -85,6 +87,15 @@ class bear_driver;
 %token <std::string> SINO
 %token <std::string> PARA
 %token <std::string> EN
+%token <std::string> VOMITA
+%token <std::string> FONDOBLANCO
+%token <std::string> ROLOEPEA
+%token <std::string> APOLAR
+%token <std::string> APANDA
+%token <std::string> AKODIAK
+%token <std::string> AMALAYO
+%token <std::string> LON
+%token <std::string> MIENTRAS
 %type  <std::string> Programa
 %type  <std::string> Expresion
 %type  <std::string> Expresiones
@@ -108,6 +119,9 @@ class bear_driver;
 %type  <std::string> DefParametro
 %type  <std::string> ParametroCueva
 %type  <std::string> AccesoCueva
+%type  <std::string> FuncionPredef
+%type  <std::string> Funcion
+%type  <std::string> IteracionIndeterminada
 
 /* %printer { yyoutput << $$; } <*>; */
 
@@ -125,13 +139,14 @@ ListaDefGlobales: DefinicionGlobal ";"                  { $$ = $1 + ";\n";      
                 | ListaDefGlobales DefinicionGlobal ";" { $$ = $1 + $2 + ";\n"; }
                 ;
 
-DefinicionGlobal: DefConstante  { $$ = $1; }
-                | DefVariable   { $$ = $1; }
-                | DefFuncion    { $$ = $1; }
+DefinicionGlobal: DefConstante  { $$ = $1;                             }
+                | DefVariable   { $$ = $1;                             }
+                | DefFuncion    { $$ = $1;                             }
+                | DefCompleja   { $$ = "Declaración compleja:\n" + $1; }
                 ;
 
-DefFuncion: ID "(" DefParametros ")" "=>" Tipo                       { $$ = "Nombre: " + $1 + "\nParametros:\n" + $3 + "\nRetorna: " + $6;                             }
-          | ID "(" DefParametros ")" "=>" Tipo "{" Instrucciones "}" { $$ = "Nombre: " + $1 + "\nParametros:\n" + $3 + "\nRetorna: " + $6 + "\nInstrucciones:\n" + $8; }
+DefFuncion: ID "(" DefParametros ")" "=>" Tipo                       { $$ = "Nombre: " + $1 + "\nParametros:\n" + $3 + "\nRetorna: " + $6;                                                                 }
+          | ID "(" DefParametros ")" "=>" Tipo "{" Instrucciones "}" { $$ = "Nombre: " + $1 + "\nParametros:\n" + $3 + "\nRetorna: " + $6 + "\nDeclaraciones Locales:\n" + $8 + "\nInstrucciones:\n" + $8; }
           ;
 
 DefParametros: DefParametro                   { $$ = $1;              }
@@ -153,7 +168,6 @@ DefConstante: CONST Tipo ID "=" Expresion { $$ = "Declaración de constante:\nTi
 DefVariable: Tipo Identificadores "=" Expresiones { $$ = "Declaración de variable con inicialización:\nTipo: " + $1 + ".\nIdentificadores: " + $2 + ".\nExpresiones: " + $4; }
            | Tipo Identificadores                 { $$ = "Declaración de variable sin inicialización:\nTipo: " + $1 + ".\nIdentificadores: " + $2;                           }
            | DefCueva                             { $$ = "Declaración de cueva:\n" + $1;                                                                                     }
-           | DefCompleja                          { $$ = "Declaración compleja:\n" + $1;                                                                                     }
            ;
 
 Identificadores: ID                     { $$ = $1;             }
@@ -166,7 +180,6 @@ DefCueva: Cuevas Tipo ID { $$ = $1 + $2 + ". Nombre: " + $3; }
 Cuevas: CUEVA "[" CONSTPOLAR "]" DE          { $$ = $1 + " [" + $3 + "] " + $5 + " ";      }
        |  Cuevas CUEVA "[" CONSTPOLAR "]" DE { $$ = $1 + $2 + " [" + $4 + "] " + $6 + " "; }
        ;
-
 
 DefCompleja: PARDO   ID "{" Campos "}" { $$ = "Pardo:\nNombre: " + $2 + "\nCampos:\n" + $4;   }
            | GRIZZLI ID "{" Campos "}" { $$ = "Grizzli:\nNombre: " + $2 + "\nCampos:\n" + $4; }
@@ -194,37 +207,26 @@ Instrucciones: Instruccion ";"               { $$ = $1 + ";\n";      }
 Instruccion: LValues "=" Expresiones                                                        { $$ = "Asignación:\nl-values: " + $1 + ".\n" + "r-values:  " + $3;                                                                                  }
            | LEER "(" ID ")"                                                                { $$ = "Leer: variable: " + $3;                                                                                                                      }
            | ESCRIBIR "(" Expresion ")"                                                     { $$ = "Escribir: valor: " + $3;                                                                                                                     }
-/*           | Funcion       */
+           | Funcion                                                                        { $$ = "Funcion:\n" + $1;                                                                                                                            }
            | SI Expresion ENTONCES "{" Instrucciones "}"                                    { $$ = "Condicional sin else:\nCondición: " + $2 + "\nInstrucciones: " + $5;                                                                         }
            | SI Expresion ENTONCES "{" Instrucciones "}" SINO "{" Instrucciones "}"         { $$ = "Condicional con else:\nCondición: " + $2 + "\nBrazo true:\n" + $5 + "\nBrazo false:\n" + $9;                                                 }
-           | PARA ID EN "(" Expresion "," Expresion ")" "{" Instrucciones "}"               { $$ = "Iteración acotada:\nVariable de iteración: " + $2 + "\nDesde: " + $5 + "\nHasta:\n" + $7 + "\nInstrucciones:\n" + $10;                       }
-           | PARA ID EN "(" Expresion "," Expresion "," Expresion ")" "{" Instrucciones "}" { $$ = "Iteración acotada:\nVariable de iteración: " + $2 + "\nDesde: " + $5 + "\nHasta:\n" + $9 + "\nCon Paso: " + $7 + "\nInstrucciones:\n" + $12; }
+           | PARA ID EN "(" Expresion ";" Expresion ")" "{" Instrucciones "}"               { $$ = "Iteración acotada:\nVariable de iteración: " + $2 + "\nDesde: " + $5 + "\nHasta:\n" + $7 + "\nInstrucciones:\n" + $10;                       }
+           | PARA ID EN "(" Expresion ";" Expresion ";" Expresion ")" "{" Instrucciones "}" { $$ = "Iteración acotada:\nVariable de iteración: " + $2 + "\nDesde: " + $5 + "\nHasta:\n" + $9 + "\nCon Paso: " + $7 + "\nInstrucciones:\n" + $12; }
            | PARA ID EN ID "{" Instrucciones "}"                                            { $$ = "Iteración acotada:\nVariable de iteración: " + $2 + "\nArreglo sobre el cual iterar: " + $4 + "\nInstrucciones:\n" + $6;                     }
+           | IteracionIndeterminada                                                         { $$ = "Iteración indeterminada:\n" + $1;                                                                                                            }
+           | ID "++"                                                                        { $$ = "Incremento de la variable: " + $1;                                                                                                           }
+           | ID "--"                                                                        { $$ = "Decremento de la variable: " + $1;                                                                                                           }
+           | VOMITA                                                                         { $$ = "Vomita";                                                                                                                                     }
+           | VOMITA ID                                                                      { $$ = "Vomita a la etiqueta: " + $2;                                                                                                                }
+           | FONDOBLANCO                                                                    { $$ = "fondoBlanco";                                                                                                                                }
+           | FONDOBLANCO ID                                                                 { $$ = "fondoBlanco a la etiqueta: " + $2;                                                                                                           }
+           | ROLOEPEA                                                                       { $$ = "roloePea";                                                                                                                                   }
+           | ROLOEPEA ID                                                                    { $$ = "roloePea a la etiqueta: " + $2;                                                                                                              }
            ;
 
-
-
-/*
-Instruccion -> ListaLValues '=' Expresiones
-            |  'leer' '(' ID ')'
-            |  'escribir' '(' Expresion ')'
-            |  Funcion
-            |  'si' ExpresionBooleana 'entonces' '{' ListaInstrucciones '}'
-            |  'si' ExpresionBooleana 'entonces' '{' ListaInstrucciones '}' sino '{' ListaInstrucciones '}'
-            |  'para' ID 'en' '(' Expresion ',' Expresion ')' '{' ListaInstrucciones '}'
-            |  'para' ID 'en' '(' Expresion ',' Expresion ',' Expresion ')' '{' ListaInstrucciones '}'
-            |  'para' ID 'en' ID '{' ListaInstrucciones '}'
-            |  IteracionIndeterminada
-            |  ID '++'
-            |  ID '--'
-            |  'vomita'
-            |  'vomita' ID
-            |  'fondoBlanco'
-            |  'fondoBlanco' ID
-            |  'roloePea'
-            |  'roloePea' ID
-*/
-
+IteracionIndeterminada: ID ":" MIENTRAS "(" Expresion ")" "{" Instrucciones "}" { $$ = "Etiqueta: " + $1 + "\nCondición: " + $5 + "\nInstrucciones: " + $8; }
+                      | MIENTRAS "(" Expresion ")" "{" Instrucciones "}"        { $$ = "Condición: " + $3 + "\nInstrucciones: " + $6;                       }
+                      ;
 
 LValues: LValue             { $$ = $1;             }
        | LValues "," LValue { $$ = $1 + ", " + $3; }
@@ -237,8 +239,8 @@ LValue: ID                 { $$ = $1;             }
       | AccesoCueva        { $$ = $1;             }
       ;
 
-AccesoCueva: ID "[" CONSTPOLAR "]"          { $$ = $1 + "[" + $3 + "]"; }
-           | AccesoCueva "[" CONSTPOLAR "]" { $$ = $1 + "[" + $3 + "]"; }
+AccesoCueva: ID "[" Expresion "]"          { $$ = $1 + "[" + $3 + "]"; }
+           | AccesoCueva "[" Expresion "]" { $$ = $1 + "[" + $3 + "]"; }
            ;
 
 
@@ -246,45 +248,53 @@ Expresiones: Expresion                 { $$ = $1 ;            }
            | Expresiones "," Expresion { $$ = $1 + ", " + $3; }
            ;
 
-Expresion: CONSTPOLAR                                    { $$ = $1;                                                                            }
-         | CONSTKODIAK                                   { $$ = $1;                                                                            }
-         | CONSTHORMIGUERO                               { $$ = $1;                                                                            }
-         | CONSTMALAYO                                   { $$ = $1;                                                                            }
-         | LValue                                        { $$ = $1;                                                                            }
-/*         | Funcion                                       { $$ = $1;                                                                            }
-         | FuncionPredef                                 { $$ = $1;                                                                            }*/
-         | BLANCO                                        { $$ = $1;                                                                            }
-         | NEGRO                                         { $$ = $1;                                                                            }
-         | Expresion   "<"   Expresion                   { $$ = $1 + "<" + $3;                                                                 }
-         | Expresion   "=<"  Expresion                   { $$ = $1 + "=<" + $3;                                                                }
-         | Expresion   ">"   Expresion                   { $$ = $1 + ">" + $3;                                                                 }
-         | Expresion   ">="  Expresion                   { $$ = $1 + ">=" + $3;                                                                }
-         | Expresion   "=="  Expresion                   { $$ = $1 + "==" + $3;                                                                }
-         | Expresion   "=/=" Expresion                   { $$ = $1 + "=/=" + $3;                                                               }
-         | Expresion   "|"   Expresion                   { $$ = $1 + "|" + $3;                                                                 }
-         | Expresion   "&"   Expresion                   { $$ = $1 + "&" + $3;                                                                 }
-         | "no" Expresion                                { $$ = "no " + $2;                                                                    }
-         | Expresion "+"  Expresion                      { $$ = $1 + "+" + $3;                                                                 }
-         | Expresion "-"  Expresion                      { $$ = $1 + "-" + $3;                                                                 }
-         | Expresion "**" Expresion                      { $$ = $1 + "**" + $3;                                                                }
-         | Expresion "*"  Expresion                      { $$ = $1 + "*" + $3;                                                                 }
-         | Expresion "/"  Expresion                      { $$ = $1 + "/" + $3;                                                                 }
-         | "-" Expresion %prec UNARIO                    { $$ = "-" + $2;                                                                      }
-         | "(" Expresion ")"                             { $$ = "(" + $2 + ")";                                                                }
-/*         | Expresion "?" Expresion ":" Expresion { $$ = "Condición: " + $1 + "\nCondición cierta: " + $3 + "\nCondición falsa: " + $5; }*/
-         ;
-
-
 %left "==" "=/=";
 %nonassoc "<" "=<" ">" ">=";
 %left "+" "-";
-%left "*" "/";
+%left "*" "/" "%";
 %left "&";
 %left "|";
 %nonassoc "no";
 %nonassoc UNARIO;
 %right "**";
 
+Expresion: CONSTPOLAR                                    { $$ = $1;                                                                            }
+         | CONSTKODIAK                                   { $$ = $1;                                                                            }
+         | CONSTHORMIGUERO                               { $$ = $1;                                                                            }
+         | CONSTMALAYO                                   { $$ = $1;                                                                            }
+         | LValue                                        { $$ = $1;                                                                            }
+         | Funcion                                       { $$ = $1;                                                                            }
+         | FuncionPredef                                 { $$ = $1;                                                                            }
+         | BLANCO                                        { $$ = $1;                                                                            }
+         | NEGRO                                         { $$ = $1;                                                                            }
+         | Expresion "<"   Expresion                     { $$ = $1 + "<" + $3;                                                                 }
+         | Expresion "=<"  Expresion                     { $$ = $1 + "=<" + $3;                                                                }
+         | Expresion ">"   Expresion                     { $$ = $1 + ">" + $3;                                                                 }
+         | Expresion ">="  Expresion                     { $$ = $1 + ">=" + $3;                                                                }
+         | Expresion "=="  Expresion                     { $$ = $1 + "==" + $3;                                                                }
+         | Expresion "=/=" Expresion                     { $$ = $1 + "=/=" + $3;                                                               }
+         | Expresion "|"   Expresion                     { $$ = $1 + "|" + $3;                                                                 }
+         | Expresion "&"   Expresion                     { $$ = $1 + "&" + $3;                                                                 }
+         | "no" Expresion                                { $$ = "no " + $2;                                                                    }
+         | Expresion "+"  Expresion                      { $$ = $1 + "+" + $3;                                                                 }
+         | Expresion "-"  Expresion                      { $$ = $1 + "-" + $3;                                                                 }
+         | Expresion "**" Expresion                      { $$ = $1 + "**" + $3;                                                                }
+         | Expresion "*"  Expresion                      { $$ = $1 + "*" + $3;                                                                 }
+         | Expresion "/"  Expresion                      { $$ = $1 + "/" + $3;                                                                 }
+         | Expresion "%"  Expresion                      { $$ = $1 + "%" + $3;                                                                 }
+         | "-" Expresion %prec UNARIO                    { $$ = "-" + $2;                                                                      }
+         | "(" Expresion ")"                             { $$ = "(" + $2 + ")";                                                                }
+/*         | Expresion "?" Expresion ":" Expresion { $$ = "Condición: " + $1 + "\nCondición cierta: " + $3 + "\nCondición falsa: " + $5; }*/
+         ;
+
+Funcion: ID "(" Expresiones ")" { $$ = "Nombre de funcion: " + $1 + "\nArgumentos:\n" + $3; }
+
+FuncionPredef: APANDA  "(" Expresion ")" { $$ = "Funcion predefinida: " + $1 + ". Argumento: " + $3; }
+             | AKODIAK "(" Expresion ")" { $$ = "Funcion predefinida: " + $1 + ". Argumento: " + $3; }
+             | AMALAYO "(" Expresion ")" { $$ = "Funcion predefinida: " + $1 + ". Argumento: " + $3; }
+             | APOLAR  "(" Expresion ")" { $$ = "Funcion predefinida: " + $1 + ". Argumento: " + $3; }
+             | LON     "(" Expresion ")" { $$ = "Funcion predefinida: " + $1 + ". Argumento: " + $3; }
+             ;
 
 %%
 

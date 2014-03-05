@@ -58,23 +58,32 @@ ID       [a-zA-Z][a-zA-Z0-9\?!_]*
 
 \"(\\.|[^\\\"])*\"  { return yy::bear_parser::make_CONSTHORMIGUERO(yytext, loc); }
 
-blanco   { return yy::bear_parser::make_BLANCO(yytext, loc);   }
-negro    { return yy::bear_parser::make_NEGRO(yytext, loc);    }
-no       { return yy::bear_parser::make_NO(loc);               }
-oso      { return yy::bear_parser::make_OSO(loc);              }
-extinto  { return yy::bear_parser::make_EXTINTO(yytext, loc);  }
-const    { return yy::bear_parser::make_CONST(yytext, loc);    }
-cueva    { return yy::bear_parser::make_CUEVA(yytext, loc);    }
-de       { return yy::bear_parser::make_DE(yytext, loc);       }
-pardo    { return yy::bear_parser::make_PARDO(yytext, loc);    }
-grizzli  { return yy::bear_parser::make_GRIZZLI(yytext, loc);  }
-leer     { return yy::bear_parser::make_LEER(yytext, loc);     }
-escribir { return yy::bear_parser::make_ESCRIBIR(yytext, loc); }
-si       { return yy::bear_parser::make_SI(yytext, loc);       }
-entonces { return yy::bear_parser::make_ENTONCES(yytext, loc); }
-sino     { return yy::bear_parser::make_SINO(yytext, loc);     }
-para     { return yy::bear_parser::make_PARA(yytext, loc);     }
-en       { return yy::bear_parser::make_EN(yytext, loc);       }
+blanco      { return yy::bear_parser::make_BLANCO(yytext, loc);      }
+negro       { return yy::bear_parser::make_NEGRO(yytext, loc);       }
+no          { return yy::bear_parser::make_NO(loc);                  }
+oso         { return yy::bear_parser::make_OSO(loc);                 }
+extinto     { return yy::bear_parser::make_EXTINTO(yytext, loc);     }
+const       { return yy::bear_parser::make_CONST(yytext, loc);       }
+cueva       { return yy::bear_parser::make_CUEVA(yytext, loc);       }
+de          { return yy::bear_parser::make_DE(yytext, loc);          }
+pardo       { return yy::bear_parser::make_PARDO(yytext, loc);       }
+grizzli     { return yy::bear_parser::make_GRIZZLI(yytext, loc);     }
+leer        { return yy::bear_parser::make_LEER(yytext, loc);        }
+escribir    { return yy::bear_parser::make_ESCRIBIR(yytext, loc);    }
+si          { return yy::bear_parser::make_SI(yytext, loc);          }
+entonces    { return yy::bear_parser::make_ENTONCES(yytext, loc);    }
+sino        { return yy::bear_parser::make_SINO(yytext, loc);        }
+para        { return yy::bear_parser::make_PARA(yytext, loc);        }
+en          { return yy::bear_parser::make_EN(yytext, loc);          }
+vomita      { return yy::bear_parser::make_VOMITA(yytext, loc);      }
+fondoBlanco { return yy::bear_parser::make_FONDOBLANCO(yytext, loc); }
+roloePea    { return yy::bear_parser::make_ROLOEPEA(yytext, loc);    }
+a_panda     { return yy::bear_parser::make_APANDA(yytext, loc);      }
+a_malayo    { return yy::bear_parser::make_AMALAYO(yytext, loc);     }
+a_polar     { return yy::bear_parser::make_APOLAR(yytext, loc);      }
+a_kodiak    { return yy::bear_parser::make_AKODIAK(yytext, loc);     }
+lon         { return yy::bear_parser::make_LON(yytext, loc);         }
+mientras    { return yy::bear_parser::make_MIENTRAS(yytext, loc);    }
 
 {ID}   { return yy::bear_parser::make_ID(yytext, loc); }
 
@@ -92,7 +101,9 @@ en       { return yy::bear_parser::make_EN(yytext, loc);       }
 ":"   { return yy::bear_parser::make_DOSPUNTOS(loc);        }
 "?"   { return yy::bear_parser::make_INTERROGACION(loc);    }
 "+"   { return yy::bear_parser::make_SUMA(loc);             }
+"++"  { return yy::bear_parser::make_INCREMENTO(loc);       }
 "-"   { return yy::bear_parser::make_MENOS(loc);            }
+"--"  { return yy::bear_parser::make_DECREMENTO(loc);       }
 "*"   { return yy::bear_parser::make_MULTIPLICACION(loc);   }
 "**"  { return yy::bear_parser::make_POTENCIA(loc);         }
 "/"   { return yy::bear_parser::make_DIVISION(loc);         }
