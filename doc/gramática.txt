@@ -7,8 +7,8 @@ Instruccion -> ListaLValues '=' Expresiones
             |  'leer' '(' ID ')'
             |  'escribir' '(' Expresion ')'
             |  Funcion
-            |  'si' ExpresionBooleana 'entonces' '{' ListaInstrucciones '}'
-            |  'si' ExpresionBooleana 'entonces' '{' ListaInstrucciones '}' sino '{' ListaInstrucciones '}'
+            |  'si' Expresion 'entonces' '{' ListaInstrucciones '}'
+            |  'si' Expresion 'entonces' '{' ListaInstrucciones '}' sino '{' ListaInstrucciones '}'
             |  'para' ID 'en' '(' Expresion ',' Expresion ')' '{' ListaInstrucciones '}'
             |  'para' ID 'en' '(' Expresion ',' Expresion ',' Expresion ')' '{' ListaInstrucciones '}'
             |  'para' ID 'en' ID '{' ListaInstrucciones '}'
@@ -28,6 +28,10 @@ ListaLValues -> LValue
 LValue -> ID
        |  LValue '->' LValue
        |  LValue '.' LValue
+       |  AccesoCueva
+
+AccesoCueva -> ID '[' NUM ']'
+            |  AccesoCueva '[' NUM ']'
 
 
 Expresion -> POLAR
@@ -38,29 +42,25 @@ Expresion -> POLAR
           |  Funcion
           |  FuncionPredef
           |  Cueva
-          |  ExpresionBooleana
-          |  ExpresionAritmetica
-          |  ExpresionBooleana '?' Expresion ':' Expresion
+          |  BLANCO
+          |  NEGRO
+          |  Expresion   '<'   Expresion
+          |  Expresion   '<='  Expresion
+          |  Expresion   '>'   Expresion
+          |  Expresion   '>='  Expresion
+          |  Expresion   '=='  Expresion
+          |  Expresion   '=/=' Expresion
+          |  Expresion   '|'   Expresion
+          |  Expresion   '&'   Expresion
+          |  'no' Expresion
+          |  Expresion '+' Expresion
+          |  Expresion '-' Expresion
+          |  Expresion '**' Expresion
+          |  Expresion '*' Expresion
+          |  Expresion '/' Expresion
+          |  '-' Expresion
+          |  Expresion '?' Expresion ':' Expresion
           |  '(' Expresion ')'
-
-ExpresionAritmetica -> Expresion '+' Expresion
-                    |  Expresion '-' Expresion
-                    |  Expresion '**' Expresion
-                    |  Expresion '*' Expresion
-                    |  Expresion '/' Expresion
-                    |  '-' Expresion
-
-ExpresionBooleana -> BLANCO
-                  |  NEGRO
-                  |  Expresion   '<'   Expresion
-                  |  Expresion   '<='  Expresion
-                  |  Expresion   '>'   Expresion
-                  |  Expresion   '>='  Expresion
-                  |  Expresion   '=='  Expresion
-                  |  Expresion   '=/=' Expresion
-                  |  Expresion   '|'   Expresion
-                  |  Expresion   '&'   Expresion
-                  |  'no' Expresion
 
 Funcion -> ID '(' Parametros ')'
 
@@ -82,8 +82,8 @@ FuncionPredef -> 'a_panda'  '(' Expresion ')'
 Cueva -> ID '[' NUM ']'
       |  Cueva '[' NUM ']'
 
-IteracionIndeterminada -> ID ':' 'mientras' '(' ExpresionBooleana ')' '{' ListaInstrucciones '}'
-                       |  'mientras' '(' ExpresionBooleana ')' '{' ListaInstrucciones '}'
+IteracionIndeterminada -> ID ':' 'mientras' '(' Expresion ')' '{' ListaInstrucciones '}'
+                       |  'mientras' '(' Expresion ')' '{' ListaInstrucciones '}'
 
 Definiciones -> ListaDefGlobales
              |  /* Vacio *\
