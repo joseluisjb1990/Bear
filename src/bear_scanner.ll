@@ -50,9 +50,9 @@ ID       [a-zA-Z][a-zA-Z0-9\?!_]*
 
 {DIGIT}+  { return yy::bear_parser::make_CONSTPOLAR(yytext, loc); }
 
-{DIGIT}+,{DIGIT}*  { return yy::bear_parser::make_CONSTKODIAK(yytext, loc); }
+{DIGIT}+;{DIGIT}*  { return yy::bear_parser::make_CONSTKODIAK(yytext, loc); }
 
-{DIGIT}+(,{DIGIT})?e-?{DIGIT}+  { return yy::bear_parser::make_CONSTKODIAK(yytext, loc);}
+{DIGIT}+(;{DIGIT})?e-?{DIGIT}+  { return yy::bear_parser::make_CONSTKODIAK(yytext, loc);}
 
 '.'|'\\n'   { return yy::bear_parser::make_CONSTMALAYO(yytext, loc);}
 

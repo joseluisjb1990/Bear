@@ -1,39 +1,39 @@
 <3 Insertion sort
 
-buscar_menor(cueva [] cueva_elem de polar, polar min, polar max) => polar
+buscar_menor(cueva [] de polar cueva_elem, polar min, polar max) => polar;
 
-cambiar(cueva [] cueva_elem de polar, polar i, polar j) => extinto;
+cambiar(cueva [] de polar cueva_elem , polar i, polar j) => extinto;
 
-buscar_menor(cueva [] cueva_elem de polar, polar min, polar max) => polar
+buscar_menor(cueva [] de polar cueva_elem , polar min, polar max) => polar
 {
   min = cueva_elem[min];
 
-  para i en (min + 1, max) hacer
-    si (cueva_elem[i]) < min) entonces
-      min = cueva_elem[i];
-}
+  para i en (min + 1; max) {
+    si (cueva_elem[i] < min) entonces { min = cueva_elem[i]; };
+  };
+};
 
-cambiar(cueva [] cueva_elem de polar, i, j) => extinto;
+cambiar(cueva [] de polar cueva_elem, polar i, polar j) => extinto
 {
   polar inter = cueva_elem[i];
   cueva_elem[i] = cueva_elem[j];
   cueva_elem[j] = cueva_elem[i];
-}
+};
 
-oso
+oso () => extinto
 {
-  cueva elementos[5] de polar;
+  cueva [5] de polar elementos;
 
-  <3 Falta llenar el arreglo;
+  <3 Falta llenar el arreglo
 
-  para i en (0,4) hacer
+  para i en (0;4)
   {
-    polar ind = buscar_menor(elementos,i44);
+    polar ind = buscar_menor(elementos,i);
     cambiar(elementos, i, ind);
-  }
+  };
 
   escribir("El arreglo ordenado \n");
 
-  para i en <0,5> escribir(a_hormiguero(elementos[i]) ++ '\n');
+  para i en (0;5)  { escribir(a_hormiguero(elementos[i])); };
 }
 

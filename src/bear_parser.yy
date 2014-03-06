@@ -107,10 +107,12 @@ class bear_driver;
 %type  <std::string> ListaDefGlobales
 %type  <std::string> DefinicionGlobal
 %type  <std::string> DefConstante
+%type  <std::string> Locales
 %type  <std::string> DefVariable
 %type  <std::string> DefCueva
 %type  <std::string> DefCompleja
 %type  <std::string> DefFuncion
+%type  <std::string> DefLocales
 %type  <std::string> Cuevas
 %type  <std::string> Identificadores
 %type  <std::string> Tipo
@@ -121,6 +123,7 @@ class bear_driver;
 %type  <std::string> AccesoCueva
 %type  <std::string> FuncionPredef
 %type  <std::string> Funcion
+%type  <std::string> Cuerpo
 %type  <std::string> IteracionIndeterminada
 
 /* %printer { yyoutput << $$; } <*>; */
@@ -128,7 +131,7 @@ class bear_driver;
 %%
 %start Programa;
 
-Programa: Definiciones "oso" "(" ")" "=>" EXTINTO "{" Instrucciones "}" { $$ = $1 + $8; std::cout << $1 << "Funcion principal oso:" << std::endl << $8; }
+Programa: Definiciones "oso" "(" ")" "=>" EXTINTO "{" Cuerpo "}" { $$ = $1 + $8; std::cout << $1 << "Funcion principal oso:" << std::endl << $8; }
         ;
 
 Definiciones: %empty /* Vacio */
@@ -146,8 +149,17 @@ DefinicionGlobal: DefConstante  { $$ = $1;                             }
                 ;
 
 DefFuncion: ID "(" DefParametros ")" "=>" Tipo                       { $$ = "Nombre: " + $1 + "\nParametros:\n" + $3 + "\nRetorna: " + $6;                                                                 }
-          | ID "(" DefParametros ")" "=>" Tipo "{" Instrucciones "}" { $$ = "Nombre: " + $1 + "\nParametros:\n" + $3 + "\nRetorna: " + $6 + "\nDeclaraciones Locales:\n" + $8 + "\nInstrucciones:\n" + $8; }
+          | ID "(" DefParametros ")" "=>" Tipo "{" Cuerpo "}" { $$ = "Nombre: " + $1 + "\nParametros:\n" + $3 + "\nRetorna: " + $6 + $8; }
           ;
+
+Cuerpo: Locales Instrucciones { $$ = "\nDeclaraciones Locales:\n" + $1 + "\nInstrucciones:\n" + $2; }
+      | Instrucciones { $$ = "\nInstrucciones:\n" + $1; }
+
+Locales: Locales DefLocales ";"  { $$ = "\nDeclaracion de variables locales a una funcion:\n" + $1; }
+       | DefLocales ";" { $$ = $1; }
+
+DefLocales: DefVariable  { $$ = $1; }
+          | DefConstante { $$ = $1; }
 
 DefParametros: DefParametro                   { $$ = $1;              }
              | DefParametros "," DefParametro { $$ = $1 + ",\n" + $3; }
@@ -162,7 +174,7 @@ ParametroCueva: CUEVA "[" "]" DE                           { $$ = $1 + " [] " + 
               | ParametroCueva CUEVA "[" CONSTPOLAR "]" DE { $$ = $1 + $2 + " [" + $4 + "] " + $6 + " "; }
               ;
 
-DefConstante: CONST Tipo ID "=" Expresion { $$ = "Declaración de constante:\nTipo: " + $2 + ". Nombre: " + $3 + ". Valor: " + $5; }
+DefConstante: CONST Tipo Identificadores "=" Expresiones { $$ = "Declaración de constante:\nTipo: " + $2 + ". Nombre: " + $3 + ". Valor: " + $5; }
             ;
 
 DefVariable: Tipo Identificadores "=" Expresiones { $$ = "Declaración de variable con inicialización:\nTipo: " + $1 + ".\nIdentificadores: " + $2 + ".\nExpresiones: " + $4; }
@@ -210,9 +222,9 @@ Instruccion: LValues "=" Expresiones                                            
            | Funcion                                                                        { $$ = "Funcion:\n" + $1;                                                                                                                            }
            | SI Expresion ENTONCES "{" Instrucciones "}"                                    { $$ = "Condicional sin else:\nCondición: " + $2 + "\nInstrucciones: " + $5;                                                                         }
            | SI Expresion ENTONCES "{" Instrucciones "}" SINO "{" Instrucciones "}"         { $$ = "Condicional con else:\nCondición: " + $2 + "\nBrazo true:\n" + $5 + "\nBrazo false:\n" + $9;                                                 }
-           | PARA ID EN "(" Expresion ";" Expresion ")" "{" Instrucciones "}"               { $$ = "Iteración acotada:\nVariable de iteración: " + $2 + "\nDesde: " + $5 + "\nHasta:\n" + $7 + "\nInstrucciones:\n" + $10;                       }
-           | PARA ID EN "(" Expresion ";" Expresion ";" Expresion ")" "{" Instrucciones "}" { $$ = "Iteración acotada:\nVariable de iteración: " + $2 + "\nDesde: " + $5 + "\nHasta:\n" + $9 + "\nCon Paso: " + $7 + "\nInstrucciones:\n" + $12; }
-           | PARA ID EN ID "{" Instrucciones "}"                                            { $$ = "Iteración acotada:\nVariable de iteración: " + $2 + "\nArreglo sobre el cual iterar: " + $4 + "\nInstrucciones:\n" + $6;                     }
+           | PARA ID EN "(" Expresion ";" Expresion ")" "{" Cuerpo "}"               { $$ = "Iteración acotada:\nVariable de iteración: " + $2 + "\nDesde: " + $5 + "\nHasta:\n" + $7 + "\nInstrucciones:\n" + $10;                       }
+           | PARA ID EN "(" Expresion ";" Expresion ";" Expresion ")" "{" Cuerpo "}" { $$ = "Iteración acotada:\nVariable de iteración: " + $2 + "\nDesde: " + $5 + "\nHasta:\n" + $9 + "\nCon Paso: " + $7 + "\nInstrucciones:\n" + $12; }
+           | PARA ID EN ID "{" Cuerpo  "}"                                            { $$ = "Iteración acotada:\nVariable de iteración: " + $2 + "\nArreglo sobre el cual iterar: " + $4 + "\nInstrucciones:\n" + $6;                     }
            | IteracionIndeterminada                                                         { $$ = "Iteración indeterminada:\n" + $1;                                                                                                            }
            | ID "++"                                                                        { $$ = "Incremento de la variable: " + $1;                                                                                                           }
            | ID "--"                                                                        { $$ = "Decremento de la variable: " + $1;                                                                                                           }
@@ -248,6 +260,7 @@ Expresiones: Expresion                 { $$ = $1 ;            }
            | Expresiones "," Expresion { $$ = $1 + ", " + $3; }
            ;
 
+%nonassoc ":" "?";
 %left "==" "=/=";
 %nonassoc "<" "=<" ">" ">=";
 %left "+" "-";
@@ -284,7 +297,7 @@ Expresion: CONSTPOLAR                                    { $$ = $1;             
          | Expresion "%"  Expresion                      { $$ = $1 + "%" + $3;                                                                 }
          | "-" Expresion %prec UNARIO                    { $$ = "-" + $2;                                                                      }
          | "(" Expresion ")"                             { $$ = "(" + $2 + ")";                                                                }
-/*         | Expresion "?" Expresion ":" Expresion { $$ = "Condición: " + $1 + "\nCondición cierta: " + $3 + "\nCondición falsa: " + $5; }*/
+         | Expresion "?" Expresion ":" Expresion { $$ = "Condición: " + $1 + "\nCondición cierta: " + $3 + "\nCondición falsa: " + $5; }
          ;
 
 Funcion: ID "(" Expresiones ")" { $$ = "Nombre de funcion: " + $1 + "\nArgumentos:\n" + $3; }
