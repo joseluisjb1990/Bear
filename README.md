@@ -10,11 +10,13 @@ Bear
 Las siguientes son palabras reservadas del lenguaje, no pueden ser redefinidas ni utilizadas como identificadores (de variables, funciones, etc).
 
 ----------------------------------------------------------------------------
+
     a_kodiak    const     extinto     leer      no      vomita
     a_malayo    cueva     fondoBlanco lon       oso     roloePea
     a_panda     de        grizzli     malayo    panda   si
     a_polar     entonces  hormiguero  mientras  pardo   sino
     blanco      escribir  kodiak      negro     polar
+
 ---------------------------------------------------------------------------
 
 Los identificadores son secuencias de caracteres alfanuméricos, el símbolo underscore (`_`), el símbolo de interrogación (`?`) y/o el símbolo de exclamación (`!`), y deben comenzar por una letra en minúscula o mayúscula.
@@ -159,6 +161,21 @@ La declaración de un pardo se hace de la siguiente manera:
     }
 
 Las variables dentro de un pardo pueden ser de cualquier tipo exceptuando `extinto`, `hormiguero` o el mismo `pardo` que se esta definiendo para evitar una recursión infinita.
+Al mismo tiempo, no es posible declarar un nuevo pardo dentro del mismo.
+
+No es posible declarar un tipo `pardo` y en la misma linea crear variables de este tipo; es decir:
+
+    pardo foo {
+    ...
+    } bar, baz;
+
+Esto debe hacerse separado. La manera correcta es la siguiente:
+
+    pardo foo {
+    ...
+    }
+
+    foo bar, baz;
 
 Para acceder a un campo del pardo se utiliza el operador `->` seguido del nombre del campo al que se quiere acceder.
 
@@ -179,6 +196,23 @@ La declaración de un grizzli se hace de la siguiente manera:
       ...
       <tipo> <identificador>;
 }
+
+Las variables dentro de un grizzli pueden ser de cualquier tipo exceptuando `extinto`, `hormiguero` o el mismo `grizzli` que se esta definiendo para evitar una recursión infinita.
+Al mismo tiempo, no es posible declarar un nuevo grizzli dentro del mismo.
+
+No es posible declarar un tipo `grizzli` y en la misma linea crear variables de este tipo; es decir:
+
+    grizzli foo {
+    ...
+    } bar, baz;
+
+Esto debe hacerse separado. La manera correcta es la siguiente:
+
+    grizzli foo {
+    ...
+    }
+
+    foo bar, baz;
 
 Debido a su semejanza física mucha gente suele confundir a los osos pardos y grizzli.
 Dado que la declaración de un pardo y un grizzli en bear es semejante (solo varían en la palabra clave `pardo` y `grizzli`) podría ocurrir lo mismo que pasa con estos osos en la vida real.
@@ -492,9 +526,9 @@ Los operadores binarios usan operacion infija y el inverso utiliza notación pre
 
 La precedencia de los operadores (de mayor a menor) es la siguiente:
 
-* `-` (unario)
-
 * `**`
+
+* `-` (unario)
 
 * `*`, `/`, `%`
 

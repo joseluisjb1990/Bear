@@ -22,7 +22,7 @@ Los identificadores son sensibles a mayúsculas; es decir, los nombres `foo`, `F
 Los números enteros solamente pueden escribirse en base decimal. Los números en base decimal son cualquier secuencia de dígitos entre 0 y 9.
 
 Los números con parte fraccionaria de igual manera solo pueden ser escritos en base decimal.
-Estos se constituyen por una secuencia no vacía de dígitos entre 0 y 9, seguida de una coma (`,`) y otra secuencia no vacía de dígitos entre 0 y 9.
+Estos se constituyen por una secuencia no vacía de dígitos entre 0 y 9, seguida de un punto (`.`) y otra secuencia no vacía de dígitos entre 0 y 9.
 También es posible agregar el exponente escribiendo "`e`" seguido de uno o mas dígitos entre 0 y 9.
 Al mismo tiempo se puede especificar el signo del exponente agregando un `+` o `-` antes del exponente.
 El exponente indica que el número antes del mismo se multiplica por diez (10) elevado al número indicado como exponente.
