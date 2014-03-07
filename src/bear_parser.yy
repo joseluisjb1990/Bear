@@ -148,18 +148,21 @@ DefinicionGlobal: DefConstante  { $$ = $1;                             }
                 | DefCompleja   { $$ = "Declaración compleja:\n" + $1; }
                 ;
 
-DefFuncion: ID "(" DefParametros ")" "=>" Tipo                       { $$ = "Nombre: " + $1 + "\nParametros:\n" + $3 + "\nRetorna: " + $6;                                                                 }
-          | ID "(" DefParametros ")" "=>" Tipo "{" Cuerpo "}" { $$ = "Nombre: " + $1 + "\nParametros:\n" + $3 + "\nRetorna: " + $6 + $8; }
+DefFuncion: ID "(" DefParametros ")" "=>" Tipo                       { $$ = "Nombre: " + $1 + "\nParametros:\n" + $3 + "\nRetorna: " + $6;      }
+          | ID "(" DefParametros ")" "=>" Tipo "{" Cuerpo "}"        { $$ = "Nombre: " + $1 + "\nParametros:\n" + $3 + "\nRetorna: " + $6 + $8; }
           ;
 
 Cuerpo: Locales Instrucciones { $$ = "\nDeclaraciones Locales:\n" + $1 + "\nInstrucciones:\n" + $2; }
-      | Instrucciones { $$ = "\nInstrucciones:\n" + $1; }
+      | Instrucciones         { $$ = "\nInstrucciones:\n" + $1;                                     }
+      ;
 
 Locales: Locales DefLocales ";"  { $$ = "\nDeclaracion de variables locales a una funcion:\n" + $1; }
        | DefLocales ";" { $$ = $1; }
+       ;
 
 DefLocales: DefVariable  { $$ = $1; }
           | DefConstante { $$ = $1; }
+          ;
 
 DefParametros: DefParametro                   { $$ = $1;              }
              | DefParametros "," DefParametro { $$ = $1 + ",\n" + $3; }
@@ -210,30 +213,30 @@ Tipo: ID          { $$ = $1; }
     | EXTINTO     { $$ = $1; }
     ;
 
-Instrucciones: Instruccion ";"               { $$ = $1 + ";\n";      }
-             | Instrucciones Instruccion ";" { $$ = $1 + $2 + ";\n"; }
+Instrucciones: Instruccion               { $$ = $1 + "\n";      }
+             | Instrucciones Instruccion { $$ = $1 + $2 + "\n"; }
              ;
 
 /* Aqui hay el problema de que hay que asegurar que la cantidad de lvalues y de expresiones sea la misma, no tengo manera de hacerlo ahorita */
 
-Instruccion: LValues "=" Expresiones                                                        { $$ = "Asignación:\nl-values: " + $1 + ".\n" + "r-values:  " + $3;                                                                                  }
-           | LEER "(" ID ")"                                                                { $$ = "Leer: variable: " + $3;                                                                                                                      }
-           | ESCRIBIR "(" Expresion ")"                                                     { $$ = "Escribir: valor: " + $3;                                                                                                                     }
-           | Funcion                                                                        { $$ = "Funcion:\n" + $1;                                                                                                                            }
+Instruccion: LValues "=" Expresiones ";"                                                    { $$ = "Asignación:\nl-values: " + $1 + ".\n" + "r-values:  " + $3 + ";";                                                                                  }
+           | LEER "(" ID ")" ";"                                                            { $$ = "Leer: variable: " + $3 + ";";                                                                                                                      }
+           | ESCRIBIR "(" Expresion ")" ";"                                                 { $$ = "Escribir: valor: " + $3 + ";";                                                                                                                     }
+           | Funcion ";"                                                                    { $$ = "Funcion:\n" + $1 + ";";                                                                                                                            }
            | SI Expresion ENTONCES "{" Instrucciones "}"                                    { $$ = "Condicional sin else:\nCondición: " + $2 + "\nInstrucciones: " + $5;                                                                         }
            | SI Expresion ENTONCES "{" Instrucciones "}" SINO "{" Instrucciones "}"         { $$ = "Condicional con else:\nCondición: " + $2 + "\nBrazo true:\n" + $5 + "\nBrazo false:\n" + $9;                                                 }
-           | PARA ID EN "(" Expresion ";" Expresion ")" "{" Cuerpo "}"               { $$ = "Iteración acotada:\nVariable de iteración: " + $2 + "\nDesde: " + $5 + "\nHasta:\n" + $7 + "\nInstrucciones:\n" + $10;                       }
-           | PARA ID EN "(" Expresion ";" Expresion ";" Expresion ")" "{" Cuerpo "}" { $$ = "Iteración acotada:\nVariable de iteración: " + $2 + "\nDesde: " + $5 + "\nHasta:\n" + $9 + "\nCon Paso: " + $7 + "\nInstrucciones:\n" + $12; }
-           | PARA ID EN ID "{" Cuerpo  "}"                                            { $$ = "Iteración acotada:\nVariable de iteración: " + $2 + "\nArreglo sobre el cual iterar: " + $4 + "\nInstrucciones:\n" + $6;                     }
+           | PARA ID EN "(" Expresion ";" Expresion ")" "{" Cuerpo "}"                      { $$ = "Iteración acotada:\nVariable de iteración: " + $2 + "\nDesde: " + $5 + "\nHasta:\n" + $7 + "\nInstrucciones:\n" + $10;                       }
+           | PARA ID EN "(" Expresion ";" Expresion ";" Expresion ")" "{" Cuerpo "}"        { $$ = "Iteración acotada:\nVariable de iteración: " + $2 + "\nDesde: " + $5 + "\nHasta:\n" + $9 + "\nCon Paso: " + $7 + "\nInstrucciones:\n" + $12; }
+           | PARA ID EN ID "{" Cuerpo  "}"                                                  { $$ = "Iteración acotada:\nVariable de iteración: " + $2 + "\nArreglo sobre el cual iterar: " + $4 + "\nInstrucciones:\n" + $6;                     }
            | IteracionIndeterminada                                                         { $$ = "Iteración indeterminada:\n" + $1;                                                                                                            }
-           | ID "++"                                                                        { $$ = "Incremento de la variable: " + $1;                                                                                                           }
-           | ID "--"                                                                        { $$ = "Decremento de la variable: " + $1;                                                                                                           }
-           | VOMITA                                                                         { $$ = "Vomita";                                                                                                                                     }
-           | VOMITA ID                                                                      { $$ = "Vomita a la etiqueta: " + $2;                                                                                                                }
-           | FONDOBLANCO                                                                    { $$ = "fondoBlanco";                                                                                                                                }
-           | FONDOBLANCO ID                                                                 { $$ = "fondoBlanco a la etiqueta: " + $2;                                                                                                           }
-           | ROLOEPEA                                                                       { $$ = "roloePea";                                                                                                                                   }
-           | ROLOEPEA ID                                                                    { $$ = "roloePea a la etiqueta: " + $2;                                                                                                              }
+           | ID "++" ";"                                                                    { $$ = "Incremento de la variable: " + $1 + ";";                                                                                                           }
+           | ID "--" ";"                                                                    { $$ = "Decremento de la variable: " + $1 + ";";                                                                                                           }
+           | VOMITA ";"                                                                     { $$ = "Vomita;";                                                                                                                                     }
+           | VOMITA ID ";"                                                                  { $$ = "Vomita a la etiqueta: " + $2 + ";";                                                                                                                }
+           | FONDOBLANCO ";"                                                                { $$ = "fondoBlanco;";                                                                                                                                }
+           | FONDOBLANCO ID ";"                                                             { $$ = "fondoBlanco a la etiqueta: " + $2 + ";";                                                                                                           }
+           | ROLOEPEA ";"                                                                   { $$ = "roloePea;";                                                                                                                                   }
+           | ROLOEPEA ID ";"                                                                { $$ = "roloePea a la etiqueta: " + $2 + ";";                                                                                                              }
            ;
 
 IteracionIndeterminada: ID ":" MIENTRAS "(" Expresion ")" "{" Instrucciones "}" { $$ = "Etiqueta: " + $1 + "\nCondición: " + $5 + "\nInstrucciones: " + $8; }

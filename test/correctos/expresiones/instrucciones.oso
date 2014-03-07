@@ -6,15 +6,15 @@ oso() => extinto {
 
   para i en (1;6) {
     escribir(i);
-  };
+  }
 
   para i en (1;2;20) {
     escribir(i);
-  };
+  }
 
   para i en cuevita {
     escribir(cuevita[i]);
-  };
+  }
 
   foo++;
   foo--;
@@ -36,10 +36,10 @@ oso() => extinto {
 
   mientras (negro) {
     foo = 42;
-  };
+  }
 
   etiqueta: mientras (negro) {
     foo = 24;
-  };
+  }
 
 }
