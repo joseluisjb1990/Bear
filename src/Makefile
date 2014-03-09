@@ -1,20 +1,20 @@
-CPP = g++
+CXX = g++
 
 EXE = bear
 
 CDEBUG = -g -Wall
 
-CPPDEBUG = -g -Wall
+CXXDEBUG = -g -Wall
 
-CPPFLAGS = -O0  $(CPPDEBUG)
+CXXFLAGS = -O0  $(CXXDEBUG)
 
 
-CPPOBJ = bear bear_driver
+CXXOBJ = bear bear_driver
 SOBJ =  parser lexer
 
-FILES = $(addsuffix .cc, $(CPPOBJ))
+FILES = $(addsuffix .cc, $(CXXOBJ))
 
-OBJS  = $(addsuffix .o, $(CPPOBJ))
+OBJS  = $(addsuffix .o, $(CXXOBJ))
 
 CLEANLIST =  $(addsuffix .o, $(OBJ)) $(OBJS) \
 			 bear_parser.tab.cc bear_parser.tab.hh \
@@ -28,16 +28,16 @@ all: bear
 bear: $(FILES)
 	$(MAKE) $(SOBJ)
 	$(MAKE) $(OBJS)
-	$(CPP) $(CPPFLAGS) -o $(EXE) $(OBJS) parser.o lexer.o $(LIBS)
+	$(CXX) $(CXXFLAGS) -o $(EXE) $(OBJS) parser.o lexer.o $(LIBS)
 
 
 parser: bear_parser.yy
 	bison -d -v bear_parser.yy
-	$(CPP) $(CPPFLAGS) -c -o parser.o bear_parser.tab.cc
+	$(CXX) $(CXXFLAGS) -c -o parser.o bear_parser.tab.cc
 
 lexer: bear_scanner.ll
 	flex --outfile=lexer.yy.cc  $<
-	$(CPP)  $(CPPFLAGS) -c lexer.yy.cc -o lexer.o
+	$(CXX)  $(CXXFLAGS) -c lexer.yy.cc -o lexer.o
 
 
 .PHONY: clean
