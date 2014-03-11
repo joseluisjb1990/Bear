@@ -6,8 +6,7 @@ CDEBUG = -g -Wall
 
 CXXDEBUG = -g -Wall
 
-CXXFLAGS = -O0  $(CXXDEBUG)
-
+CXXFLAGS = -O0  -std=c++11 $(CXXDEBUG)
 
 CXXOBJ = bear bear_driver
 SOBJ =  parser lexer
@@ -28,7 +27,7 @@ all: bear
 bear: $(FILES)
 	$(MAKE) $(SOBJ)
 	$(MAKE) $(OBJS)
-	$(CXX) $(CXXFLAGS) -o $(EXE) $(OBJS) parser.o lexer.o $(LIBS)
+	$(CXX) $(CXXFLAGS) -o $(EXE) $(OBJS) parser.o lexer.o TablaSimbolos.cc Contenido.cc $(LIBS)
 
 
 parser: bear_parser.yy

@@ -7,8 +7,8 @@ Contenido::Contenido (Tipos tipo, Categorias categoria, unsigned int alcance, un
   :_tipo( tipo )
   ,_categoria( categoria )
   ,_alcance( alcance )
-  ,_columna( columna )
   ,_linea( linea )
+  ,_columna( columna )
   {}
 
 unsigned int Contenido::getAlcance() { return _alcance; }
