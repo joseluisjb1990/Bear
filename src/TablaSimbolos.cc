@@ -1,40 +1,10 @@
-#include <iostream>
-#include <map>
-#include <string>
-#include <stack>
-#include <vector>
-#include "Contenedor.cc"
-
-using namespace std;
-
-typedef std::multimap<std::string, Contenido*> Diccionario;
-typedef std::vector<unsigned int> Stack;
-
-class TablaSimbolos
-{
-private:
-
-    Diccionario _dicc;
-    Stack       _pila;
-    unsigned int _alcance;
-
-public:
-
-    TablaSimbolos();
-    unsigned int add_symbol (string nombre, Tipos tipo, Categorias categoria, unsigned int linea, unsigned int columna);
-    unsigned int add_container (string nombre, Tipos tipo, Categorias categoria, unsigned int linea, unsigned int columna, unsigned int alcanceCampos);
-    friend inline std::ostream& operator<<(std::ostream& os, TablaSimbolos &ts);
-    unsigned int enter_scope();
-    unsigned int exit_scope();
-    bool check_scope(string nombre);
-    Contenido* find_symbol(string nombre);
-};
+#include "TablaSimbolos.hh"
 
 unsigned int TablaSimbolos::add_container (string nombre, Tipos tipo, Categorias categoria, unsigned int linea, unsigned int columna, unsigned int alcanceCampos)
 {
   Contenido *cont;
   cont = new  Contenedor(tipo, categoria,_alcance, linea, columna, alcanceCampos);
-  _dicc.insert(std::make_pair(nombre,cont)); 
+  _dicc.insert(std::make_pair(nombre,cont));
   return _alcance;
 }
 
@@ -85,7 +55,7 @@ bool TablaSimbolos::check_scope(string nombre)
 unsigned int TablaSimbolos::exit_scope()
 {
   _pila.pop_back();
-  _pila.back();
+  return _pila.back();
 }
 unsigned int TablaSimbolos::enter_scope()
 {
@@ -112,6 +82,6 @@ std::ostream& operator<<(std::ostream& os, TablaSimbolos &ts)
 unsigned int TablaSimbolos::add_symbol (string nombre, Tipos tipo, Categorias categoria, unsigned int linea, unsigned int columna)
 {
   Contenido *cont = new Contenido(tipo, categoria,_alcance, linea, columna);
-  _dicc.insert(std::make_pair(nombre,cont)); 
+  _dicc.insert(std::make_pair(nombre,cont));
   return _alcance;
 }
