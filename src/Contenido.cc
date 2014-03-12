@@ -3,7 +3,7 @@
 
 using namespace std;
 
-Contenido::Contenido (Tipos tipo, Categorias categoria, unsigned int alcance, unsigned int linea, unsigned int columna)
+Contenido::Contenido (std::string tipo, Categorias categoria, unsigned int alcance, unsigned int linea, unsigned int columna)
   :_tipo( tipo )
   ,_categoria( categoria )
   ,_alcance( alcance )
@@ -15,10 +15,10 @@ unsigned int Contenido::getAlcance() { return _alcance; }
 
 std::string Contenido::to_string()
 {
-  return std::to_string(_tipo) + " " + std::to_string(_categoria) + " " + std::to_string(_alcance) + " " + std::to_string(_linea) + " " + std::to_string(_columna);
+  return _tipo + " " + std::to_string(_categoria) + " " + std::to_string(_alcance) + " " + std::to_string(_linea) + " " + std::to_string(_columna);
 }
 
-Contenedor::Contenedor(Tipos tipo, Categorias categoria, unsigned int alcance, unsigned int linea, unsigned int columna, unsigned int alcanceCampos)
+Contenedor::Contenedor(std::string tipo, Categorias categoria, unsigned int alcance, unsigned int linea, unsigned int columna, unsigned int alcanceCampos)
   : Contenido(tipo, categoria, alcance, linea, columna)
   , _alcanceCampos(alcanceCampos)
   {}

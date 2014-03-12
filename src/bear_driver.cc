@@ -4,8 +4,6 @@
 bear_driver::bear_driver ()
   : trace_scanning (false), trace_parsing (false)
 {
-  variables["one"] = 1;
-  variables["two"] = 2;
 }
 
 bear_driver::~bear_driver ()
@@ -20,6 +18,7 @@ bear_driver::parse (const std::string &f)
   yy::bear_parser parser (*this);
   //parser.set_debug_level (trace_parsing);
   int res = parser.parse ();
+  cout << tabla;
   scan_end ();
   return res;
 }

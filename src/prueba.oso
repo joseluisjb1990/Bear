@@ -1,19 +1,4 @@
-54 ==             32;
---8**4**5 <= 7;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-blanco | negro =/= no (blanco & negro);
+oso()=>extinto{
+  polar a,b,c = 42,7,69;
+  escribir(a);
+}

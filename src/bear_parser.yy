@@ -8,7 +8,14 @@
 %code requires
 {
 # include <string>
+# include <vector>
 class bear_driver;
+
+typedef struct {
+  std::string nombre;
+  unsigned int linea;
+  unsigned int columna;
+} elementoLista;
 }
 // The parsing context.
 %param { bear_driver& driver }
@@ -98,7 +105,7 @@ class bear_driver;
 %token <std::string> MIENTRAS
 %type  <std::string> Programa
 %type  <std::string> Expresion
-%type  <std::string> Expresiones
+%type  <std::vector<elementoLista>*> Expresiones
 %type  <std::string> Instrucciones
 %type  <std::string> Instruccion
 %type  <std::string> LValue
@@ -114,7 +121,7 @@ class bear_driver;
 %type  <std::string> DefFuncion
 %type  <std::string> DefLocales
 %type  <std::string> Cuevas
-%type  <std::string> Identificadores
+%type  <std::vector<elementoLista>*> Identificadores
 %type  <std::string> Tipo
 %type  <std::string> Campos
 %type  <std::string> DefParametros
@@ -134,7 +141,7 @@ class bear_driver;
 Programa: Definiciones "oso" "(" ")" "=>" EXTINTO "{" Cuerpo "}" { $$ = $1 + $8; std::cout << $1 << "Funcion principal oso:" << std::endl << $8; }
         ;
 
-Definiciones: %empty /* Vacio */
+Definiciones: /* Vacio */
             | ListaDefGlobales   { $$ = "Definiciones:\n" + $1; }
             ;
 
@@ -177,16 +184,23 @@ ParametroCueva: CUEVA "[" "]" DE                           { $$ = $1 + " [] " + 
               | ParametroCueva CUEVA "[" CONSTPOLAR "]" DE { $$ = $1 + $2 + " [" + $4 + "] " + $6 + " "; }
               ;
 
-DefConstante: CONST Tipo Identificadores "=" Expresiones { $$ = "Declaración de constante:\nTipo: " + $2 + ". Nombre: " + $3 + ". Valor: " + $5; }
+DefConstante: CONST Tipo Identificadores "=" Expresiones { $$ = "Declaración de constante:\nTipo: "; /*+ $2 + ". Nombre: " + $3 + ". Valor: ";  + $5;*/ }
             ;
 
-DefVariable: Tipo Identificadores "=" Expresiones { $$ = "Declaración de variable con inicialización:\nTipo: " + $1 + ".\nIdentificadores: " + $2 + ".\nExpresiones: " + $4; }
-           | Tipo Identificadores                 { $$ = "Declaración de variable sin inicialización:\nTipo: " + $1 + ".\nIdentificadores: " + $2;                           }
+DefVariable: Tipo Identificadores "=" Expresiones {
+                                                    if ($2->size() == $4->size()) {
+                                                      for (unsigned int i=0; i < $2->size(); ++i) {
+                                                        driver.tabla.add_symbol($2->at(i).nombre, $1, Var, $2->at(i).linea, $2->at(i).columna);
+                                                      }
+                                                    }
+                                                    $$ = "Declaración de variable con inicialización:\nTipo: " + $1 + ".\nIdentificadores: " + /*$2*/ + ".\nExpresiones: "; /* + $4;*/
+                                                  }
+           | Tipo Identificadores                 { $$ = "Declaración de variable sin inicialización:\nTipo: " + $1 + ".\nIdentificadores: "; /* + $2;*/                           }
            | DefCueva                             { $$ = "Declaración de cueva:\n" + $1;                                                                                     }
            ;
 
-Identificadores: ID                     { $$ = $1;             }
-               | Identificadores "," ID { $$ = $1 + ", " + $3; }
+Identificadores: ID                     { $$ = new std::vector<elementoLista>(); elementoLista e; e.nombre = $1; e.linea = @1.begin.line; e.columna = @1.begin.column; $$->push_back(e); }
+               | Identificadores "," ID { $$ = $1; elementoLista e; e.nombre = $3, e.linea = @3.begin.line; e.columna = @3.begin.column; $$->push_back(e); }
                ;
 
 DefCueva: Cuevas Tipo ID { $$ = $1 + $2 + ". Nombre: " + $3; }
@@ -219,7 +233,7 @@ Instrucciones: Instruccion               { $$ = $1 + "\n";      }
 
 /* Aqui hay el problema de que hay que asegurar que la cantidad de lvalues y de expresiones sea la misma, no tengo manera de hacerlo ahorita */
 
-Instruccion: LValues "=" Expresiones ";"                                                    { $$ = "Asignación:\nl-values: " + $1 + ".\n" + "r-values:  " + $3 + ";";                                                                                  }
+Instruccion: LValues "=" Expresiones ";"                                                    { $$ = "Asignación:\nl-values: " + $1 + ".\n" + "r-values:  " /*+ $3 */+ ";";                                                                                  }
            | LEER "(" ID ")" ";"                                                            { $$ = "Leer: variable: " + $3 + ";";                                                                                                                      }
            | ESCRIBIR "(" Expresion ")" ";"                                                 { $$ = "Escribir: valor: " + $3 + ";";                                                                                                                     }
            | Funcion ";"                                                                    { $$ = "Funcion:\n" + $1 + ";";                                                                                                                            }
@@ -259,8 +273,8 @@ AccesoCueva: ID "[" Expresion "]"          { $$ = $1 + "[" + $3 + "]"; }
            ;
 
 
-Expresiones: Expresion                 { $$ = $1 ;            }
-           | Expresiones "," Expresion { $$ = $1 + ", " + $3; }
+Expresiones: Expresion                 { $$ = new std::vector<elementoLista>(); elementoLista e; e.nombre = $1; e.linea = @1.begin.line; e.columna = @1.begin.column; $$->push_back(e); }
+           | Expresiones "," Expresion { $$ = $1; elementoLista e; e.nombre = $3, e.linea = @3.begin.line; e.columna = @3.begin.column; $$->push_back(e); }
            ;
 
 %nonassoc ":" "?";
@@ -303,7 +317,7 @@ Expresion: CONSTPOLAR                                    { $$ = $1;             
          | Expresion "?" Expresion ":" Expresion { $$ = "Condición: " + $1 + "\nCondición cierta: " + $3 + "\nCondición falsa: " + $5; }
          ;
 
-Funcion: ID "(" Expresiones ")" { $$ = "Nombre de funcion: " + $1 + "\nArgumentos:\n" + $3; }
+Funcion: ID "(" Expresiones ")" { $$ = "Nombre de funcion: " + $1 + "\nArgumentos:\n";/* + $3;*/ }
 
 FuncionPredef: APANDA  "(" Expresion ")" { $$ = "Funcion predefinida: " + $1 + ". Argumento: " + $3; }
              | AKODIAK "(" Expresion ")" { $$ = "Funcion predefinida: " + $1 + ". Argumento: " + $3; }

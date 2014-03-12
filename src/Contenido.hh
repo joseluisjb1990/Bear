@@ -1,11 +1,10 @@
-enum Tipos { POLAR, PANDA, KODIAK, MALAYO, GRIZZLI, PARDO, EXTINTO };
-enum Categorias { VAR, CONST, PROC, CAMPO, CUEVA};
+enum Categorias { Var, Const, Proc, Campo, Cueva};
 
 class Contenido
 {
 private:
 
-    Tipos _tipo;
+    std::string _tipo;
     Categorias _categoria;
     unsigned int _alcance;
     unsigned int _linea;
@@ -14,7 +13,7 @@ private:
 
 public:
 
-    Contenido ( Tipos         tipo
+    Contenido ( std::string   tipo
               , Categorias    categoria
               , unsigned int  alcance
               , unsigned int  linea
@@ -35,7 +34,7 @@ private:
 
 public:
 
-  Contenedor  ( Tipos         tipo
+  Contenedor  ( std::string   tipo
               , Categorias    categoria
               , unsigned int  alcance
               , unsigned int  linea

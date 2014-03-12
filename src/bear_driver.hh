@@ -3,6 +3,7 @@
 # include <string>
 # include <map>
 # include "bear_parser.tab.hh"
+# include "TablaSimbolos.hh"
 
 // Tell Flex the lexer's prototype ...
 # define YY_DECL \
@@ -17,7 +18,7 @@ public:
   bear_driver ();
   virtual ~bear_driver ();
 
-  std::map<std::string, int> variables;
+  TablaSimbolos tabla;
 
   int result;
 
