@@ -1,4 +1,1 @@
-oso()=>extinto{
-  polar a,b,c = 42,7,69;
-  escribir(a);
-}
+42 + 5 * 42 + blanco + no negro
