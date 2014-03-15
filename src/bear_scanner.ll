@@ -41,11 +41,11 @@ ID       [a-zA-Z][a-zA-Z0-9\?!_]*
 "--<3"   {  loc.step(); BEGIN(comentario); }
 
 <comentario>{
-  "<3->"   { loc.step(); BEGIN(INITIAL);                                             }
-  [^<\n]+  { loc.step();                                                             }
-  "<"      { loc.step();                                                             }
-  \n       { loc.lines(1); loc.step();                                               }
-  <<EOF>>  { printf("Comentario sin terminar :(\n"); yy::bear_parser::make_END(loc); }
+  "<3->"   { loc.step(); BEGIN(INITIAL);    printf("blah");                                                  }
+  [^<\n]+  { loc.step();                                                                      }
+  "<"      { loc.step();                                                                      }
+  \n       { loc.lines(1); loc.step();                                                        }
+  <<EOF>>  { driver.error(loc, "Comentario sin terminar :("); yy::bear_parser::make_END(loc); }
 }
 
 {DIGIT}+  { return yy::bear_parser::make_CONSTPOLAR(yytext, loc); }
@@ -57,6 +57,7 @@ ID       [a-zA-Z][a-zA-Z0-9\?!_]*
 '.'|'\\n'   { return yy::bear_parser::make_CONSTMALAYO(yytext, loc);}
 
 \"(\\.|[^\\\"])*\"  { return yy::bear_parser::make_CONSTHORMIGUERO(yytext, loc); }
+\"(\\.|[^\\\"])*    { driver.error(loc, "String incompleto"); }
 
 blanco      { return yy::bear_parser::make_BLANCO(yytext, loc);      }
 negro       { return yy::bear_parser::make_NEGRO(yytext, loc);       }
@@ -126,6 +127,9 @@ mientras    { return yy::bear_parser::make_MIENTRAS(yytext, loc);    }
 
 
 <<EOF>>    return yy::bear_parser::make_END(loc);
+
+.  driver.error(loc, "Caracter inesperado");
+
 %%
 
 void
