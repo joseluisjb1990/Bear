@@ -9,6 +9,7 @@
 {
 # include <string>
 # include <vector>
+# include "expresion.hh"
 class bear_driver;
 
 typedef struct {
@@ -103,9 +104,9 @@ typedef struct {
 %token <std::string> AMALAYO
 %token <std::string> LON
 %token <std::string> MIENTRAS
-%type  <std::string> Programa
-%type  <std::string> Expresion
-%type  <std::vector<elementoLista>*> Expresiones
+%type  <Expression*> Programa
+%type  <Expression*> Expresion
+%type  <std::vector<Expression *>*> Expresiones
 %type  <std::string> Instrucciones
 %type  <std::string> Instruccion
 %type  <std::string> LValue
@@ -138,10 +139,12 @@ typedef struct {
 %%
 %start Programa;
 
+Programa : Expresion { cout << $1->to_string(); $$ = $1; }
+/*
 Programa: Definiciones "oso" "(" ")" "=>" EXTINTO "{" Cuerpo "}" { $$ = $1 + $8; std::cout << $1 << "Funcion principal oso:" << std::endl << $8; }
         ;
 
-Definiciones: /* Vacio */
+Definiciones:
             | ListaDefGlobales   { $$ = "Definiciones:\n" + $1; }
             ;
 
@@ -184,7 +187,7 @@ ParametroCueva: CUEVA "[" "]" DE                           { $$ = $1 + " [] " + 
               | ParametroCueva CUEVA "[" CONSTPOLAR "]" DE { $$ = $1 + $2 + " [" + $4 + "] " + $6 + " "; }
               ;
 
-DefConstante: CONST Tipo Identificadores "=" Expresiones { $$ = "Declaración de constante:\nTipo: "; /*+ $2 + ". Nombre: " + $3 + ". Valor: ";  + $5;*/ }
+DefConstante: CONST Tipo Identificadores "=" Expresiones { $$ = "Declaración de constante:\nTipo: "; }
             ;
 
 DefVariable: Tipo Identificadores "=" Expresiones {
@@ -193,10 +196,10 @@ DefVariable: Tipo Identificadores "=" Expresiones {
                                                         driver.tabla.add_symbol($2->at(i).nombre, $1, Var, $2->at(i).linea, $2->at(i).columna);
                                                       }
                                                     }
-                                                    $$ = "Declaración de variable con inicialización:\nTipo: " + $1 + ".\nIdentificadores: " + /*$2*/ + ".\nExpresiones: "; /* + $4;*/
+                                                    $$ = "Declaración de variable con inicialización:\nTipo: " + $1 + ".\nIdentificadores: " + ".\nExpresiones: ";
                                                   }
-           | Tipo Identificadores                 { $$ = "Declaración de variable sin inicialización:\nTipo: " + $1 + ".\nIdentificadores: "; /* + $2;*/                           }
-           | DefCueva                             { $$ = "Declaración de cueva:\n" + $1;                                                                                     }
+           | Tipo Identificadores                 { $$ = "Declaración de variable sin inicialización:\nTipo: " + $1 + ".\nIdentificadores: "; }
+           | DefCueva                             { $$ = "Declaración de cueva:\n" + $1;                                                      }
            ;
 
 Identificadores: ID                     { $$ = new std::vector<elementoLista>(); elementoLista e; e.nombre = $1; e.linea = @1.begin.line; e.columna = @1.begin.column; $$->push_back(e); }
@@ -231,26 +234,24 @@ Instrucciones: Instruccion               { $$ = $1 + "\n";      }
              | Instrucciones Instruccion { $$ = $1 + $2 + "\n"; }
              ;
 
-/* Aqui hay el problema de que hay que asegurar que la cantidad de lvalues y de expresiones sea la misma, no tengo manera de hacerlo ahorita */
-
-Instruccion: LValues "=" Expresiones ";"                                                    { $$ = "Asignación:\nl-values: " + $1 + ".\n" + "r-values:  " /*+ $3 */+ ";";                                                                                  }
-           | LEER "(" ID ")" ";"                                                            { $$ = "Leer: variable: " + $3 + ";";                                                                                                                      }
-           | ESCRIBIR "(" Expresion ")" ";"                                                 { $$ = "Escribir: valor: " + $3 + ";";                                                                                                                     }
-           | Funcion ";"                                                                    { $$ = "Funcion:\n" + $1 + ";";                                                                                                                            }
+Instruccion: LValues "=" Expresiones ";"                                                    { $$ = "Asignación:\nl-values: " + $1 + ".\n" + "r-values:  " + ";";                                                                        }
+           | LEER "(" ID ")" ";"                                                            { $$ = "Leer: variable: " + $3 + ";";                                                                                                                }
+           | ESCRIBIR "(" Expresion ")" ";"                                                 { $$ = "Escribir: valor: " + $3 + ";";                                                                                                               }
+           | Funcion ";"                                                                    { $$ = "Funcion:\n" + $1 + ";";                                                                                                                      }
            | SI Expresion ENTONCES "{" Instrucciones "}"                                    { $$ = "Condicional sin else:\nCondición: " + $2 + "\nInstrucciones: " + $5;                                                                         }
            | SI Expresion ENTONCES "{" Instrucciones "}" SINO "{" Instrucciones "}"         { $$ = "Condicional con else:\nCondición: " + $2 + "\nBrazo true:\n" + $5 + "\nBrazo false:\n" + $9;                                                 }
            | PARA ID EN "(" Expresion ";" Expresion ")" "{" Cuerpo "}"                      { $$ = "Iteración acotada:\nVariable de iteración: " + $2 + "\nDesde: " + $5 + "\nHasta:\n" + $7 + "\nInstrucciones:\n" + $10;                       }
            | PARA ID EN "(" Expresion ";" Expresion ";" Expresion ")" "{" Cuerpo "}"        { $$ = "Iteración acotada:\nVariable de iteración: " + $2 + "\nDesde: " + $5 + "\nHasta:\n" + $9 + "\nCon Paso: " + $7 + "\nInstrucciones:\n" + $12; }
            | PARA ID EN ID "{" Cuerpo  "}"                                                  { $$ = "Iteración acotada:\nVariable de iteración: " + $2 + "\nArreglo sobre el cual iterar: " + $4 + "\nInstrucciones:\n" + $6;                     }
            | IteracionIndeterminada                                                         { $$ = "Iteración indeterminada:\n" + $1;                                                                                                            }
-           | ID "++" ";"                                                                    { $$ = "Incremento de la variable: " + $1 + ";";                                                                                                           }
-           | ID "--" ";"                                                                    { $$ = "Decremento de la variable: " + $1 + ";";                                                                                                           }
-           | VOMITA ";"                                                                     { $$ = "Vomita;";                                                                                                                                     }
-           | VOMITA ID ";"                                                                  { $$ = "Vomita a la etiqueta: " + $2 + ";";                                                                                                                }
-           | FONDOBLANCO ";"                                                                { $$ = "fondoBlanco;";                                                                                                                                }
-           | FONDOBLANCO ID ";"                                                             { $$ = "fondoBlanco a la etiqueta: " + $2 + ";";                                                                                                           }
-           | ROLOEPEA ";"                                                                   { $$ = "roloePea;";                                                                                                                                   }
-           | ROLOEPEA ID ";"                                                                { $$ = "roloePea a la etiqueta: " + $2 + ";";                                                                                                              }
+           | ID "++" ";"                                                                    { $$ = "Incremento de la variable: " + $1 + ";";                                                                                                     }
+           | ID "--" ";"                                                                    { $$ = "Decremento de la variable: " + $1 + ";";                                                                                                     }
+           | VOMITA ";"                                                                     { $$ = "Vomita;";                                                                                                                                    }
+           | VOMITA ID ";"                                                                  { $$ = "Vomita a la etiqueta: " + $2 + ";";                                                                                                          }
+           | FONDOBLANCO ";"                                                                { $$ = "fondoBlanco;";                                                                                                                               }
+           | FONDOBLANCO ID ";"                                                             { $$ = "fondoBlanco a la etiqueta: " + $2 + ";";                                                                                                     }
+           | ROLOEPEA ";"                                                                   { $$ = "roloePea;";                                                                                                                                  }
+           | ROLOEPEA ID ";"                                                                { $$ = "roloePea a la etiqueta: " + $2 + ";";                                                                                                        }
            ;
 
 IteracionIndeterminada: ID ":" MIENTRAS "(" Expresion ")" "{" Instrucciones "}" { $$ = "Etiqueta: " + $1 + "\nCondición: " + $5 + "\nInstrucciones: " + $8; }
@@ -272,9 +273,22 @@ AccesoCueva: ID "[" Expresion "]"          { $$ = $1 + "[" + $3 + "]"; }
            | AccesoCueva "[" Expresion "]" { $$ = $1 + "[" + $3 + "]"; }
            ;
 
+*/
 
-Expresiones: Expresion                 { $$ = new std::vector<elementoLista>(); elementoLista e; e.nombre = $1; e.linea = @1.begin.line; e.columna = @1.begin.column; $$->push_back(e); }
-           | Expresiones "," Expresion { $$ = $1; elementoLista e; e.nombre = $3, e.linea = @3.begin.line; e.columna = @3.begin.column; $$->push_back(e); }
+Expresiones: Expresion                 { /*std::vector<elementoLista> vector = new std::vector<elementoLista>();
+                                          elementoLista e; e.nombre  = $1; e.linea = @1.begin.line;
+                                          e.columna = @1.begin.column; $$->push_back(e);*/
+
+                                          $$ = new std::vector<Expression*>();
+                                          $$->push_back($1);
+                                       }
+           | Expresiones "," Expresion {  /*$$ = $1;
+                                          elementoLista e;
+                                          e.nombre = $3;
+                                          e.linea = @3.begin.line;
+                                          e.columna = @3.begin.column;*/
+                                          $$->push_back($3);
+                                        }
            ;
 
 %nonassoc ":" "?";
@@ -288,44 +302,46 @@ Expresiones: Expresion                 { $$ = new std::vector<elementoLista>(); 
 %nonassoc UNARIO;
 %right "**";
 
-Expresion: CONSTPOLAR                                    { $$ = $1;                                                                            }
-         | CONSTKODIAK                                   { $$ = $1;                                                                            }
-         | CONSTHORMIGUERO                               { $$ = $1;                                                                            }
-         | CONSTMALAYO                                   { $$ = $1;                                                                            }
-         | LValue                                        { $$ = $1;                                                                            }
-         | Funcion                                       { $$ = $1;                                                                            }
-         | FuncionPredef                                 { $$ = $1;                                                                            }
-         | BLANCO                                        { $$ = $1;                                                                            }
-         | NEGRO                                         { $$ = $1;                                                                            }
-         | Expresion "<"   Expresion                     { $$ = $1 + "<" + $3;                                                                 }
-         | Expresion "=<"  Expresion                     { $$ = $1 + "=<" + $3;                                                                }
-         | Expresion ">"   Expresion                     { $$ = $1 + ">" + $3;                                                                 }
-         | Expresion ">="  Expresion                     { $$ = $1 + ">=" + $3;                                                                }
-         | Expresion "=="  Expresion                     { $$ = $1 + "==" + $3;                                                                }
-         | Expresion "=/=" Expresion                     { $$ = $1 + "=/=" + $3;                                                               }
-         | Expresion "|"   Expresion                     { $$ = $1 + "|" + $3;                                                                 }
-         | Expresion "&"   Expresion                     { $$ = $1 + "&" + $3;                                                                 }
-         | "no" Expresion                                { $$ = "no " + $2;                                                                    }
-         | Expresion "+"  Expresion                      { $$ = $1 + "+" + $3;                                                                 }
-         | Expresion "-"  Expresion                      { $$ = $1 + "-" + $3;                                                                 }
-         | Expresion "**" Expresion                      { $$ = $1 + "**" + $3;                                                                }
-         | Expresion "*"  Expresion                      { $$ = $1 + "*" + $3;                                                                 }
-         | Expresion "/"  Expresion                      { $$ = $1 + "/" + $3;                                                                 }
-         | Expresion "%"  Expresion                      { $$ = $1 + "%" + $3;                                                                 }
-         | "-" Expresion %prec UNARIO                    { $$ = "-" + $2;                                                                      }
-         | "(" Expresion ")"                             { $$ = "(" + $2 + ")";                                                                }
-         | Expresion "?" Expresion ":" Expresion { $$ = "Condición: " + $1 + "\nCondición cierta: " + $3 + "\nCondición falsa: " + $5; }
+Expresion: CONSTPOLAR                          { $$ = new ExprConstante(std::string("polar"),$1);                                 }
+         | CONSTKODIAK                         { $$ = new ExprConstante(std::string("kodiak"),$1);                                }
+         | CONSTHORMIGUERO                     { $$ = new ExprConstante(std::string("hormiguero"),$1);                            }
+         | CONSTMALAYO                         { $$ = new ExprConstante(std::string("malayo"), $1);                               }
+        /* | LValue                            { $$ = $1;                                                                }*/
+        /* | Funcion                           { $$ = $1;                                                                }*/
+        /* | FuncionPredef                     { $$ = $1;                                                                }*/
+         | BLANCO                              { $$ = new ExprConstante(std::string("panda"), $1);                                    }
+         | NEGRO                               { $$ = new ExprConstante(std::string("panda"), $1);                                    }
+         | Expresion "<"   Expresion           { $$ = new ExprBinaria(std::string("<"  ), $1,$3)   ;     /*$1 + "<" + $3;*/                }
+         | Expresion "=<"  Expresion           { $$ = new ExprBinaria(std::string("=<" ), $1,$3)  ;    /* $1 + "=<" + $3;*/              }
+         | Expresion ">"   Expresion           { $$ = new ExprBinaria(std::string(">"  ), $1,$3)   ;     /*$1 + ">" + $3;  */              }
+         | Expresion ">="  Expresion           { $$ = new ExprBinaria(std::string(">=" ), $1,$3)  ;    /*$1 + ">=" + $3; */              }
+         | Expresion "=="  Expresion           { $$ = new ExprBinaria(std::string("==" ), $1,$3)  ;    /*$1 + "==" + $3; */              }
+         | Expresion "=/=" Expresion           { $$ = new ExprBinaria(std::string("=/="), $1,$3) ;   /*$1 + "=/=" + $3;*/              }
+         | Expresion "|"   Expresion           { $$ = new ExprBinaria(std::string("|"  ), $1,$3)   ;     /*$1 + "|" + $3;  */              }
+         | Expresion "&"   Expresion           { $$ = new ExprBinaria(std::string("&"  ), $1,$3)   ;     /*$1 + "&" + $3;  */              }
+         | "no" Expresion                      { $$ = new ExprUnaria (std::string("no" ), $2)     ;        /*"no " + $2;     */              }
+         | Expresion "+"  Expresion            { $$ = new ExprBinaria(std::string("+"  ), $1,$3)   ;     /*$1 + "+" + $3;  */              }
+         | Expresion "-"  Expresion            { $$ = new ExprBinaria(std::string("-"  ), $1,$3)   ;     /*$1 + "-" + $3;  */              }
+         | Expresion "**" Expresion            { $$ = new ExprBinaria(std::string("**" ), $1,$3)  ;    /*$1 + "**" + $3; */              }
+         | Expresion "*"  Expresion            { $$ = new ExprBinaria(std::string("*"  ), $1,$3)   ;     /*$1 + "*" + $3;  */              }
+         | Expresion "/"  Expresion            { $$ = new ExprBinaria(std::string("/"  ), $1,$3)   ;     /*$1 + "/" + $3;  */              }
+         | Expresion "%"  Expresion            { $$ = new ExprBinaria(std::string("%"  ), $1,$3)   ;     /*$1 + "%" + $3;  */              }
+         | "-" Expresion %prec UNARIO          { $$ = new ExprUnaria (std::string("-"  ), $2)      ;   /*"-" + $2;*/                     }
+         | "(" Expresion ")"                   { $$ = $2;                                                                }
+        /* | Expresion "?" Expresion ":" Expresion { $$ = "Condición: " + $1 + "\nCondición cierta: " + $3 + "\nCondición falsa: " + $5; }*/
          ;
 
-Funcion: ID "(" Expresiones ")" { $$ = "Nombre de funcion: " + $1 + "\nArgumentos:\n";/* + $3;*/ }
+/*
+Funcion: ID "(" Expresiones ")" { $$ = "Nombre de funcion: " + $1 + "\nArgumentos:\n"; }
 
-FuncionPredef: APANDA  "(" Expresion ")" { $$ = "Funcion predefinida: " + $1 + ". Argumento: " + $3; }
-             | AKODIAK "(" Expresion ")" { $$ = "Funcion predefinida: " + $1 + ". Argumento: " + $3; }
-             | AMALAYO "(" Expresion ")" { $$ = "Funcion predefinida: " + $1 + ". Argumento: " + $3; }
-             | APOLAR  "(" Expresion ")" { $$ = "Funcion predefinida: " + $1 + ". Argumento: " + $3; }
-             | LON     "(" Expresion ")" { $$ = "Funcion predefinida: " + $1 + ". Argumento: " + $3; }
+FuncionPredef: APANDA  "(" Expresion ")" { $$ = "Funcion predefinida: " + $1 + ". Argumento: "  }
+             | AKODIAK "(" Expresion ")" { $$ = "Funcion predefinida: " + $1 + ". Argumento: "  }
+             | AMALAYO "(" Expresion ")" { $$ = "Funcion predefinida: " + $1 + ". Argumento: "  }
+             | APOLAR  "(" Expresion ")" { $$ = "Funcion predefinida: " + $1 + ". Argumento: "  }
+             | LON     "(" Expresion ")" { $$ = "Funcion predefinida: " + $1 + ". Argumento: "  }
              ;
 
+*/
 %%
 
 void

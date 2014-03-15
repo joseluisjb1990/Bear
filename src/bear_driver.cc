@@ -18,7 +18,7 @@ bear_driver::parse (const std::string &f)
   yy::bear_parser parser (*this);
   //parser.set_debug_level (trace_parsing);
   int res = parser.parse ();
-  cout << tabla;
+  //cout << tabla;
   scan_end ();
   return res;
 }
