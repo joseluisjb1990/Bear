@@ -1,9 +1,9 @@
-oso()=>extinto{
-  ñ
-  \
-  hormiguero h = "holiiiis
-  <3 alskdjflasdf
-
-  polar a,b,c = 42,7,69;
-  escribir(a);
-}
+  const polar a, b = 57, 68
+  a, d = 42, "holiiiiiiiiiiis";
+  b = 42 ? 42 : 69;
+  c->r = 42.0;
+  e.fla->esteee = 5 + 7;
+  a[56][98][5] = 42;
+  a[blanco | negro ] = b[5];
+  si blanco entonces {a = negro;}
+  si negro entonces {t->g = 8;} sino { si blanco entonces {a = 56;} }
