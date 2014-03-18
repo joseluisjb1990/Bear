@@ -19,6 +19,7 @@ public:
   virtual ~bear_driver ();
 
   TablaSimbolos tabla;
+  int errores = 0;
 
   int result;
 

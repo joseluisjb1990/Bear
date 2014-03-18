@@ -1,5 +1,5 @@
   const polar a, b = 57, 68
-  a, d = 42, "holiiiiiiiiiiis";
+  a, d = 42, "holiiiiiiiiiiis"
   b = 42 ? 42 : 69;
   c->r = 42.0;
   e.fla->esteee = 5 + 7;

@@ -26,11 +26,14 @@ bear_driver::parse (const std::string &f)
 void
 bear_driver::error (const yy::location& l, const std::string& m)
 {
-  std::cerr << l << ": " << m << std::endl;
+  ++errores;
+  cout << errores;
+  std::cerr << "Error entre " << l.begin.line << "." << l.begin.column << " y " << l.end.line << "." << l.end.column << ": " << m << std::endl;
 }
 
 void
 bear_driver::error (const std::string& m)
 {
+  ++errores;
   std::cerr << m << std::endl;
 }

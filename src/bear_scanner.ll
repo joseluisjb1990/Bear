@@ -20,8 +20,12 @@ static yy::location loc;
 
 %x comentario
 
-DIGIT    [0-9]
-ID       [a-zA-Z][a-zA-Z0-9\?!_]*
+DIGIT      [0-9]
+ID         [a-zA-Z][a-zA-Z0-9\?!_]*
+Entero     {DIGIT}+
+Decimal    {DIGIT}+\.{DIGIT}*
+NotCientif {DIGIT}+(\.{DIGIT})?e-?{DIGIT}+
+Caracter   '.'|'\\n'
 
 %{
   // Code run each time a pattern is matched.
@@ -48,13 +52,13 @@ ID       [a-zA-Z][a-zA-Z0-9\?!_]*
   <<EOF>>  { driver.error(loc, "Comentario sin terminar :("); return yy::bear_parser::make_END(loc); }
 }
 
-{DIGIT}+  { return yy::bear_parser::make_CONSTPOLAR(yytext, loc); }
+{Entero}     { return yy::bear_parser::make_CONSTPOLAR(yytext, loc);  }
 
-{DIGIT}+\.{DIGIT}*  { return yy::bear_parser::make_CONSTKODIAK(yytext, loc); }
+{Decimal}    { return yy::bear_parser::make_CONSTKODIAK(yytext, loc); }
 
-{DIGIT}+(\.{DIGIT})?e-?{DIGIT}+  { return yy::bear_parser::make_CONSTKODIAK(yytext, loc);}
+{NotCientif} { return yy::bear_parser::make_CONSTKODIAK(yytext, loc); }
 
-'.'|'\\n'   { return yy::bear_parser::make_CONSTMALAYO(yytext, loc);}
+{Caracter}   { return yy::bear_parser::make_CONSTMALAYO(yytext, loc); }
 
 \"([^\"\n])*\"  { return yy::bear_parser::make_CONSTHORMIGUERO(yytext, loc); }
 \"([^\"\n])*    { driver.error(loc, "String incompleto");                    }
@@ -127,6 +131,8 @@ mientras    { return yy::bear_parser::make_MIENTRAS(yytext, loc);    }
 
 
 <<EOF>>    return yy::bear_parser::make_END(loc);
+
+    /* Aqui me gustaría poner cual es el caracter que recibe (yytext) en el output del error. No supe hacerlo xD */
 
 .  driver.error(loc, "Caracter inesperado");
 
