@@ -1,9 +1,0 @@
-oso
-{
-  escribir("Por favor, introduzca su nombre \n");
-  hormiguero Nombre;
-  leer (Nombre);
-  escribir("Mucho gusto Sr/Sra ");
-  escribir(Nombre);
-  escribir('\n');
-}
