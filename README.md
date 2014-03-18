@@ -403,7 +403,7 @@ Si se cumple la `<condición>` se ejecuta la lista de `<instrucciones1>`, en cas
 
 ### Iteración acotada
 
-    para <variable> en ( <expresión1>, <expresión2>, <expresión3> ) {
+    para <variable> en ( <expresión1>; <expresión2>; <expresión3> ) {
       <instrucciones>
     }
 
