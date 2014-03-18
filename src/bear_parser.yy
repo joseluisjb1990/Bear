@@ -14,11 +14,6 @@
 # include "definition.hh"
 class bear_driver;
 
-typedef struct {
-  std::string nombre;
-  unsigned int linea;
-  unsigned int columna;
-} elementoLista;
 }
 // The parsing context.
 %param { bear_driver& driver }
@@ -111,7 +106,7 @@ typedef struct {
 %type  <std::vector<Expression*>*> Expresiones
 %type  <std::vector<Statement*>*> Instrucciones
 %type  <Statement*> Instruccion
-%type  <ExprLValue*> LValue
+%type  <LValueExpr*> LValue
 %type  <std::vector<Expression*>*> LValues
 %type  <std::string> Definiciones
 %type  <std::string> ListaDefGlobales
@@ -130,7 +125,7 @@ typedef struct {
 %type  <std::string> DefParametros
 %type  <std::string> DefParametro
 %type  <std::string> ParametroCueva
-%type  <ExprCueva*>  AccesoCueva
+%type  <CuevaExpr*>  AccesoCueva
 %type  <std::string> FuncionPredef
 %type  <std::string> Funcion
 %type  <std::string> Cuerpo
@@ -257,6 +252,7 @@ Instruccion: LValues "=" Expresiones ";"                                        
            | Funcion ";"                                                                    { $$ = "Funcion:\n" + $1 + ";";                                                                                                                      }*/
            | SI Expresion ENTONCES "{" Instrucciones "}"                                    { $$ = new If($2, $5);                                                                                                                               }
            | SI Expresion ENTONCES "{" Instrucciones "}" SINO "{" Instrucciones "}"         { $$ = new IfElse($2, $5, $9);                                                                                                                       }
+           | error ';'                                                                      { yyerrok;                                                                                                                                           }
 /*           | PARA ID EN "(" Expresion ";" Expresion ")" "{" Cuerpo "}"                      { $$ = "Iteración acotada:\nVariable de iteración: " + $2 + "\nDesde: " + $5 + "\nHasta:\n" + $7 + "\nInstrucciones:\n" + $10;                       }
            | PARA ID EN "(" Expresion ";" Expresion ";" Expresion ")" "{" Cuerpo "}"        { $$ = "Iteración acotada:\nVariable de iteración: " + $2 + "\nDesde: " + $5 + "\nHasta:\n" + $9 + "\nCon Paso: " + $7 + "\nInstrucciones:\n" + $12; }
            | PARA ID EN ID "{" Cuerpo  "}"                                                  { $$ = "Iteración acotada:\nVariable de iteración: " + $2 + "\nArreglo sobre el cual iterar: " + $4 + "\nInstrucciones:\n" + $6;                     }
@@ -280,31 +276,19 @@ LValues: LValue             { $$ = new std::vector<Expression*>(); $$->push_back
        ;
 
 %left "->" ".";
-LValue: ID                 { $$ = new ExprID($1);          }
-      | LValue "->" LValue { $$ = new ExprPardo($1, $3);   }
-      | LValue "."  LValue { $$ = new ExprGrizzli($1, $3); }
-      | AccesoCueva        { $$ = $1;             }
+LValue: ID                 { $$ = new IDExpr($1);          }
+      | LValue "->" LValue { $$ = new PardoExpr($1, $3);   }
+      | LValue "."  LValue { $$ = new GrizzliExpr($1, $3); }
+      | AccesoCueva        { $$ = $1;                      }
       ;
 
-AccesoCueva: ID "[" Expresion "]"          { $$ = new ExprCueva($1, $3); }
+AccesoCueva: ID "[" Expresion "]"          { $$ = new CuevaExpr($1, $3); }
            | AccesoCueva "[" Expresion "]" { $$ = $1; $$->addDimension($3); }
            ;
 
 
-Expresiones: Expresion                 { /*std::vector<elementoLista> vector = new std::vector<elementoLista>();
-                                          elementoLista e; e.nombre  = $1; e.linea = @1.begin.line;
-                                          e.columna = @1.begin.column; $$->push_back(e);*/
-
-                                          $$ = new std::vector<Expression*>();
-                                          $$->push_back($1);
-                                       }
-           | Expresiones "," Expresion {  /*$$ = $1;
-                                          elementoLista e;
-                                          e.nombre = $3;
-                                          e.linea = @3.begin.line;
-                                          e.columna = @3.begin.column;*/
-                                          $$ = $1; $$->push_back($3);
-                                        }
+Expresiones: Expresion                 { $$ = new std::vector<Expression*>(); $$->push_back($1); }
+           | Expresiones "," Expresion { $$ = $1; $$->push_back($3); }
            ;
 
 %nonassoc ":" "?";
@@ -318,33 +302,33 @@ Expresiones: Expresion                 { /*std::vector<elementoLista> vector = n
 %nonassoc UNARIO;
 %right "**";
 
-Expresion: CONSTPOLAR                            { $$ = new ExprConstante(std::string("polar")     , $1); }
-         | CONSTKODIAK                           { $$ = new ExprConstante(std::string("kodiak")    , $1); }
-         | CONSTHORMIGUERO                       { $$ = new ExprConstante(std::string("hormiguero"), $1); }
-         | CONSTMALAYO                           { $$ = new ExprConstante(std::string("malayo")    , $1); }
+Expresion: CONSTPOLAR                            { $$ = new ConstantExpr(std::string("polar")     , $1); }
+         | CONSTKODIAK                           { $$ = new ConstantExpr(std::string("kodiak")    , $1); }
+         | CONSTHORMIGUERO                       { $$ = new ConstantExpr(std::string("hormiguero"), $1); }
+         | CONSTMALAYO                           { $$ = new ConstantExpr(std::string("malayo")    , $1); }
          | LValue                                { $$ = $1;                                               }
         /* | Funcion                             { $$ = $1;                                                                }*/
         /* | FuncionPredef                       { $$ = $1;                                                                }*/
-         | BLANCO                                { $$ = new ExprConstante(std::string("panda"), $1    );  }
-         | NEGRO                                 { $$ = new ExprConstante(std::string("panda"), $1    );  }
-         | Expresion "<"   Expresion             { $$ = new ExprBinaria  (std::string("<"  )  , $1, $3);  }
-         | Expresion "=<"  Expresion             { $$ = new ExprBinaria  (std::string("=<" )  , $1, $3);  }
-         | Expresion ">"   Expresion             { $$ = new ExprBinaria  (std::string(">"  )  , $1, $3);  }
-         | Expresion ">="  Expresion             { $$ = new ExprBinaria  (std::string(">=" )  , $1, $3);  }
-         | Expresion "=="  Expresion             { $$ = new ExprBinaria  (std::string("==" )  , $1, $3);  }
-         | Expresion "=/=" Expresion             { $$ = new ExprBinaria  (std::string("=/=")  , $1, $3);  }
-         | Expresion "|"   Expresion             { $$ = new ExprBinaria  (std::string("|"  )  , $1, $3);  }
-         | Expresion "&"   Expresion             { $$ = new ExprBinaria  (std::string("&"  )  , $1, $3);  }
-         | "no" Expresion                        { $$ = new ExprUnaria   (std::string("no" )  , $2    );  }
-         | Expresion "+"  Expresion              { $$ = new ExprBinaria  (std::string("+"  )  , $1, $3);  }
-         | Expresion "-"  Expresion              { $$ = new ExprBinaria  (std::string("-"  )  , $1, $3);  }
-         | Expresion "**" Expresion              { $$ = new ExprBinaria  (std::string("**" )  , $1, $3);  }
-         | Expresion "*"  Expresion              { $$ = new ExprBinaria  (std::string("*"  )  , $1, $3);  }
-         | Expresion "/"  Expresion              { $$ = new ExprBinaria  (std::string("/"  )  , $1, $3);  }
-         | Expresion "%"  Expresion              { $$ = new ExprBinaria  (std::string("%"  )  , $1, $3);  }
-         | "-" Expresion %prec UNARIO            { $$ = new ExprUnaria   (std::string("-"  )  , $2    );  }
+         | BLANCO                                { $$ = new ConstantExpr(std::string("panda"), $1    );  }
+         | NEGRO                                 { $$ = new ConstantExpr(std::string("panda"), $1    );  }
+         | Expresion "<"   Expresion             { $$ = new BinaryExpr  (std::string("<"  )  , $1, $3);  }
+         | Expresion "=<"  Expresion             { $$ = new BinaryExpr  (std::string("=<" )  , $1, $3);  }
+         | Expresion ">"   Expresion             { $$ = new BinaryExpr  (std::string(">"  )  , $1, $3);  }
+         | Expresion ">="  Expresion             { $$ = new BinaryExpr  (std::string(">=" )  , $1, $3);  }
+         | Expresion "=="  Expresion             { $$ = new BinaryExpr  (std::string("==" )  , $1, $3);  }
+         | Expresion "=/=" Expresion             { $$ = new BinaryExpr  (std::string("=/=")  , $1, $3);  }
+         | Expresion "|"   Expresion             { $$ = new BinaryExpr  (std::string("|"  )  , $1, $3);  }
+         | Expresion "&"   Expresion             { $$ = new BinaryExpr  (std::string("&"  )  , $1, $3);  }
+         | "no" Expresion                        { $$ = new UnaryExpr   (std::string("no" )  , $2    );  }
+         | Expresion "+"  Expresion              { $$ = new BinaryExpr  (std::string("+"  )  , $1, $3);  }
+         | Expresion "-"  Expresion              { $$ = new BinaryExpr  (std::string("-"  )  , $1, $3);  }
+         | Expresion "**" Expresion              { $$ = new BinaryExpr  (std::string("**" )  , $1, $3);  }
+         | Expresion "*"  Expresion              { $$ = new BinaryExpr  (std::string("*"  )  , $1, $3);  }
+         | Expresion "/"  Expresion              { $$ = new BinaryExpr  (std::string("/"  )  , $1, $3);  }
+         | Expresion "%"  Expresion              { $$ = new BinaryExpr  (std::string("%"  )  , $1, $3);  }
+         | "-" Expresion %prec UNARIO            { $$ = new UnaryExpr   (std::string("-"  )  , $2    );  }
          | "(" Expresion ")"                     { $$ = $2;                                                                       }
-         | Expresion "?" Expresion ":" Expresion { $$ = new ExprSelector ($1                  , $3, $5);  }
+         | Expresion "?" Expresion ":" Expresion { $$ = new SelectorExpr ($1                  , $3, $5);  }
          ;
 
 /*

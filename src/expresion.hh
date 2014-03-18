@@ -13,7 +13,7 @@ public :
     virtual std::string to_string(){ return "EXPRESIÓN BASE"; };
 };
 
-class ExprBinaria : public Expression
+class BinaryExpr : public Expression
 {
 private:
 
@@ -23,15 +23,15 @@ private:
 
 public:
 
-  ExprBinaria(std::string operador, Expression *izq, Expression *der);
+  BinaryExpr(std::string operador, Expression *izq, Expression *der);
   std::string to_string();
 };
 
-class ExprUnaria : public Expression
+class UnaryExpr : public Expression
 {
 public:
 
-  ExprUnaria(std::string operador, Expression *operando);
+  UnaryExpr(std::string operador, Expression *operando);
   std::string to_string();
 
 private:
@@ -39,11 +39,11 @@ private:
   Expression *_operando;
 };
 
-class ExprConstante : public Expression
+class ConstantExpr : public Expression
 {
 public:
 
-  ExprConstante(std::string tipo, std::string valor);
+  ConstantExpr(std::string tipo, std::string valor);
   std::string to_string();
 
 private:
@@ -52,11 +52,11 @@ private:
   std::string _valor;
 };
 
-class ExprSelector : public Expression
+class SelectorExpr : public Expression
 {
 public:
 
-  ExprSelector(Expression* condicion, Expression* brazoTrue, Expression* brazoFalse);
+  SelectorExpr(Expression* condicion, Expression* brazoTrue, Expression* brazoFalse);
   std::string to_string();
 
 private:
@@ -67,16 +67,16 @@ private:
 
 };
 
-class ExprLValue : public Expression
+class LValueExpr : public Expression
 {
   public:
-    ExprLValue(){};
+    LValueExpr(){};
 };
 
-class ExprID : public ExprLValue
+class IDExpr : public LValueExpr
 {
   public:
-    ExprID(std::string nombre);
+    IDExpr(std::string nombre);
     std::string to_string();
 
   private:
@@ -84,34 +84,34 @@ class ExprID : public ExprLValue
 
 };
 
-class ExprPardo : public ExprLValue
+class PardoExpr : public LValueExpr
 {
   public:
-    ExprPardo(ExprLValue* izquierda, ExprLValue* derecha);
+    PardoExpr(LValueExpr* izquierda, LValueExpr* derecha);
     std::string to_string();
 
   private:
-   ExprLValue* _izquierda;
-   ExprLValue* _derecha;
+   LValueExpr* _izquierda;
+   LValueExpr* _derecha;
 
 };
 
-class ExprGrizzli : public ExprLValue
+class GrizzliExpr : public LValueExpr
 {
   public:
-    ExprGrizzli(ExprLValue* izquierda, ExprLValue* derecha);
+    GrizzliExpr(LValueExpr* izquierda, LValueExpr* derecha);
     std::string to_string();
 
   private:
-   ExprLValue* _izquierda;
-   ExprLValue* _derecha;
+   LValueExpr* _izquierda;
+   LValueExpr* _derecha;
 
 };
 
-class ExprCueva : public ExprLValue
+class CuevaExpr : public LValueExpr
 {
   public:
-    ExprCueva(std::string nombre, Expression* dimension);
+    CuevaExpr(std::string nombre, Expression* dimension);
     std::string to_string();
     void addDimension(Expression* dimension);
 

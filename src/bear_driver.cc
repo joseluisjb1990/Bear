@@ -27,7 +27,6 @@ void
 bear_driver::error (const yy::location& l, const std::string& m)
 {
   ++errores;
-  cout << errores;
   std::cerr << "Error entre " << l.begin.line << "." << l.begin.column << " y " << l.end.line << "." << l.end.column << ": " << m << std::endl;
 }
 
