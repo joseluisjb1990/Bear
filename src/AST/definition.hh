@@ -41,4 +41,29 @@ class DefVar : public DefWithInit
     DefVar(std::string tipo, std::vector<std::string>* ids, std::vector<Expression*>* expr);
 
 };
+
+class DefVarNoInit : public Definition
+{
+  public:
+    DefVarNoInit(std::string tipo, std::vector<std::string>* ids);
+    std::string to_string();
+
+  private:
+    std::string _tipo;
+    std::vector<std::string>*_ids;
+
+};
+
+class DefCueva : public Definition
+{
+  public:
+    DefCueva(std::string tipo, std::string id, std::vector<std::string>* dimensiones);
+    std::string to_string();
+
+  private:
+    std::string _tipo;
+    std::string _id;
+    std::vector<std::string>* _dimensiones;
+};
+
 #endif

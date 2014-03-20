@@ -9,6 +9,7 @@
 {
 # include <string>
 # include <vector>
+# include "node.hh"
 # include "expresion.hh"
 # include "statement.hh"
 # include "definition.hh"
@@ -267,8 +268,8 @@ Instruccion: LValues "=" Expresiones ";"                                        
            | ROLOEPEA ID ";"                                                                { $$ = "roloePea a la etiqueta: " + $2 + ";";                                                                                                        }*/
            ;
 /*
-IteracionIndeterminada: ID ":" MIENTRAS "(" Expresion ")" "{" Instrucciones "}" { $$ = "Etiqueta: " + $1 + "\nCondición: " + $5 + "\nInstrucciones: " + $8; }
-                      | MIENTRAS "(" Expresion ")" "{" Instrucciones "}"        { $$ = "Condición: " + $3 + "\nInstrucciones: " + $6;                       }
+IteracionIndeterminada: ID ":" MIENTRAS "(" Expresion ")" "{" Cuerpo "}" { $$ = "Etiqueta: " + $1 + "\nCondición: " + $5 + "\nInstrucciones: " + $8; }
+                      | MIENTRAS "(" Expresion ")" "{" Cuerpo "}"        { $$ = "Condición: " + $3 + "\nInstrucciones: " + $6;                       }
                       ;
 */
 LValues: LValue             { $$ = new std::vector<Expression*>(); $$->push_back($1); }
