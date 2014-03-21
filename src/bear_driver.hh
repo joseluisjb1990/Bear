@@ -20,6 +20,7 @@ public:
 
   TablaSimbolos tabla;
   int errores = 0;
+  std::vector<Statement*>* AST;
 
   int result;
 

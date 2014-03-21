@@ -61,7 +61,7 @@ Caracter   '.'|'\\n'
 {Caracter}   { return yy::bear_parser::make_CONSTMALAYO(yytext, loc); }
 
 \"([^\"\n])*\"  { return yy::bear_parser::make_CONSTHORMIGUERO(yytext, loc); }
-\"([^\"\n])*    { driver.error(loc, "String incompleto");                    }
+\"([^\"\n])*    { driver.error(loc, "Hormiguero incompleto");                }
 
 blanco      { return yy::bear_parser::make_BLANCO(yytext, loc);      }
 negro       { return yy::bear_parser::make_NEGRO(yytext, loc);       }
@@ -134,7 +134,7 @@ mientras    { return yy::bear_parser::make_MIENTRAS(yytext, loc);    }
 
     /* Aqui me gustaría poner cual es el caracter que recibe (yytext) en el output del error. No supe hacerlo xD */
 
-.  driver.error(loc, "Caracter inesperado");
+.  { driver.error(loc, "Caracter inesperado"); }
 
 %%
 

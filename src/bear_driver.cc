@@ -18,8 +18,14 @@ bear_driver::parse (const std::string &f)
   yy::bear_parser parser (*this);
   //parser.set_debug_level (trace_parsing);
   int res = parser.parse ();
-  //cout << tabla;
-  scan_end ();
+  if (0 == errores) {
+    for (unsigned int i=0; i < AST->size(); ++i) {
+      cout << AST->at(i)->to_string() << std::endl;
+    }
+    cout << tabla;
+  }
+
+  scan_end();
   return res;
 }
 

@@ -137,13 +137,7 @@ class bear_driver;
 %%
 %start Programa;
 
-Programa : DefConstante Instrucciones {
-                                        cout << $1->to_string() << std::endl;
-                                        for (unsigned int i=0; i < $2->size(); ++i) {
-                                          cout << $2->at(i)->to_string() << std::endl;
-                                        }
-                                        $$ = $2;
-                                      }
+Programa : DefConstante Instrucciones { $$ = $2; driver.AST = $$; }
 /*
 Programa: Definiciones "oso" "(" ")" "=>" EXTINTO "{" Cuerpo "}" { $$ = $1 + $8; std::cout << $1 << "Funcion principal oso:" << std::endl << $8; }
         ;
@@ -245,6 +239,7 @@ Tipo: ID          { $$ = $1; }
 
 Instrucciones: Instruccion               { $$ = new std::vector<Statement*>(); $$->push_back($1); }
              | Instrucciones Instruccion { $$ = $1; $$->push_back($2);                            }
+             | error                     { yyerrok;                                               }
              ;
 
 Instruccion: LValues "=" Expresiones ";"                                                    { $$ = new Assign($1, $3);                                                                                                                                     }
@@ -253,7 +248,6 @@ Instruccion: LValues "=" Expresiones ";"                                        
            | Funcion ";"                                                                    { $$ = "Funcion:\n" + $1 + ";";                                                                                                                      }*/
            | SI Expresion ENTONCES "{" Instrucciones "}"                                    { $$ = new If($2, $5);                                                                                                                               }
            | SI Expresion ENTONCES "{" Instrucciones "}" SINO "{" Instrucciones "}"         { $$ = new IfElse($2, $5, $9);                                                                                                                       }
-           | error ';'                                                                      { yyerrok;                                                                                                                                           }
 /*           | PARA ID EN "(" Expresion ";" Expresion ")" "{" Cuerpo "}"                      { $$ = "Iteración acotada:\nVariable de iteración: " + $2 + "\nDesde: " + $5 + "\nHasta:\n" + $7 + "\nInstrucciones:\n" + $10;                       }
            | PARA ID EN "(" Expresion ";" Expresion ";" Expresion ")" "{" Cuerpo "}"        { $$ = "Iteración acotada:\nVariable de iteración: " + $2 + "\nDesde: " + $5 + "\nHasta:\n" + $9 + "\nCon Paso: " + $7 + "\nInstrucciones:\n" + $12; }
            | PARA ID EN ID "{" Cuerpo  "}"                                                  { $$ = "Iteración acotada:\nVariable de iteración: " + $2 + "\nArreglo sobre el cual iterar: " + $4 + "\nInstrucciones:\n" + $6;                     }
