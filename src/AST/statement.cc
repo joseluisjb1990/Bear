@@ -20,7 +20,7 @@ std::string Assign::to_string()
   return str;
 }
 
-If::If(Expression* condicion, std::vector<Statement*>* instrucciones)
+If::If(Expression* condicion, Statement* instrucciones)
   : Statement()
   , _condicion     ( condicion     )
   , _instrucciones ( instrucciones )
@@ -28,14 +28,10 @@ If::If(Expression* condicion, std::vector<Statement*>* instrucciones)
 
 std::string If::to_string()
 {
-  std::string str = "if " + _condicion->to_string() + "then: \n";
-  for (unsigned int i=0; i < _instrucciones->size(); ++i) {
-    str += _instrucciones->at(i)->to_string();
-  }
-  return str;
+  return "if " + _condicion->to_string() + "then: " + _instrucciones->to_string() + '\n';
 }
 
-IfElse::IfElse(Expression* condicion, std::vector<Statement*>* brazoTrue, std::vector<Statement*>* brazoFalse)
+IfElse::IfElse(Expression* condicion, Statement* brazoTrue, Statement* brazoFalse)
   : Statement()
   , _condicion  ( condicion  )
   , _brazoTrue  ( brazoTrue  )
@@ -44,15 +40,7 @@ IfElse::IfElse(Expression* condicion, std::vector<Statement*>* brazoTrue, std::v
 
 std::string IfElse::to_string()
 {
-  std::string str = "if " + _condicion->to_string() + "then: \n";
-  for (unsigned int i=0; i < _brazoTrue->size(); ++i) {
-    str += _brazoTrue->at(i)->to_string();
-  }
-  str += "else: \n";
-  for (unsigned int i=0; i < _brazoFalse->size(); ++i) {
-    str += _brazoFalse->at(i)->to_string();
-  }
-  return str;
+  return "if " + _condicion->to_string() + "then: " + _brazoTrue->to_string() + '\n' + "else:" + _brazoFalse->to_string() ;
 }
 
 Write::Write(Expression* expr)
@@ -94,7 +82,7 @@ std::string Body::to_string()
   return str;
 }
 
-ComplexFor::ComplexFor(std::string id, Expression* begin, Expression* end, Expression* step, Body* body)
+ComplexFor::ComplexFor(std::string id, Expression* begin, Expression* end, Expression* step, Statement* body)
   : Statement()
   , _id( id )
   , _begin( begin )
@@ -114,7 +102,7 @@ std::string ComplexFor::to_string()
         ;
 }
 
-SimpleFor::SimpleFor(std::string id, Expression* begin, Expression* end, Body* body)
+SimpleFor::SimpleFor(std::string id, Expression* begin, Expression* end, Statement* body)
   : Statement()
   , _id( id )
   , _begin( begin )
@@ -132,7 +120,7 @@ std::string SimpleFor::to_string()
         ;
 }
 
-IdFor::IdFor(std::string id, std::string iterVar, Body* body)
+IdFor::IdFor(std::string id, std::string iterVar, Statement* body)
   : Statement()
   , _id( id )
   , _iterVar( iterVar )
@@ -225,7 +213,7 @@ std::string BreakID::to_string()
   return "Nodo roloePea a la etiqueta " + _id + '\n';
 }
 
-While::While(Expression* expr, Body* body)
+While::While(Expression* expr, Statement* body)
   : _expr( expr )
   , _body( body )
   {}
@@ -240,10 +228,10 @@ std::string While::to_string()
 }
 
 
-TagWhile::TagWhile(Expression* expr, Body* body, std::string id)
-  : _expr ( expr )
+TagWhile::TagWhile(std::string id, Expression* expr, Statement* body)
+  : _id   ( id )
+  , _expr ( expr )
   , _body ( body )
-  , _id   ( id )
   {}
 
 std::string TagWhile::to_string()

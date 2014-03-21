@@ -31,25 +31,25 @@ class Assign : public Statement
 class If : public Statement
 {
   public:
-    If(Expression* condicion, std::vector<Statement*>* instrucciones);
+    If(Expression* condicion, Statement* instrucciones);
     std::string to_string();
 
   private:
     Expression* _condicion;
-    std::vector<Statement*>* _instrucciones;
+    Statement* _instrucciones;
 
 };
 
 class IfElse : public Statement
 {
   public:
-    IfElse(Expression* condicion, std::vector<Statement*>* brazoTrue, std::vector<Statement*>* brazoFalse);
+    IfElse(Expression* condicion, Statement* brazoTrue, Statement* brazoFalse);
     std::string to_string();
 
   private:
     Expression* _condicion;
-    std::vector<Statement*>* _brazoTrue;
-    std::vector<Statement*>* _brazoFalse;
+    Statement* _brazoTrue;
+    Statement* _brazoFalse;
 
 };
 
@@ -75,7 +75,7 @@ class Read : public Statement
 
 };
 
-class Body : public Node
+class Body : public Statement
 {
   public:
     Body(std::vector<Definition *>* listDef, std::vector<Statement *>* listSta);
@@ -86,10 +86,10 @@ class Body : public Node
     std::vector<Statement *>  * _listSta;
 };
 
-class ComplexFor : Statement
+class ComplexFor : public Statement
 {
   public:
-    ComplexFor(std::string id, Expression* begin, Expression* end, Expression* step, Body* body);
+    ComplexFor(std::string id, Expression* begin, Expression* end, Expression* step, Statement* body);
     std::string to_string();
 
   private:
@@ -97,32 +97,32 @@ class ComplexFor : Statement
     Expression* _begin;
     Expression* _end;
     Expression* _step;
-    Body*       _body;
+    Statement*       _body;
 };
 
-class SimpleFor : Statement
+class SimpleFor : public Statement
 {
   public:
-    SimpleFor(std::string id, Expression* begin, Expression* end, Body* body);
+    SimpleFor(std::string id, Expression* begin, Expression* end, Statement* body);
     std::string to_string();
 
   private:
     std::string _id;
     Expression* _begin;
     Expression* _end;
-    Body*       _body;
+    Statement*       _body;
 };
 
-class IdFor : Statement
+class IdFor : public Statement
 {
   public:
-    IdFor(std::string id, std::string iterVar, Body* body);
+    IdFor(std::string id, std::string iterVar, Statement* body);
     std::string to_string();
 
   private:
     std::string _id;
     std::string _iterVar;
-    Body*       _body;
+    Statement*       _body;
 };
 
 class Return : public Statement
@@ -200,23 +200,23 @@ class BreakID : public Statement
 class While : public Statement
 {
   public:
-    While(Expression* expr, Body* body);
+    While(Expression* expr, Statement* body);
     std::string to_string();
 
   private:
     Expression* _expr;
-    Body*       _body;
+    Statement*  _body;
 };
 
 class TagWhile : public Statement
 {
   public:
-    TagWhile(Expression* expr, Body* body, std::string id);
+    TagWhile(std::string id, Expression* expr, Statement* body);
     std::string to_string();
 
   private:
-    Expression* _expr;
-    Body*       _body;
     std::string _id;
+    Expression* _expr;
+    Statement*  _body;
 };
 #endif
