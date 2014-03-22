@@ -1,6 +1,6 @@
 #include "TablaSimbolos.hh"
 
-unsigned int TablaSimbolos::add_container (string nombre, std::string tipo, Categorias categoria, unsigned int linea, unsigned int columna, unsigned int alcanceCampos)
+unsigned int TablaSimbolos::add_container (std::string nombre, Type* tipo, Categorias categoria, unsigned int linea, unsigned int columna, unsigned int alcanceCampos)
 {
   Contenido *cont;
   cont = new  Contenedor(tipo, categoria,_alcance, linea, columna, alcanceCampos);
@@ -79,9 +79,15 @@ std::ostream& operator<<(std::ostream& os, TablaSimbolos &ts)
   os << '\n';
   return os;
 }
-unsigned int TablaSimbolos::add_symbol (string nombre, std::string tipo, Categorias categoria, unsigned int linea, unsigned int columna)
+unsigned int TablaSimbolos::add_symbol (string nombre, Type* tipo, Categorias categoria, unsigned int linea, unsigned int columna)
 {
   Contenido *cont = new Contenido(tipo, categoria,_alcance, linea, columna);
+  _dicc.insert(std::make_pair(nombre,cont));
+  return _alcance;
+}
+unsigned int TablaSimbolos::add_symbol (string nombre, Type* tipo, Categorias categoria, unsigned int lineaDec, unsigned int columnaDec, unsigned int lineaDef, unsigned int columnaDef)
+{
+  Contenido *cont = new Contenido(tipo, categoria,_alcance, lineaDec, columnaDec, lineaDef, columnaDef);
   _dicc.insert(std::make_pair(nombre,cont));
   return _alcance;
 }

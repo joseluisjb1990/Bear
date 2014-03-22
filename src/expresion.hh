@@ -2,10 +2,11 @@
 #define EXPRESSION_HH
 #include <string>
 #include <vector>
+#include "node.hh"
 
 using namespace std;
 
-class Expression
+class Expression : public Node
 {
 public :
 

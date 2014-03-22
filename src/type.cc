@@ -73,15 +73,15 @@ std::string HormigueroType::to_string()
 }
 
 CuevaType::CuevaType(Type* tipo, std::vector<int>* longitudes)
-  : _tipo       ( tipo       )
+  : Type(0)
+  , _tipo       ( tipo       )
   , _longitudes ( longitudes )
-  , Type(0)
   {}
 
 int CuevaType::getSize()
 {
   int size = _tipo->getSize();
-  for (unsigned int i; i<_longitudes->size(); ++i)
+  for (unsigned int i=0; i<_longitudes->size(); ++i)
     size = size * _longitudes->at(i);
   return size;
 }
@@ -116,7 +116,7 @@ PardoType::PardoType(std::vector<CampoType*>* campos, std::string nombre)
 std::string PardoType::to_string()
 {
   std::string str = _nombre + ":\n";
-  for (unsigned int i; i < _campos->size(); ++i)
+  for (unsigned int i=0; i < _campos->size(); ++i)
     str += _campos->at(i)->to_string() + "\n";
   return str;
 }
@@ -124,16 +124,40 @@ std::string PardoType::to_string()
 int PardoType::getSize()
 {
   int size = 0;
-  for (unsigned int i; i < _campos->size(); ++i)
+  for (unsigned int i=0; i < _campos->size(); ++i)
     size += _campos->at(i)->getSize();
   return size;
+}
+
+GrizzliType::GrizzliType(std::vector<CampoType*>* campos, std::string nombre)
+  : Type(0)
+  , _campos ( campos )
+  , _nombre ( nombre )
+  {}
+
+std::string GrizzliType::to_string()
+{
+  std::string str = _nombre + ";\n";
+  for (unsigned int i=0; i < _campos->size(); ++i)
+    str += _campos->at(i)->to_string() + "\n";
+  return str;
+}
+
+int GrizzliType::getSize()
+{
+  int max = 0;
+  for (unsigned int i=0; i < _campos->size(); ++i) {
+    if (max < _campos->at(i)->getSize() )
+      max = _campos->at(i)->getSize();
+  }
+  return max;
 }
 
 ErrorType::ErrorType()
   : Type(4)
   {}
 
-std::string to_string()
+std::string ErrorType::to_string()
 {
   return "error";
 }

@@ -4,6 +4,7 @@
 #include <stack>
 #include <vector>
 #include "Contenido.hh"
+#include "type.hh"
 
 using namespace std;
 
@@ -21,8 +22,9 @@ private:
 public:
 
     TablaSimbolos();
-    unsigned int add_symbol (string nombre, std::string tipo, Categorias categoria, unsigned int linea, unsigned int columna);
-    unsigned int add_container (string nombre, std::string tipo, Categorias categoria, unsigned int linea, unsigned int columna, unsigned int alcanceCampos);
+    unsigned int add_symbol (string nombre, Type* tipo, Categorias categoria, unsigned int linea, unsigned int columna);
+    unsigned int add_symbol (string nombre, Type* tipo, Categorias categoria, unsigned int lineaDec, unsigned int columnaDec, unsigned int lineaDef, unsigned int columnaDef);
+    unsigned int add_container (string nombre, Type* tipo, Categorias categoria, unsigned int linea, unsigned int columna, unsigned int alcanceCampos);
     friend std::ostream& operator<<(std::ostream& os, TablaSimbolos &ts);
     unsigned int enter_scope();
     unsigned int exit_scope();

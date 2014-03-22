@@ -40,6 +40,7 @@ public:
 
   // Error handling.
   void error (const yy::location& l, const std::string& m);
+  void error (const yy::location& l1, const yy::location& l2, const std::string& m);
   void error (const std::string& m);
 };
 #endif // ! CALCXX_DRIVER_HH

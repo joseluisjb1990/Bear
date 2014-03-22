@@ -1,19 +1,32 @@
-enum Categorias { Var, Const, Proc, Campo, Cueva};
+#include "type.hh"
+
+typedef enum { Var, Const, Proc, Campo, Cueva} Categorias;
 
 class Contenido
 {
 private:
 
-    std::string _tipo;
+    Type* _tipo;
     Categorias _categoria;
     unsigned int _alcance;
-    unsigned int _linea;
-    unsigned int _columna;
+    unsigned int _lineaDec;
+    unsigned int _columnaDec;
+    unsigned int _lineaDef;
+    unsigned int _columnaDef;
    //Posiblemente haya otros dependiendo del tipo o la categoria.
 
 public:
 
-    Contenido ( std::string   tipo
+    Contenido ( Type*         tipo
+              , Categorias    categoria
+              , unsigned int  alcance
+              , unsigned int  lineaDec
+              , unsigned int  columnaDec
+              , unsigned int  lineaDef
+              , unsigned int  columnaDef
+              );
+
+    Contenido ( Type*         tipo
               , Categorias    categoria
               , unsigned int  alcance
               , unsigned int  linea
@@ -34,7 +47,7 @@ private:
 
 public:
 
-  Contenedor  ( std::string   tipo
+  Contenedor  ( Type*         tipo
               , Categorias    categoria
               , unsigned int  alcance
               , unsigned int  linea

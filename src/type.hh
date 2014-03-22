@@ -86,7 +86,7 @@ class PardoType : public Type
 {
   private:
     std::vector<CampoType*>* _campos;
-    std::string         _nombre;
+    std::string              _nombre;
 
   public:
     PardoType(std::vector<CampoType*>* campos, std::string nombre);
@@ -94,10 +94,22 @@ class PardoType : public Type
     int getSize();
 };
 
+class GrizzliType : public Type
+{
+  private:
+    std::vector<CampoType*>* _campos;
+    std::string              _nombre;
+
+  public:
+    GrizzliType(std::vector<CampoType*>* campos, std::string nombre);
+    std::string to_string();
+    int getSize();
+};
+
 class ErrorType : public Type
 {
   public:
-    ErrorType()
+    ErrorType();
     std::string to_string();
 };
 

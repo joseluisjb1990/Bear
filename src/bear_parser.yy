@@ -13,8 +13,14 @@
 # include "expresion.hh"
 # include "statement.hh"
 # include "definition.hh"
+# include "type.hh"
 class bear_driver;
 
+typedef struct {
+  std::string nombre;
+  unsigned int linea;
+  unsigned int columna;
+} elementoLista;
 }
 // The parsing context.
 %param { bear_driver& driver }
@@ -29,6 +35,10 @@ class bear_driver;
 %code
 {
 # include "bear_driver.hh"
+
+void agregarConInicializacion(std::vector<elementoLista>* ids, Categorias categoria);
+void agregarSinInicializacion(std::vector<elementoLista>* ids, Categorias categoria);
+bool chequearLongitudListas(std::vector<elementoLista>* ids, std::vector<Expression*>* expr);
 }
 %define api.token.prefix {TOK_}
 %token
@@ -112,16 +122,16 @@ class bear_driver;
 %type  <std::string> Definiciones
 %type  <std::string> ListaDefGlobales
 %type  <std::string> DefinicionGlobal
-%type  <ConstDef*>   DefConstante
-%type  <std::string> Locales
-%type  <std::string> DefVariable
+%type  <Definition*>   DefConstante
+%type  <std::vector<Definition*>*> Locales
+%type  <Definition*> DefVariable
 %type  <std::string> DefCueva
 %type  <std::string> DefCompleja
 %type  <std::string> DefFuncion
-%type  <std::string> DefLocales
+%type  <Definition*> DefLocales
 %type  <std::string> Cuevas
-%type  <std::vector<std::string>*> Identificadores
-%type  <std::string> Tipo
+%type  <std::vector<elementoLista>*> Identificadores
+%type  <Type*> Tipo
 %type  <std::string> Campos
 %type  <std::string> DefParametros
 %type  <std::string> DefParametro
@@ -137,7 +147,7 @@ class bear_driver;
 %%
 %start Programa;
 
-Programa : DefConstante Instrucciones { $$ = $2; driver.AST = $$; }
+Programa : Locales Instrucciones { $$ = $2; driver.AST = $$; }
 /*
 Programa: Definiciones "oso" "(" ")" "=>" EXTINTO "{" Cuerpo "}" { $$ = $1 + $8; std::cout << $1 << "Funcion principal oso:" << std::endl << $8; }
         ;
@@ -163,15 +173,17 @@ DefFuncion: ID "(" DefParametros ")" "=>" Tipo                       { $$ = "Nom
 Cuerpo: Locales Instrucciones { $$ = "\nDeclaraciones Locales:\n" + $1 + "\nInstrucciones:\n" + $2; }
       | Instrucciones         { $$ = "\nInstrucciones:\n" + $1;                                     }
       ;
+*/
 
-Locales: Locales DefLocales ";"  { $$ = "\nDeclaracion de variables locales a una funcion:\n" + $1; }
-       | DefLocales ";" { $$ = $1; }
+Locales: Locales DefLocales ";"  { $$ = $1; $$->push_back($2);                             }
+       | DefLocales ";"          { $$ = new std::vector<Definition*>(); $$->push_back($1); }
        ;
+
 
 DefLocales: DefVariable  { $$ = $1; }
           | DefConstante { $$ = $1; }
           ;
-
+/*
 DefParametros: DefParametro                   { $$ = $1;              }
              | DefParametros "," DefParametro { $$ = $1 + ",\n" + $3; }
              ;
@@ -186,27 +198,50 @@ ParametroCueva: CUEVA "[" "]" DE                           { $$ = $1 + " [] " + 
               ;
 */
 
-DefConstante: CONST Tipo Identificadores "=" Expresiones { $$ = new ConstDef($2, $3, $5); }
+DefConstante: CONST Tipo Identificadores "=" Expresiones {
+                                                           std::vector<std::string>* l = new std::vector<std::string>();
+                                                           if ($3->size() == $5->size()) {
+                                                             for (unsigned int i=0; i < $3->size(); ++i) {
+                                                               driver.tabla.add_symbol($3->at(i).nombre, $2, Const, $3->at(i).linea, $3->at(i).columna, $3->at(i).linea, $3->at(i).columna);
+                                                               l->push_back($3->at(i).nombre);
+                                                             }
+                                                           } else {
+                                                             driver.error(@1, @4, "El numero de identificadores y de expresiones no se corresponde.");
+                                                           }
+                                                           $$ = new ConstDef($2, l, $5);
+                                                         }
             ;
 
-/*
 
 DefVariable: Tipo Identificadores "=" Expresiones {
+                                                    if (chequearLongitudListas($2, $4)) {
+                                                      agregarConInicializacion($2, Var);
+                                                    }
+                                                    std::vector<std::string>* l = new std::vector<std::string>();
                                                     if ($2->size() == $4->size()) {
                                                       for (unsigned int i=0; i < $2->size(); ++i) {
-                                                        driver.tabla.add_symbol($2->at(i).nombre, $1, Var, $2->at(i).linea, $2->at(i).columna);
+                                                        driver.tabla.add_symbol($2->at(i).nombre, $1, Var, $2->at(i).linea, $2->at(i).columna, $2->at(i).linea, $2->at(i).columna);
+                                                        l->push_back($2->at(i).nombre);
                                                       }
+                                                    } else {
+                                                      driver.error(@1, @4, "El numero de identificadores y de expresiones no se corresponde.");
                                                     }
-                                                    $$ = "Declaración de variable con inicialización:\nTipo: " + $1 + ".\nIdentificadores: " + ".\nExpresiones: ";
+                                                    $$ = new DefVar($1, l, $4);
                                                   }
-           | Tipo Identificadores                 { $$ = "Declaración de variable sin inicialización:\nTipo: " + $1 + ".\nIdentificadores: "; }
-           | DefCueva                             { $$ = "Declaración de cueva:\n" + $1;                                                      }
+           | Tipo Identificadores                 {
+                                                    std::vector<std::string>* l = new std::vector<std::string>();
+                                                    for (unsigned int i=0; i < $2->size(); ++i) {
+                                                      driver.tabla.add_symbol($2->at(i).nombre, $1, Var, $2->at(i).linea, $2->at(i).columna);
+                                                      l->push_back($2->at(i).nombre);
+                                                    }
+                                                    $$ = new DefVarNoInit($1, l);
+                                                  }
+/*           | DefCueva                             { $$ = "Declaración de cueva:\n" + $1;                                                      }*/
            ;
 
-*/
 
-Identificadores: ID                     { $$ = new std::vector<std::string>(); $$->push_back($1); }
-               | Identificadores "," ID { $$ = $1; $$->push_back($3); }
+Identificadores: ID                     { $$ = new std::vector<elementoLista>(); elementoLista e; e.nombre = $1; e.linea = @1.begin.line; e.columna = @1.begin.column; $$->push_back(e); }
+               | Identificadores "," ID { $$ = $1; elementoLista e; e.nombre = $3; e.linea = @3.begin.line; e.columna = @3.begin.column; $$->push_back(e); }
                ;
 
 /*
@@ -228,46 +263,48 @@ Campos: Tipo ID ";"        { $$ = "Tipo: " + $1 + " Nombre: " + $2 + ";\n";     
 
 */
 
-Tipo: ID          { $$ = $1; }
-    | PANDA       { $$ = $1; }
-    | POLAR       { $$ = $1; }
-    | KODIAK      { $$ = $1; }
-    | MALAYO      { $$ = $1; }
-    | HORMIGUERO  { $$ = $1; }
-    | EXTINTO     { $$ = $1; }
+Tipo: PANDA       { $$ = new PandaType();      }
+    | POLAR       { $$ = new PolarType();      }
+    | KODIAK      { $$ = new KodiakType();     }
+    | MALAYO      { $$ = new MalayoType();     }
+    | HORMIGUERO  { $$ = new HormigueroType(); }
+    | EXTINTO     { $$ = new ExtintoType();    }
+/*    | ID          { $$ = $1; }*/
     ;
 
-Instrucciones: Instruccion               { $$ = new std::vector<Statement*>(); $$->push_back($1); }
-             | Instrucciones Instruccion { $$ = $1; $$->push_back($2);                            }
-             | error                     { yyerrok;                                               }
+Instrucciones: Instruccion ";"               { $$ = new std::vector<Statement*>(); $$->push_back($1); }
+             | Instrucciones Instruccion ";" { $$ = $1; $$->push_back($2);                            }
+             | error                         { $$ = new std::vector<Statement*>(); yyerrok;           }
              ;
 
-Instruccion: LValues "=" Expresiones ";"                                                    { $$ = new Assign($1, $3);                                                                                                                                     }
-/*           | LEER "(" ID ")" ";"                                                            { $$ = "Leer: variable: " + $3 + ";";                                                                                                                }
-           | ESCRIBIR "(" Expresion ")" ";"                                                 { $$ = "Escribir: valor: " + $3 + ";";                                                                                                               }
-           | Funcion ";"                                                                    { $$ = "Funcion:\n" + $1 + ";";                                                                                                                      }*/
-           | SI Expresion ENTONCES "{" Instrucciones "}"                                    { $$ = new If($2, $5);                                                                                                                               }
-           | SI Expresion ENTONCES "{" Instrucciones "}" SINO "{" Instrucciones "}"         { $$ = new IfElse($2, $5, $9);                                                                                                                       }
-/*           | PARA ID EN "(" Expresion ";" Expresion ")" "{" Cuerpo "}"                      { $$ = "Iteración acotada:\nVariable de iteración: " + $2 + "\nDesde: " + $5 + "\nHasta:\n" + $7 + "\nInstrucciones:\n" + $10;                       }
-           | PARA ID EN "(" Expresion ";" Expresion ";" Expresion ")" "{" Cuerpo "}"        { $$ = "Iteración acotada:\nVariable de iteración: " + $2 + "\nDesde: " + $5 + "\nHasta:\n" + $9 + "\nCon Paso: " + $7 + "\nInstrucciones:\n" + $12; }
+%right ENTONCES SINO;
+Instruccion: LValues "=" Expresiones                                                  { $$ = new Assign($1, $3);             }
+/*           | LEER "(" ID ")"                                                        { $$ = "Leer: variable: " + $3 + ";";  }
+           | ESCRIBIR "(" Expresion ")"                                               { $$ = "Escribir: valor: " + $3 + ";"; }
+           | Funcion                                                                  { $$ = "Funcion:\n" + $1 + ";";        }*/
+/*           | SI Expresion ENTONCES Instruccion                                        { $$ = new If($2, $4);                 }
+           | SI Expresion ENTONCES Instruccion SINO Instruccion                       { $$ = new IfElse($2, $4, $6);         }
+           | "{" Locales Instrucciones "}"                                            { $$ = new Body($2, $3);               }
+           | PARA ID EN "(" Expresion ";" Expresion ")" Instruccion                         { $$ = "Iteración acotada:\nVariable de iteración: " + $2 + "\nDesde: " + $5 + "\nHasta:\n" + $7 + "\nInstrucciones:\n" + $10;                       }
+           | PARA ID EN "(" Expresion ";" Expresion ";" Expresion ")" Instruccion           { $$ = "Iteración acotada:\nVariable de iteración: " + $2 + "\nDesde: " + $5 + "\nHasta:\n" + $9 + "\nCon Paso: " + $7 + "\nInstrucciones:\n" + $12; }
            | PARA ID EN ID "{" Cuerpo  "}"                                                  { $$ = "Iteración acotada:\nVariable de iteración: " + $2 + "\nArreglo sobre el cual iterar: " + $4 + "\nInstrucciones:\n" + $6;                     }
            | IteracionIndeterminada                                                         { $$ = "Iteración indeterminada:\n" + $1;                                                                                                            }
-           | ID "++" ";"                                                                    { $$ = "Incremento de la variable: " + $1 + ";";                                                                                                     }
-           | ID "--" ";"                                                                    { $$ = "Decremento de la variable: " + $1 + ";";                                                                                                     }
-           | VOMITA ";"                                                                     { $$ = "Vomita;";                                                                                                                                    }
-           | VOMITA ID ";"                                                                  { $$ = "Vomita a la etiqueta: " + $2 + ";";                                                                                                          }
-           | FONDOBLANCO ";"                                                                { $$ = "fondoBlanco;";                                                                                                                               }
-           | FONDOBLANCO ID ";"                                                             { $$ = "fondoBlanco a la etiqueta: " + $2 + ";";                                                                                                     }
-           | ROLOEPEA ";"                                                                   { $$ = "roloePea;";                                                                                                                                  }
-           | ROLOEPEA ID ";"                                                                { $$ = "roloePea a la etiqueta: " + $2 + ";";                                                                                                        }*/
+           | ID "++"                                                                        { $$ = "Incremento de la variable: " + $1 + ";";                                                                                                     }
+           | ID "--"                                                                        { $$ = "Decremento de la variable: " + $1 + ";";                                                                                                     }
+           | VOMITA                                                                         { $$ = "Vomita;";                                                                                                                                    }
+           | VOMITA ID                                                                      { $$ = "Vomita a la etiqueta: " + $2 + ";";                                                                                                          }
+           | FONDOBLANCO                                                                    { $$ = "fondoBlanco;";                                                                                                                               }
+           | FONDOBLANCO ID                                                                 { $$ = "fondoBlanco a la etiqueta: " + $2 + ";";                                                                                                     }
+           | ROLOEPEA                                                                       { $$ = "roloePea;";                                                                                                                                  }
+           | ROLOEPEA ID                                                                    { $$ = "roloePea a la etiqueta: " + $2 + ";";                                                                                                        }*/
            ;
 /*
-IteracionIndeterminada: ID ":" MIENTRAS "(" Expresion ")" "{" Cuerpo "}" { $$ = "Etiqueta: " + $1 + "\nCondición: " + $5 + "\nInstrucciones: " + $8; }
-                      | MIENTRAS "(" Expresion ")" "{" Cuerpo "}"        { $$ = "Condición: " + $3 + "\nInstrucciones: " + $6;                       }
+IteracionIndeterminada: ID ":" MIENTRAS "(" Expresion ")" Instruccion    { $$ = "Etiqueta: " + $1 + "\nCondición: " + $5 + "\nInstrucciones: " + $8; }
+                      | MIENTRAS "(" Expresion ")" Instruccion           { $$ = "Condición: " + $3 + "\nInstrucciones: " + $6;                       }
                       ;
 */
 LValues: LValue             { $$ = new std::vector<Expression*>(); $$->push_back($1); }
-       | LValues "," LValue { $$ = $1; $$->push_back($3);                                      }
+       | LValues "," LValue { $$ = $1; $$->push_back($3);                             }
        ;
 
 %left "->" ".";
@@ -345,3 +382,7 @@ yy::bear_parser::error (const location_type& l,
 {
   driver.error (l, m);
 }
+
+void agregarConInicializacion(std::vector<elementoLista>* ids, Categorias categoria){};
+void agregarSinInicializacion(std::vector<elementoLista>* ids, Categorias categoria){};
+bool chequearLongitudListas(std::vector<elementoLista>* ids, std::vector<Expression*>* expr){};
