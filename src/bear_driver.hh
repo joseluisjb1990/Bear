@@ -41,8 +41,9 @@ public:
   // Error handling.
   void error (const yy::location& l, const std::string& m);
   void error (const yy::location& l1, const yy::location& l2, const std::string& m);
+  void error (const unsigned int LI, const unsigned int CI, const unsigned int LF, unsigned int CF, const std::string& m);
   void error (const std::string& m);
-  void agregarConInicializacion(std::vector<elementoLista>* ids, Categorias categoria, Type* tipo);
+  void agregarConInicializacion(std::vector<elementoLista>* ids, Categorias categoria, Type* tipo, bool mut);
   void agregarSinInicializacion(std::vector<elementoLista>* ids, Categorias categoria, Type* tipo);
 };
 #endif // ! CALCXX_DRIVER_HH

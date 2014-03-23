@@ -14,6 +14,7 @@ private:
     unsigned int _columnaDec;
     unsigned int _lineaDef;
     unsigned int _columnaDef;
+    bool _mutable;
 
    //Posiblemente haya otros dependiendo del tipo o la categoria.
 
@@ -26,6 +27,7 @@ public:
               , unsigned int  columnaDec
               , unsigned int  lineaDef
               , unsigned int  columnaDef
+              , bool          mut
               );
 
     Contenido ( Type*         tipo
@@ -33,11 +35,13 @@ public:
               , unsigned int  alcance
               , unsigned int  linea
               , unsigned int  columna
+              , bool          mut
               );
 
     virtual std::string to_string();
 
     unsigned int getAlcance();
+    bool esMutable();
 };
 
 class Contenedor : public Contenido

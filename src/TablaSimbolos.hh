@@ -22,8 +22,8 @@ private:
 public:
 
     TablaSimbolos();
-    unsigned int add_symbol (string nombre, Type* tipo, Categorias categoria, unsigned int linea, unsigned int columna);
-    unsigned int add_symbol (string nombre, Type* tipo, Categorias categoria, unsigned int lineaDec, unsigned int columnaDec, unsigned int lineaDef, unsigned int columnaDef);
+    unsigned int add_symbol (string nombre, Type* tipo, Categorias categoria, unsigned int linea, unsigned int columna, bool mut);
+    unsigned int add_symbol (string nombre, Type* tipo, Categorias categoria, unsigned int lineaDec, unsigned int columnaDec, unsigned int lineaDef, unsigned int columnaDef, bool mut);
     Contenedor* add_container (string nombre, Type* tipo, Categorias categoria, unsigned int linea, unsigned int columna, unsigned int alcanceCampos);
     unsigned int add_function (string nombre, Type* tipo, unsigned int linea, unsigned int columna, vector<Definition*>* parametros, bool definida);
     friend std::ostream& operator<<(std::ostream& os, TablaSimbolos &ts);

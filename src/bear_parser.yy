@@ -18,8 +18,10 @@ class bear_driver;
 
 typedef struct {
   std::string nombre;
-  unsigned int linea;
-  unsigned int columna;
+  unsigned int lineaI;
+  unsigned int columnaI;
+  unsigned int lineaF;
+  unsigned int columnaF;
 } elementoLista;
 }
 // The parsing context.
@@ -132,7 +134,7 @@ std::vector<std::string>* extraerIds(std::vector<elementoLista>* ids);
 %type  <std::vector<std::string>*> Cuevas
 %type  <std::vector<elementoLista>*> Identificadores
 %type  <Type*> Tipo
-%type  <std::vector<Parameter*>*> Campos
+%type  <std::vector<CampoType*>*> Campos
 %type  <std::vector<Definition*>*> DefParametros
 %type  <Definition*> DefParametro
 %type  <std::string> ParametroCueva
@@ -201,7 +203,7 @@ ParametroCueva: CUEVA "[" "]" DE                           { $$ = $1 + " [] " + 
 DefConstante: CONST Tipo Identificadores "=" Expresiones {
                                                             if (chequearLongitudListas ($3,$5))
                                                             {
-                                                              driver.agregarConInicializacion($3, Const, $2);
+                                                              driver.agregarConInicializacion($3, Const, $2, false);
                                                               std::vector<string>* l = extraerIds($3);
                                                               $$ = new ConstDef($2, l, $5);
                                                             } else
@@ -216,7 +218,7 @@ DefConstante: CONST Tipo Identificadores "=" Expresiones {
 DefVariable: Tipo Identificadores "=" Expresiones {
                                                     if (chequearLongitudListas ($2,$4))
                                                     {
-                                                      driver.agregarConInicializacion($2, Var, $1);
+                                                      driver.agregarConInicializacion($2, Var, $1, true);
                                                       std::vector<string>* l = extraerIds($2);
                                                       $$ = new DefVar($1, l, $4);
                                                     } else
@@ -234,8 +236,8 @@ DefVariable: Tipo Identificadores "=" Expresiones {
            ;
 
 
-Identificadores: ID                     { $$ = new std::vector<elementoLista>(); elementoLista e; e.nombre = $1; e.linea = @1.begin.line; e.columna = @1.begin.column; $$->push_back(e); }
-               | Identificadores "," ID { $$ = $1; elementoLista e; e.nombre = $3; e.linea = @3.begin.line; e.columna = @3.begin.column; $$->push_back(e); }
+Identificadores: ID                     { $$ = new std::vector<elementoLista>(); elementoLista e; e.nombre = $1; e.lineaI = @1.begin.line; e.columnaI = @1.begin.column; e.lineaF = @1.end.line; e.columnaF = @1.end.column; $$->push_back(e); }
+               | Identificadores "," ID { $$ = $1; elementoLista e; e.nombre = $3; e.lineaI = @3.begin.line; e.columnaI = @3.begin.column; e.lineaF = @3.end.line; e.columnaF = @3.end.column; $$->push_back(e); }
                ;
 
 
@@ -243,7 +245,7 @@ Identificadores: ID                     { $$ = new std::vector<elementoLista>();
 DefCueva: Cuevas Tipo ID {
                             $$ = new DefArray($2,$3,$1);
                             Type* tipoCueva = new CuevaType($2,$1);
-                            driver.tabla.add_symbol($3,tipoCueva,Cueva, @3.begin.line, @3.begin.column);
+                            driver.tabla.add_symbol($3,tipoCueva,Cueva, @3.begin.line, @3.begin.column, true);
                           }
         ;
 
@@ -252,27 +254,41 @@ Cuevas: CUEVA "[" CONSTPOLAR "]" DE          { $$ = new std::vector<std::string>
        ;
 
 
-DefCompleja: PARDO ID "{" { Grizzli* g = new Grizzli();
-                            $<Contenedor*>$ = driver.tabla.add_container($2, g, Compuesto, @1.begin.line,@1.begin.column,0);
-                            driver.tabla.enter_scope(); } Campos "}" {
-                                                                        int alcanceCampos = driver.tabla.get_actual_scope();
-                                                                        Contenedor* c = $<Contenedor*>4;
-                                                                        c->set_alcanceCampos(alcanceCampos);
-                                                                        driver.tabla.exit_scope();
-                                                                        $$ = nullptr;
-                                                                      }
+DefCompleja: PARDO ID "{" { driver.tabla.enter_scope(); }
+             Campos "}"   {
+                            int alcanceCampos = driver.tabla.get_actual_scope();
+                            driver.tabla.exit_scope();
+                            PardoType* p = new PardoType($5, $2);
+                            if (driver.tabla.check_scope($2)) {
+                              driver.error(@1, @6, "Se intenta redefinir el tipo " + $2 + ".");
+                            } else {
+                              driver.tabla.add_container($2, p, Compuesto, @1.begin.line, @1.begin.column, alcanceCampos);
+                            }
+                            $$ = nullptr;
+                          }
 
-      /*     | GRIZZLI ID "{" Campos "}" { $$ = "Grizzli:\nNombre: " + $2 + "\nCampos:\n" + $4; } */
+           | GRIZZLI ID "{" { driver.tabla.enter_scope(); }
+             Campos "}" {
+                          int alcanceCampos = driver.tabla.get_actual_scope();
+                          driver.tabla.exit_scope();
+                          GrizzliType* g = new GrizzliType($5, $2);
+                            if (driver.tabla.check_scope($2)) {
+                              driver.error(@1, @6, "Se intenta redefinir el tipo " + $2 + ".");
+                            } else {
+                              driver.tabla.add_container($2, g, Compuesto, @1.begin.line, @1.begin.column, alcanceCampos);
+                            }
+                          $$ = nullptr;
+                        }
            ;
 
 Campos: Tipo ID ";"        {
-                              $$ = new std::vector<Parameter*>; Parameter* p = new Parameter($2,$1,false); $$->push_back(p);
-                              driver.tabla.add_symbol($2, $1, Campo, @2.begin.line, @2.begin.column);
+                              $$ = new std::vector<CampoType*>; CampoType* p = new CampoType($1,$2); $$->push_back(p);
+                              driver.tabla.add_symbol($2, $1, Campo, @2.begin.line, @2.begin.column, true);
                            }
 
       | Campos Tipo ID ";" {
-                              $$ = $1; Parameter* p = new Parameter($3, $2, false); $$->push_back(p);
-                              driver.tabla.add_symbol($3, $2, Campo, @2.begin.line, @2.begin.column);
+                              $$ = $1; CampoType* p = new CampoType($2, $3); $$->push_back(p);
+                              driver.tabla.add_symbol($3, $2, Campo, @2.begin.line, @2.begin.column, true);
                             }
       ;
 
@@ -291,16 +307,47 @@ Instrucciones: Instruccion ";"               { $$ = new std::vector<Statement*>(
              ;
 
 %right ENTONCES SINO;
-Instruccion: LValues "=" Expresiones                                                  { $$ = new Assign($1, $3);             }
-/*           | LEER "(" ID ")"                                                        { $$ = "Leer: variable: " + $3 + ";";  }
-           | ESCRIBIR "(" Expresion ")"                                               { $$ = "Escribir: valor: " + $3 + ";"; }
-           | Funcion                                                                  { $$ = "Funcion:\n" + $1 + ";";        }*/
-/*           | SI Expresion ENTONCES Instruccion                                        { $$ = new If($2, $4);                 }
+Instruccion: LValues "=" Expresiones                                                  {
+                                                                                        if (!($1->size() == $3->size())) {
+                                                                                          driver.error(@1, @3, "El numero de identificadores y de expresiones en la asignación no se corresponde.");
+                                                                                        }
+                                                                                        $$ = new Assign($1, $3);
+                                                                                      }
+           | LEER "(" ID ")"                                                        {
+                                                                                      Contenido* c = driver.tabla.find_symbol($3);
+                                                                                      if (!c) {
+                                                                                        driver.error(@1, @4, "Se intenta leer la variable " + $3 + " que no se encuentra definida.");
+                                                                                        $$ =  new Empty();
+                                                                                      }
+                                                                                      else if (!c->esMutable()) {
+                                                                                        driver.error(@1, @4, "Se intenta inicializar la variable " + $3 + ", que no es mutable.");
+                                                                                        $$ =  new Empty();
+                                                                                      } else {
+                                                                                        $$ = new Read($3);
+                                                                                      }
+                                                                                    }
+           | ESCRIBIR "(" Expresion ")"                                               { $$ = new Write($3); }
+/*           | Funcion                                                                  { $$ = "Funcion:\n" + $1 + ";";        }*/
+           | SI Expresion ENTONCES Instruccion                                        { $$ = new If($2, $4);                 }
            | SI Expresion ENTONCES Instruccion SINO Instruccion                       { $$ = new IfElse($2, $4, $6);         }
-           | "{" Locales Instrucciones "}"                                            { $$ = new Body($2, $3);               }
-           | PARA ID EN "(" Expresion ";" Expresion ")" Instruccion                         { $$ = "Iteración acotada:\nVariable de iteración: " + $2 + "\nDesde: " + $5 + "\nHasta:\n" + $7 + "\nInstrucciones:\n" + $10;                       }
-           | PARA ID EN "(" Expresion ";" Expresion ";" Expresion ")" Instruccion           { $$ = "Iteración acotada:\nVariable de iteración: " + $2 + "\nDesde: " + $5 + "\nHasta:\n" + $9 + "\nCon Paso: " + $7 + "\nInstrucciones:\n" + $12; }
-           | PARA ID EN ID "{" Cuerpo  "}"                                                  { $$ = "Iteración acotada:\nVariable de iteración: " + $2 + "\nArreglo sobre el cual iterar: " + $4 + "\nInstrucciones:\n" + $6;                     }
+           | "{"                                                                      { driver.tabla.enter_scope();          }
+             Locales Instrucciones "}"                                                {
+                                                                                        $$ = new Body($3, $4);
+                                                                                        driver.tabla.exit_scope();           }
+           | PARA ID EN "(" Expresion ";" Expresion ")" Instruccion                         {
+                                                                                              PolarType* p = new PolarType();
+                                                                                              driver.tabla.add_symbol($2, p, Var, @2.begin.line, @2.begin.column, @2.end.line, @2.end.column, false);
+                                                                                              $$ = new SimpleFor($2, $5, $7, $9);
+                                                                                            }
+/*
+ Tenemos un hermoso problema, hay que lograr agregar el ID en el mismo scope que las instrucciones pero no sabemos como asi que por ahora fuck it, hay juego de futbol yy stuff..
+*/
+           | PARA ID EN "(" Expresion ";" Expresion ";" Expresion ")" Instruccion           {
+                                                                                              PolarType* p = new PolarType();
+                                                                                              driver.tabla.add_symbol($2, p, Var, @2.begin.line, @2.begin.column, @2.end.line, @2.end.column, false);
+                                                                                              $$ = new ComplexFor($2, $5, $9, $7, $11);
+                                                                                            }
+/*           | PARA ID EN ID "{" Cuerpo  "}"                                                  { $$ = "Iteración acotada:\nVariable de iteración: " + $2 + "\nArreglo sobre el cual iterar: " + $4 + "\nInstrucciones:\n" + $6;                     }
            | IteracionIndeterminada                                                         { $$ = "Iteración indeterminada:\n" + $1;                                                                                                            }
            | ID "++"                                                                        { $$ = "Incremento de la variable: " + $1 + ";";                                                                                                     }
            | ID "--"                                                                        { $$ = "Decremento de la variable: " + $1 + ";";                                                                                                     }
@@ -321,16 +368,25 @@ LValues: LValue             { $$ = new std::vector<Expression*>(); $$->push_back
        ;
 
 %left "->" ".";
-LValue: ID                 { $$ = new IDExpr($1);          }
-      | LValue "->" LValue { $$ = new PardoExpr($1, $3);   }
+LValue: ID                 {
+                             Contenido* c = driver.tabla.find_symbol($1);
+                             if (!c) {
+                               driver.error(@1, "Se intenta inicializar la variable " + $1 + ", que no se encuentra definida.");
+                             }
+                             else if (!c->esMutable()) {
+                               driver.error(@1, "Se intenta inicializar la variable " + $1 + ", que no es mutable.");
+                             }
+                             $$ = new IDExpr($1);
+                           }
+/*      | LValue "->" LValue { $$ = new PardoExpr($1, $3);   }
       | LValue "."  LValue { $$ = new GrizzliExpr($1, $3); }
-      | AccesoCueva        { $$ = $1;                      }
+      | AccesoCueva        { $$ = $1;                      }*/
       ;
-
+/*
 AccesoCueva: ID "[" Expresion "]"          { $$ = new CuevaExpr($1, $3); }
            | AccesoCueva "[" Expresion "]" { $$ = $1; $$->addDimension($3); }
            ;
-
+*/
 
 Expresiones: Expresion                 { $$ = new std::vector<Expression*>(); $$->push_back($1); }
            | Expresiones "," Expresion { $$ = $1; $$->push_back($3); }

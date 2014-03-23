@@ -115,7 +115,7 @@ PardoType::PardoType(std::vector<CampoType*>* campos, std::string nombre)
 
 std::string PardoType::to_string()
 {
-  std::string str = _nombre + ":\n";
+  std::string str = "pardo\n";
   for (unsigned int i=0; i < _campos->size(); ++i)
     str += _campos->at(i)->to_string() + "\n";
   return str;
@@ -137,7 +137,7 @@ GrizzliType::GrizzliType(std::vector<CampoType*>* campos, std::string nombre)
 
 std::string GrizzliType::to_string()
 {
-  std::string str = _nombre + ";\n";
+  std::string str = "grizzli\n";
   for (unsigned int i=0; i < _campos->size(); ++i)
     str += _campos->at(i)->to_string() + "\n";
   return str;

@@ -3,7 +3,7 @@
 
 using namespace std;
 
-Contenido::Contenido (Type* tipo, Categorias categoria, unsigned int alcance, unsigned int lineaDec, unsigned int columnaDec, unsigned int lineaDef, unsigned int columnaDef)
+Contenido::Contenido (Type* tipo, Categorias categoria, unsigned int alcance, unsigned int lineaDec, unsigned int columnaDec, unsigned int lineaDef, unsigned int columnaDef, bool mut)
   : _tipo       ( tipo       )
   , _categoria  ( categoria  )
   , _alcance    ( alcance    )
@@ -11,9 +11,10 @@ Contenido::Contenido (Type* tipo, Categorias categoria, unsigned int alcance, un
   , _columnaDec ( columnaDec )
   , _lineaDef   ( lineaDef   )
   , _columnaDef ( columnaDef )
+  , _mutable    ( mut        )
   {}
 
-Contenido::Contenido (Type* tipo, Categorias categoria, unsigned int alcance, unsigned int linea, unsigned int columna)
+Contenido::Contenido (Type* tipo, Categorias categoria, unsigned int alcance, unsigned int linea, unsigned int columna, bool mut)
   : _tipo       ( tipo      )
   , _categoria  ( categoria )
   , _alcance    ( alcance   )
@@ -21,17 +22,20 @@ Contenido::Contenido (Type* tipo, Categorias categoria, unsigned int alcance, un
   , _columnaDec ( columna   )
   , _lineaDef   ( 0         )
   , _columnaDef ( 0         )
+  , _mutable    ( mut       )
   {}
 
 unsigned int Contenido::getAlcance() { return _alcance; }
 
+bool Contenido::esMutable() { return _mutable; }
+
 std::string Contenido::to_string()
 {
-  return "Tipo: " + _tipo->to_string() + ", Categoria: " + std::to_string(_categoria) + ", Alcance: " + std::to_string(_alcance) + ", Linea de Declaración: " + std::to_string(_lineaDec) + ", Columna de Declaración: " + std::to_string(_columnaDec) + ", Linea de Definición: " + std::to_string(_lineaDef) + ", Columna de Definición: " + std::to_string(_columnaDef) + "\n";
+  return "Tipo: " + _tipo->to_string() + ", Categoria: " + std::to_string(_categoria) + ", Alcance: " + std::to_string(_alcance) + ", Linea de Declaración: " + std::to_string(_lineaDec) + ", Columna de Declaración: " + std::to_string(_columnaDec) + ", Linea de Definición: " + std::to_string(_lineaDef) + ", Columna de Definición: " + std::to_string(_columnaDef) + ", Mutabilidad: " + std::to_string(_mutable) + "\n";
 }
 
 Contenedor::Contenedor(Type* tipo, Categorias categoria, unsigned int alcance, unsigned int linea, unsigned int columna, unsigned int alcanceCampos)
-  : Contenido(tipo, categoria, alcance, linea, columna)
+  : Contenido(tipo, categoria, alcance, linea, columna, true)
   , _alcanceCampos(alcanceCampos)
   {}
 
@@ -47,7 +51,7 @@ Funcion::Funcion ( Type* tipo
                  , bool def
                  , std::vector<Definition*>* parametros
                  )
-  : Contenido(tipo, Proc, alcance, linea, columna)
+  : Contenido(tipo, Proc, alcance, linea, columna, false)
   , _def        ( def        )
   , _parametros ( parametros )
   {}

@@ -44,21 +44,30 @@ bear_driver::error (const yy::location& l1, const yy::location& l2, const std::s
 }
 
 void
+bear_driver::error (const unsigned int LI, const unsigned int CI, const unsigned int LF, unsigned int CF, const std::string& m)
+{
+  ++errores;
+  std::cerr << "Error entre " << LI << "." << CI << " y " << LF << "." << CF << ": " << m << std::endl;
+}
+
+void
 bear_driver::error (const std::string& m)
 {
   ++errores;
   std::cerr << m << std::endl;
 }
 
-void bear_driver::agregarConInicializacion(std::vector<elementoLista>* ids, Categorias categoria, Type* tipo)
+void bear_driver::agregarConInicializacion(std::vector<elementoLista>* ids, Categorias categoria, Type* tipo, bool mut)
 {
   elementoLista e;
   for (unsigned int i = 0; i < ids->size(); ++i)
   {
-    cout << i << '\n';
-
     e = ids->at(i);
-    tabla.add_symbol(e.nombre, tipo, categoria, e.linea, e.columna, e.linea, e.columna);
+    if (tabla.check_scope(e.nombre)) {
+      error(e.lineaI, e.columnaI, e.lineaF, e.columnaF, "Se intenta redefinir la variable " + e.nombre + ".");
+    } else {
+      tabla.add_symbol(e.nombre, tipo, categoria, e.lineaI, e.columnaI, e.lineaF, e.columnaF, mut);
+    }
   }
 }
 
@@ -68,7 +77,11 @@ void bear_driver::agregarSinInicializacion(std::vector<elementoLista>* ids, Cate
   for (unsigned int i = 0; i < ids->size(); ++i)
   {
     e = ids->at(i);
-    tabla.add_symbol(e.nombre, tipo, categoria, e.linea, e.columna);
+    if (tabla.check_scope(e.nombre)) {
+      error(e.lineaI, e.columnaI, e.lineaF, e.columnaF, "Se intenta redefinir la variable " + e.nombre + ".");
+    } else {
+      tabla.add_symbol(e.nombre, tipo, categoria, e.lineaI, e.columnaI, true);
+    }
   }
 }
 

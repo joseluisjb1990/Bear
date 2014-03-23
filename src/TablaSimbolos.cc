@@ -3,7 +3,7 @@
 Contenedor* TablaSimbolos::add_container (std::string nombre, Type* tipo, Categorias categoria, unsigned int linea, unsigned int columna, unsigned int alcanceCampos)
 {
   Contenedor *cont;
-  cont = new  Contenedor(tipo, categoria,_alcance, linea, columna, alcanceCampos);
+  cont = new  Contenedor(tipo, categoria, _pila.back(), linea, columna, alcanceCampos);
   _dicc.insert(std::make_pair(nombre,cont));
   return cont;
 }
@@ -79,15 +79,15 @@ std::ostream& operator<<(std::ostream& os, TablaSimbolos &ts)
   os << '\n';
   return os;
 }
-unsigned int TablaSimbolos::add_symbol (string nombre, Type* tipo, Categorias categoria, unsigned int linea, unsigned int columna)
+unsigned int TablaSimbolos::add_symbol (string nombre, Type* tipo, Categorias categoria, unsigned int linea, unsigned int columna, bool mut)
 {
-  Contenido *cont = new Contenido(tipo, categoria,_alcance, linea, columna);
+  Contenido *cont = new Contenido(tipo, categoria, _pila.back(), linea, columna, mut);
   _dicc.insert(std::make_pair(nombre,cont));
   return _alcance;
 }
-unsigned int TablaSimbolos::add_symbol (string nombre, Type* tipo, Categorias categoria, unsigned int lineaDec, unsigned int columnaDec, unsigned int lineaDef, unsigned int columnaDef)
+unsigned int TablaSimbolos::add_symbol (string nombre, Type* tipo, Categorias categoria, unsigned int lineaDec, unsigned int columnaDec, unsigned int lineaDef, unsigned int columnaDef, bool mut)
 {
-  Contenido *cont = new Contenido(tipo, categoria,_alcance, lineaDec, columnaDec, lineaDef, columnaDef);
+  Contenido *cont = new Contenido(tipo, categoria, _pila.back(), lineaDec, columnaDec, lineaDef, columnaDef, mut);
   _dicc.insert(std::make_pair(nombre,cont));
   return _alcance;
 }
@@ -101,7 +101,7 @@ unsigned int TablaSimbolos::add_function  (
                                           , bool definida
                                           )
 {
-  Contenido *cont = new Funcion(tipo, _alcance, linea, columna, definida, parametros);
+  Contenido *cont = new Funcion(tipo, _pila.back(), linea, columna, definida, parametros);
   _dicc.insert(std::make_pair(nombre,cont));
   return _alcance;
 }
