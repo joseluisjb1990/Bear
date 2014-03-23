@@ -72,7 +72,7 @@ std::string HormigueroType::to_string()
   return "hormiguero";
 }
 
-CuevaType::CuevaType(Type* tipo, std::vector<int>* longitudes)
+CuevaType::CuevaType(Type* tipo, std::vector<std::string>* longitudes)
   : Type(0)
   , _tipo       ( tipo       )
   , _longitudes ( longitudes )
@@ -82,7 +82,7 @@ int CuevaType::getSize()
 {
   int size = _tipo->getSize();
   for (unsigned int i=0; i<_longitudes->size(); ++i)
-    size = size * _longitudes->at(i);
+    size = size * std::stoi(_longitudes->at(i));
   return size;
 }
 

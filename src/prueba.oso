@@ -1,6 +1,12 @@
+  pardo griz {
+    polar n;
+    panda hola;
+  }
+
   const polar a = 57;
   panda b, c, d;
   kodiak uy = 67.95;
+  cueva [2] de polar cuevita;
   a = 42;
   b = 42;
   c = 58;

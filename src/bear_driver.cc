@@ -49,3 +49,26 @@ bear_driver::error (const std::string& m)
   ++errores;
   std::cerr << m << std::endl;
 }
+
+void bear_driver::agregarConInicializacion(std::vector<elementoLista>* ids, Categorias categoria, Type* tipo)
+{
+  elementoLista e;
+  for (unsigned int i = 0; i < ids->size(); ++i)
+  {
+    cout << i << '\n';
+
+    e = ids->at(i);
+    tabla.add_symbol(e.nombre, tipo, categoria, e.linea, e.columna, e.linea, e.columna);
+  }
+}
+
+void bear_driver::agregarSinInicializacion(std::vector<elementoLista>* ids, Categorias categoria, Type* tipo)
+{
+  elementoLista e;
+  for (unsigned int i = 0; i < ids->size(); ++i)
+  {
+    e = ids->at(i);
+    tabla.add_symbol(e.nombre, tipo, categoria, e.linea, e.columna);
+  }
+}
+

@@ -55,16 +55,52 @@ class DefVarNoInit : public Definition
 
 };
 
-class DefCueva : public Definition
+class DefArray : public Definition
 {
   public:
-    DefCueva(Type* tipo, std::string id, std::vector<std::string>* dimensiones);
+    DefArray(Type* tipo, std::string id, std::vector<std::string>* dimensiones);
     std::string to_string();
 
   private:
     Type* _tipo;
     std::string _id;
     std::vector<std::string>* _dimensiones;
+};
+
+class DefFunction : public Definition
+{
+  private:
+    std::string                 _name;
+    std::vector<Definition*>*   _parametros;
+    Type*                       _tipoRetorno;
+
+  public:
+    DefFunction ( std::string               name
+                , std::vector<Definition*>* parametros
+                , Type*                     tipoRetorno
+                );
+
+    std::string to_string();
+
+};
+
+class Parameter : public Definition
+{
+  public:
+    Parameter ( std::string id
+              , Type* tipo
+              , bool ref
+              );
+
+    std::string to_string();
+    std::string get_id();
+    Type*       get_tipo();
+    bool        get_ref();
+
+  private:
+    std::string _id;
+    Type*       _tipo;
+    bool        _ref;
 };
 
 #endif

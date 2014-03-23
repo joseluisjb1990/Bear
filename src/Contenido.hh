@@ -1,6 +1,7 @@
 #include "type.hh"
+#include "definition.hh"
 
-typedef enum { Var, Const, Proc, Campo, Cueva} Categorias;
+typedef enum { Var, Const, Proc, Campo, Cueva, Compuesto} Categorias;
 
 class Contenido
 {
@@ -13,6 +14,7 @@ private:
     unsigned int _columnaDec;
     unsigned int _lineaDef;
     unsigned int _columnaDef;
+
    //Posiblemente haya otros dependiendo del tipo o la categoria.
 
 public:
@@ -56,4 +58,24 @@ public:
               );
 
   virtual std::string to_string();
+  void set_alcanceCampos(unsigned int alcanceCampos) { _alcanceCampos = alcanceCampos; };
+};
+
+class Funcion : public Contenido
+{
+
+public:
+    Funcion ( Type* tipo
+            , unsigned int alcance
+            , unsigned int linea
+            , unsigned int columna
+            , bool def
+            , std::vector<Definition*>* parametros
+            );
+
+    std::string to_string();
+
+private:
+    bool                _def;
+    std::vector<Definition*>* _parametros;
 };

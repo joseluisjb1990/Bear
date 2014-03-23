@@ -1,11 +1,11 @@
 #include "TablaSimbolos.hh"
 
-unsigned int TablaSimbolos::add_container (std::string nombre, Type* tipo, Categorias categoria, unsigned int linea, unsigned int columna, unsigned int alcanceCampos)
+Contenedor* TablaSimbolos::add_container (std::string nombre, Type* tipo, Categorias categoria, unsigned int linea, unsigned int columna, unsigned int alcanceCampos)
 {
-  Contenido *cont;
+  Contenedor *cont;
   cont = new  Contenedor(tipo, categoria,_alcance, linea, columna, alcanceCampos);
   _dicc.insert(std::make_pair(nombre,cont));
-  return _alcance;
+  return cont;
 }
 
 TablaSimbolos::TablaSimbolos ()
@@ -91,3 +91,19 @@ unsigned int TablaSimbolos::add_symbol (string nombre, Type* tipo, Categorias ca
   _dicc.insert(std::make_pair(nombre,cont));
   return _alcance;
 }
+
+unsigned int TablaSimbolos::add_function  (
+                                            string nombre
+                                          , Type* tipo
+                                          , unsigned int linea
+                                          , unsigned int columna
+                                          , vector<Definition*>* parametros
+                                          , bool definida
+                                          )
+{
+  Contenido *cont = new Funcion(tipo, _alcance, linea, columna, definida, parametros);
+  _dicc.insert(std::make_pair(nombre,cont));
+  return _alcance;
+}
+
+unsigned int TablaSimbolos::get_actual_scope() { return _alcance; }

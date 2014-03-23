@@ -36,9 +36,9 @@ typedef struct {
 {
 # include "bear_driver.hh"
 
-void agregarConInicializacion(std::vector<elementoLista>* ids, Categorias categoria);
-void agregarSinInicializacion(std::vector<elementoLista>* ids, Categorias categoria);
 bool chequearLongitudListas(std::vector<elementoLista>* ids, std::vector<Expression*>* expr);
+std::vector<std::string>* extraerIds(std::vector<elementoLista>* ids);
+
 }
 %define api.token.prefix {TOK_}
 %token
@@ -122,19 +122,19 @@ bool chequearLongitudListas(std::vector<elementoLista>* ids, std::vector<Express
 %type  <std::string> Definiciones
 %type  <std::string> ListaDefGlobales
 %type  <std::string> DefinicionGlobal
-%type  <Definition*>   DefConstante
+%type  <Definition*> DefConstante
 %type  <std::vector<Definition*>*> Locales
 %type  <Definition*> DefVariable
-%type  <std::string> DefCueva
-%type  <std::string> DefCompleja
-%type  <std::string> DefFuncion
+%type  <DefArray*> DefCueva
+%type  <Definition*> DefCompleja
+%type  <Definition*> DefFuncion
 %type  <Definition*> DefLocales
-%type  <std::string> Cuevas
+%type  <std::vector<std::string>*> Cuevas
 %type  <std::vector<elementoLista>*> Identificadores
 %type  <Type*> Tipo
-%type  <std::string> Campos
-%type  <std::string> DefParametros
-%type  <std::string> DefParametro
+%type  <std::vector<Parameter*>*> Campos
+%type  <std::vector<Definition*>*> DefParametros
+%type  <Definition*> DefParametro
 %type  <std::string> ParametroCueva
 %type  <CuevaExpr*>  AccesoCueva
 %type  <std::string> FuncionPredef
@@ -147,7 +147,7 @@ bool chequearLongitudListas(std::vector<elementoLista>* ids, std::vector<Express
 %%
 %start Programa;
 
-Programa : Locales Instrucciones { $$ = $2; driver.AST = $$; }
+Programa : DefCompleja Locales Instrucciones { $$ = $3; driver.AST = $$; }
 /*
 Programa: Definiciones "oso" "(" ")" "=>" EXTINTO "{" Cuerpo "}" { $$ = $1 + $8; std::cout << $1 << "Funcion principal oso:" << std::endl << $8; }
         ;
@@ -166,14 +166,13 @@ DefinicionGlobal: DefConstante  { $$ = $1;                             }
                 | DefCompleja   { $$ = "Declaración compleja:\n" + $1; }
                 ;
 
-DefFuncion: ID "(" DefParametros ")" "=>" Tipo                       { $$ = "Nombre: " + $1 + "\nParametros:\n" + $3 + "\nRetorna: " + $6;      }
-          | ID "(" DefParametros ")" "=>" Tipo "{" Cuerpo "}"        { $$ = "Nombre: " + $1 + "\nParametros:\n" + $3 + "\nRetorna: " + $6 + $8; }
-          ;
-
-Cuerpo: Locales Instrucciones { $$ = "\nDeclaraciones Locales:\n" + $1 + "\nInstrucciones:\n" + $2; }
-      | Instrucciones         { $$ = "\nInstrucciones:\n" + $1;                                     }
-      ;
 */
+
+DefFuncion: ID "(" DefParametros ")" "=>" Tipo                       { $$ = new DefFunction($1, $3, $6);
+                                                                       driver.tabla.add_function($1, $6, @1.begin.line, @1.begin.column, $3, false);
+                                                                     }
+         /* | ID "(" DefParametros ")" "=>" Tipo Instruccion           { $$ = "Nombre: " + $1 + "\nParametros:\n" + $3 + "\nRetorna: " + $6 + $8; } */
+          ;
 
 Locales: Locales DefLocales ";"  { $$ = $1; $$->push_back($2);                             }
        | DefLocales ";"          { $$ = new std::vector<Definition*>(); $$->push_back($1); }
@@ -183,60 +182,55 @@ Locales: Locales DefLocales ";"  { $$ = $1; $$->push_back($2);                  
 DefLocales: DefVariable  { $$ = $1; }
           | DefConstante { $$ = $1; }
           ;
-/*
-DefParametros: DefParametro                   { $$ = $1;              }
-             | DefParametros "," DefParametro { $$ = $1 + ",\n" + $3; }
+
+DefParametros: DefParametro                   { $$ = new std::vector<Definition*> (); $$->push_back($1);               }
+             | DefParametros "," DefParametro { $$ = $1; $$->push_back($3);                                           }
              ;
 
-DefParametro: Tipo ID                  { $$ = "Tipo: " + $1 + " Nombre: " + $2;      }
-            | "^" Tipo ID              { $$ = "Tipo: ^" + $2 + " Nombre: " + $3;     }
-            | ParametroCueva Tipo ID   { $$ = "Tipo: " + $1 + $2 + " Nombre: " + $3; }
+DefParametro: Tipo ID                  { $$ = new Parameter($2, $1, false);       }
+            | "^" Tipo ID              { $$ = new Parameter($3, $2, true);        }
+           /* | ParametroCueva Tipo ID   { $$ = "Tipo: " + $1 + $2 + " Nombre: " + $3; }*/
             ;
 
+/*
 ParametroCueva: CUEVA "[" "]" DE                           { $$ = $1 + " [] " + $4 + " ";                }
               | ParametroCueva CUEVA "[" CONSTPOLAR "]" DE { $$ = $1 + $2 + " [" + $4 + "] " + $6 + " "; }
               ;
 */
 
 DefConstante: CONST Tipo Identificadores "=" Expresiones {
-                                                           std::vector<std::string>* l = new std::vector<std::string>();
-                                                           if ($3->size() == $5->size()) {
-                                                             for (unsigned int i=0; i < $3->size(); ++i) {
-                                                               driver.tabla.add_symbol($3->at(i).nombre, $2, Const, $3->at(i).linea, $3->at(i).columna, $3->at(i).linea, $3->at(i).columna);
-                                                               l->push_back($3->at(i).nombre);
-                                                             }
-                                                           } else {
-                                                             driver.error(@1, @4, "El numero de identificadores y de expresiones no se corresponde.");
-                                                           }
-                                                           $$ = new ConstDef($2, l, $5);
+                                                            if (chequearLongitudListas ($3,$5))
+                                                            {
+                                                              driver.agregarConInicializacion($3, Const, $2);
+                                                              std::vector<string>* l = extraerIds($3);
+                                                              $$ = new ConstDef($2, l, $5);
+                                                            } else
+                                                            {
+                                                              driver.error(@1, @5, "El numero de identificadores y de expresiones no se corresponde.");
+                                                              $$ = nullptr;
+                                                            }
                                                          }
             ;
 
 
 DefVariable: Tipo Identificadores "=" Expresiones {
-                                                    if (chequearLongitudListas($2, $4)) {
-                                                      agregarConInicializacion($2, Var);
-                                                    }
-                                                    std::vector<std::string>* l = new std::vector<std::string>();
-                                                    if ($2->size() == $4->size()) {
-                                                      for (unsigned int i=0; i < $2->size(); ++i) {
-                                                        driver.tabla.add_symbol($2->at(i).nombre, $1, Var, $2->at(i).linea, $2->at(i).columna, $2->at(i).linea, $2->at(i).columna);
-                                                        l->push_back($2->at(i).nombre);
-                                                      }
-                                                    } else {
+                                                    if (chequearLongitudListas ($2,$4))
+                                                    {
+                                                      driver.agregarConInicializacion($2, Var, $1);
+                                                      std::vector<string>* l = extraerIds($2);
+                                                      $$ = new DefVar($1, l, $4);
+                                                    } else
+                                                    {
                                                       driver.error(@1, @4, "El numero de identificadores y de expresiones no se corresponde.");
+                                                      $$ = nullptr;
                                                     }
-                                                    $$ = new DefVar($1, l, $4);
                                                   }
            | Tipo Identificadores                 {
-                                                    std::vector<std::string>* l = new std::vector<std::string>();
-                                                    for (unsigned int i=0; i < $2->size(); ++i) {
-                                                      driver.tabla.add_symbol($2->at(i).nombre, $1, Var, $2->at(i).linea, $2->at(i).columna);
-                                                      l->push_back($2->at(i).nombre);
-                                                    }
-                                                    $$ = new DefVarNoInit($1, l);
+                                                      driver.agregarSinInicializacion($2, Var, $1);
+                                                      std::vector<string>* l = extraerIds($2);
+                                                      $$ = new DefVarNoInit($1, l);
                                                   }
-/*           | DefCueva                             { $$ = "Declaración de cueva:\n" + $1;                                                      }*/
+           | DefCueva                             { $$ = $1;                                                      }
            ;
 
 
@@ -244,24 +238,43 @@ Identificadores: ID                     { $$ = new std::vector<elementoLista>();
                | Identificadores "," ID { $$ = $1; elementoLista e; e.nombre = $3; e.linea = @3.begin.line; e.columna = @3.begin.column; $$->push_back(e); }
                ;
 
-/*
 
-DefCueva: Cuevas Tipo ID { $$ = $1 + $2 + ". Nombre: " + $3; }
+
+DefCueva: Cuevas Tipo ID {
+                            $$ = new DefArray($2,$3,$1);
+                            Type* tipoCueva = new CuevaType($2,$1);
+                            driver.tabla.add_symbol($3,tipoCueva,Cueva, @3.begin.line, @3.begin.column);
+                          }
         ;
 
-Cuevas: CUEVA "[" CONSTPOLAR "]" DE          { $$ = $1 + " [" + $3 + "] " + $5 + " ";      }
-       |  Cuevas CUEVA "[" CONSTPOLAR "]" DE { $$ = $1 + $2 + " [" + $4 + "] " + $6 + " "; }
+Cuevas: CUEVA "[" CONSTPOLAR "]" DE          { $$ = new std::vector<std::string>(); $$->push_back($3);      }
+       |  Cuevas CUEVA "[" CONSTPOLAR "]" DE { $$ = $1; $$->push_back($4); }
        ;
 
-DefCompleja: PARDO   ID "{" Campos "}" { $$ = "Pardo:\nNombre: " + $2 + "\nCampos:\n" + $4;   }
-           | GRIZZLI ID "{" Campos "}" { $$ = "Grizzli:\nNombre: " + $2 + "\nCampos:\n" + $4; }
+
+DefCompleja: PARDO ID "{" { Grizzli* g = new Grizzli();
+                            $<Contenedor*>$ = driver.tabla.add_container($2, g, Compuesto, @1.begin.line,@1.begin.column,0);
+                            driver.tabla.enter_scope(); } Campos "}" {
+                                                                        int alcanceCampos = driver.tabla.get_actual_scope();
+                                                                        Contenedor* c = $<Contenedor*>4;
+                                                                        c->set_alcanceCampos(alcanceCampos);
+                                                                        driver.tabla.exit_scope();
+                                                                        $$ = nullptr;
+                                                                      }
+
+      /*     | GRIZZLI ID "{" Campos "}" { $$ = "Grizzli:\nNombre: " + $2 + "\nCampos:\n" + $4; } */
            ;
 
-Campos: Tipo ID ";"        { $$ = "Tipo: " + $1 + " Nombre: " + $2 + ";\n";      }
-      | Campos Tipo ID ";" { $$ = $1 + "Tipo: " + $2 + " Nombre: " + $3 + ";\n"; }
-      ;
+Campos: Tipo ID ";"        {
+                              $$ = new std::vector<Parameter*>; Parameter* p = new Parameter($2,$1,false); $$->push_back(p);
+                              driver.tabla.add_symbol($2, $1, Campo, @2.begin.line, @2.begin.column);
+                           }
 
-*/
+      | Campos Tipo ID ";" {
+                              $$ = $1; Parameter* p = new Parameter($3, $2, false); $$->push_back(p);
+                              driver.tabla.add_symbol($3, $2, Campo, @2.begin.line, @2.begin.column);
+                            }
+      ;
 
 Tipo: PANDA       { $$ = new PandaType();      }
     | POLAR       { $$ = new PolarType();      }
@@ -376,13 +389,21 @@ FuncionPredef: APANDA  "(" Expresion ")" { $$ = "Funcion predefinida: " + $1 + "
 */
 %%
 
-void
-yy::bear_parser::error (const location_type& l,
-                          const std::string& m)
+void yy::bear_parser::error ( const location_type& l,
+                              const std::string& m  )
 {
   driver.error (l, m);
 }
 
-void agregarConInicializacion(std::vector<elementoLista>* ids, Categorias categoria){};
-void agregarSinInicializacion(std::vector<elementoLista>* ids, Categorias categoria){};
-bool chequearLongitudListas(std::vector<elementoLista>* ids, std::vector<Expression*>* expr){};
+bool chequearLongitudListas(std::vector<elementoLista>* ids, std::vector<Expression*>* expr){ return ids->size() == expr->size(); }
+
+std::vector<std::string>* extraerIds(std::vector<elementoLista>* ids)
+{
+  std::vector<std::string>* l = new std::vector<std::string>();
+  for(unsigned int i = 0; i < ids->size(); ++i)
+  {
+    l->push_back(ids->at(i).nombre);
+  }
+  return l;
+
+}

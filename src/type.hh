@@ -62,10 +62,10 @@ class CuevaType : public Type
 {
   private:
     Type* _tipo;
-    std::vector<int>*   _longitudes;
+    std::vector<std::string>*   _longitudes;
 
   public:
-    CuevaType(Type* tipo, std::vector<int>* longitudes);
+    CuevaType(Type* tipo, std::vector<std::string>* longitudes);
     int getSize();
     std::string to_string();
 };
@@ -104,6 +104,13 @@ class GrizzliType : public Type
     GrizzliType(std::vector<CampoType*>* campos, std::string nombre);
     std::string to_string();
     int getSize();
+};
+
+class Grizzli : public Type
+{
+  public:
+    Grizzli() : Type(0) {};
+    std::string to_string() { return std::string("grizzli"); };
 };
 
 class ErrorType : public Type

@@ -39,3 +39,24 @@ std::string Contenedor::to_string()
 {
   return this->Contenido::to_string() + " " + std::to_string(_alcanceCampos);
 }
+
+Funcion::Funcion ( Type* tipo
+                 , unsigned int alcance
+                 , unsigned int linea
+                 , unsigned int columna
+                 , bool def
+                 , std::vector<Definition*>* parametros
+                 )
+  : Contenido(tipo, Proc, alcance, linea, columna)
+  , _def        ( def        )
+  , _parametros ( parametros )
+  {}
+
+std::string Funcion::to_string()
+{
+  std::string str =  "Funcion : " + this->Contenido::to_string() + "Definida: " + std::to_string( _def ) + " Parametros : ";
+  for (unsigned int i=0; i<_parametros->size(); ++i)
+    str += _parametros->at(i)->to_string() + " ";
+
+  return str;
+}
