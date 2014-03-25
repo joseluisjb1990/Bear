@@ -57,8 +57,8 @@ std::string DefArray::to_string()
   return str;
 }
 
-DefFunction::DefFunction ( std::string         name
-                         , std::vector<Definition*>* parametros
+DecFunction::DecFunction ( std::string         name
+                         , std::vector<Parameter*>* parametros
                          , Type*               tipoRetorno
                          )
   : Definition  ()
@@ -67,7 +67,7 @@ DefFunction::DefFunction ( std::string         name
   , _tipoRetorno( tipoRetorno )
   {}
 
-std::string DefFunction::to_string()
+std::string DecFunction::to_string()
 {
   std::string str =  "Nodo Funcion\nNombre de la funcion " + _name + "\nParametros : ";
 
@@ -96,4 +96,5 @@ std::string Parameter::to_string()
 std::string Parameter::get_id()   { return _id;   }
 Type*       Parameter::get_tipo() { return _tipo; }
 bool        Parameter::get_ref()  { return _ref;  }
+
 #endif

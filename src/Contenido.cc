@@ -49,7 +49,7 @@ Funcion::Funcion ( Type* tipo
                  , unsigned int linea
                  , unsigned int columna
                  , bool def
-                 , std::vector<Definition*>* parametros
+                 , std::vector<Parameter*>* parametros
                  )
   : Contenido(tipo, Proc, alcance, linea, columna, false)
   , _def        ( def        )

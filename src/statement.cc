@@ -252,4 +252,20 @@ std::string Empty::to_string()
 {
   return "vacia";
 }
+
+DefFunction::DefFunction ( std::string               id
+                         , std::vector<Parameter*>*  parameters
+                         , Type*                     type
+                         , Statement*                statements
+                         )
+  : _id         ( id )
+  , _parameters ( parameters )
+  , _type       ( type )
+  , _statements ( statements )
+  {}
+
+std::string DefFunction::to_string()
+{
+  return "Defincion de funcion\nNombre: " + _id + "\nParametros: " + "CICLO DE LOS PARAMETROS" + "\nTipo: " + _type->to_string() + "\nInstrucciones: " + _statements->to_string();
+}
 #endif

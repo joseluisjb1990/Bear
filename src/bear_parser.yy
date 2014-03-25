@@ -114,7 +114,7 @@ std::vector<std::string>* extraerIds(std::vector<elementoLista>* ids);
 %token <std::string> AMALAYO
 %token <std::string> LON
 %token <std::string> MIENTRAS
-%type  <std::vector<Statement*>*> Programa
+%type  <Node*> Programa
 %type  <Expression*> Expresion
 %type  <std::vector<Expression*>*> Expresiones
 %type  <std::vector<Statement*>*> Instrucciones
@@ -135,8 +135,8 @@ std::vector<std::string>* extraerIds(std::vector<elementoLista>* ids);
 %type  <std::vector<elementoLista>*> Identificadores
 %type  <Type*> Tipo
 %type  <std::vector<CampoType*>*> Campos
-%type  <std::vector<Definition*>*> DefParametros
-%type  <Definition*> DefParametro
+%type  <std::vector<Parameter*>*> DefParametros
+%type  <Parameter*> DefParametro
 %type  <std::string> ParametroCueva
 %type  <CuevaExpr*>  AccesoCueva
 %type  <std::string> FuncionPredef
@@ -149,7 +149,7 @@ std::vector<std::string>* extraerIds(std::vector<elementoLista>* ids);
 %%
 %start Programa;
 
-Programa : DefCompleja Locales Instrucciones { $$ = $3; driver.AST = $$; }
+Programa : DefFuncion { $$ = $1; driver.AST = $$; }
 /*
 Programa: Definiciones "oso" "(" ")" "=>" EXTINTO "{" Cuerpo "}" { $$ = $1 + $8; std::cout << $1 << "Funcion principal oso:" << std::endl << $8; }
         ;
@@ -170,10 +170,42 @@ DefinicionGlobal: DefConstante  { $$ = $1;                             }
 
 */
 
-DefFuncion: ID "(" DefParametros ")" "=>" Tipo                       { $$ = new DefFunction($1, $3, $6);
+DefFuncion: ID "(" DefParametros ")" "=>" Tipo                       { $$ = new DecFunction($1, $3, $6);
                                                                        driver.tabla.add_function($1, $6, @1.begin.line, @1.begin.column, $3, false);
                                                                      }
-         /* | ID "(" DefParametros ")" "=>" Tipo Instruccion           { $$ = "Nombre: " + $1 + "\nParametros:\n" + $3 + "\nRetorna: " + $6 + $8; } */
+          | ID "(" DefParametros ")" "=>" Tipo {
+                                                  Funcion* f = driver.tabla.get_function($1);
+                                                  if(f)
+                                                  {
+                                                    if (!(f->get_def()))
+                                                    {
+                                                      if (driver.compare_parameters($3, f->get_parameters()))
+                                                      {
+                                                        f->define();
+                                                        driver.tabla.enter_scope();
+                                                        for(std::vector<Parameter*>::iterator it = $3->begin(); it != $3->end(); ++it)
+                                                        {
+                                                          driver.tabla.add_symbol((*it)->get_id(), (*it)->get_tipo(),Var,@3.begin.line, @3.begin.column, true);
+                                                        }
+                                                      } else
+                                                      {
+                                                        driver.error(@3, " parameters in function definition don't matches function declaration" + $1 + " ");
+                                                      }
+                                                    } else
+                                                    {
+                                                      driver.error(@1, "Function "+ $1 + " is redefined " + '\n');
+                                                    }
+                                                  } else
+                                                  {
+                                                    driver.tabla.add_function($1,$6,@1.begin.line,@1.end.column,$3, true);
+                                                    driver.tabla.enter_scope();
+                                                    for(std::vector<Parameter*>::iterator it = $3->begin(); it != $3->end(); ++it)
+                                                    {
+                                                      driver.tabla.add_symbol((*it)->get_id(), (*it)->get_tipo(),Var,@3.begin.line, @3.begin.column, true);
+                                                    }
+                                                  }
+                                                }
+          Instruccion           { $$ = new DefFunction($1, $3, $6, $8); }
           ;
 
 Locales: Locales DefLocales ";"  { $$ = $1; $$->push_back($2);                             }
@@ -185,7 +217,7 @@ DefLocales: DefVariable  { $$ = $1; }
           | DefConstante { $$ = $1; }
           ;
 
-DefParametros: DefParametro                   { $$ = new std::vector<Definition*> (); $$->push_back($1);               }
+DefParametros: DefParametro                   { $$ = new std::vector<Parameter*> (); $$->push_back($1);               }
              | DefParametros "," DefParametro { $$ = $1; $$->push_back($3);                                           }
              ;
 

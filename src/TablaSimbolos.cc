@@ -12,7 +12,7 @@ TablaSimbolos::TablaSimbolos ()
   :_alcance( 0 )
   { _pila.push_back( 0 ); }
 
-Contenido* TablaSimbolos::find_symbol(string nombre)
+Contenido* TablaSimbolos::find_symbol(std::string nombre)
 {
   Contenido* constante = nullptr;
   Contenido* mejor = nullptr;
@@ -30,7 +30,6 @@ Contenido* TablaSimbolos::find_symbol(string nombre)
         {
           if( *itPila == e->getAlcance() ) { mejor = e; break; }
           else if ( mejor != nullptr and *itPila == mejor->getAlcance() ) { break; }
-          else { break; }
         }
       }
     }
@@ -40,7 +39,7 @@ Contenido* TablaSimbolos::find_symbol(string nombre)
   else if (constante != nullptr) { return constante; }
   else { return nullptr; }
 }
-bool TablaSimbolos::check_scope(string nombre)
+bool TablaSimbolos::check_scope(std::string nombre)
 {
   Contenido *cont;
   unsigned int topePila = _pila.back();
@@ -79,13 +78,13 @@ std::ostream& operator<<(std::ostream& os, TablaSimbolos &ts)
   os << '\n';
   return os;
 }
-unsigned int TablaSimbolos::add_symbol (string nombre, Type* tipo, Categorias categoria, unsigned int linea, unsigned int columna, bool mut)
+unsigned int TablaSimbolos::add_symbol (std::string nombre, Type* tipo, Categorias categoria, unsigned int linea, unsigned int columna, bool mut)
 {
   Contenido *cont = new Contenido(tipo, categoria, _pila.back(), linea, columna, mut);
   _dicc.insert(std::make_pair(nombre,cont));
   return _alcance;
 }
-unsigned int TablaSimbolos::add_symbol (string nombre, Type* tipo, Categorias categoria, unsigned int lineaDec, unsigned int columnaDec, unsigned int lineaDef, unsigned int columnaDef, bool mut)
+unsigned int TablaSimbolos::add_symbol (std::string nombre, Type* tipo, Categorias categoria, unsigned int lineaDec, unsigned int columnaDec, unsigned int lineaDef, unsigned int columnaDef, bool mut)
 {
   Contenido *cont = new Contenido(tipo, categoria, _pila.back(), lineaDec, columnaDec, lineaDef, columnaDef, mut);
   _dicc.insert(std::make_pair(nombre,cont));
@@ -93,11 +92,11 @@ unsigned int TablaSimbolos::add_symbol (string nombre, Type* tipo, Categorias ca
 }
 
 unsigned int TablaSimbolos::add_function  (
-                                            string nombre
+                                            std::string nombre
                                           , Type* tipo
                                           , unsigned int linea
                                           , unsigned int columna
-                                          , vector<Definition*>* parametros
+                                          , vector<Parameter*>* parametros
                                           , bool definida
                                           )
 {
@@ -106,4 +105,22 @@ unsigned int TablaSimbolos::add_function  (
   return _alcance;
 }
 
+
 unsigned int TablaSimbolos::get_actual_scope() { return _alcance; }
+
+Funcion* TablaSimbolos::get_function(std::string nombre)
+{
+
+  for(Diccionario::iterator it = _dicc.lower_bound(nombre); it != _dicc.upper_bound(nombre); ++it)
+  {
+    if (it->first == nombre)
+    {
+      if(it->second->get_categoria() == Proc)
+      {
+        Funcion* f = dynamic_cast <Funcion *>(it->second);
+        return f;
+      }
+    }
+  }
+  return nullptr;
+}

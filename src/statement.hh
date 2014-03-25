@@ -226,4 +226,22 @@ class Empty : public Statement
     Empty();
     std::string to_string();
 };
+
+class DefFunction : public Definition
+{
+  public:
+    DefFunction( std::string               id
+               , std::vector<Parameter*>*  parameters
+               , Type*                     type
+               , Statement*                statements
+               );
+
+    std::string to_string();
+
+  private:
+    std::string               _id;
+    std::vector<Parameter*>*  _parameters;
+    Type*                     _type;
+    Statement*                _statements;
+};
 #endif

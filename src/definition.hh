@@ -67,23 +67,6 @@ class DefArray : public Definition
     std::vector<std::string>* _dimensiones;
 };
 
-class DefFunction : public Definition
-{
-  private:
-    std::string                 _name;
-    std::vector<Definition*>*   _parametros;
-    Type*                       _tipoRetorno;
-
-  public:
-    DefFunction ( std::string               name
-                , std::vector<Definition*>* parametros
-                , Type*                     tipoRetorno
-                );
-
-    std::string to_string();
-
-};
-
 class Parameter : public Definition
 {
   public:
@@ -101,6 +84,23 @@ class Parameter : public Definition
     std::string _id;
     Type*       _tipo;
     bool        _ref;
+};
+
+class DecFunction : public Definition
+{
+  private:
+    std::string                 _name;
+    std::vector<Parameter*>*   _parametros;
+    Type*                       _tipoRetorno;
+
+  public:
+    DecFunction ( std::string                name
+                , std::vector<Parameter*>*  parametros
+                , Type*                      tipoRetorno
+                );
+
+    std::string to_string();
+
 };
 
 #endif

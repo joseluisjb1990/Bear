@@ -20,7 +20,7 @@ public:
 
   TablaSimbolos tabla;
   int errores = 0;
-  std::vector<Statement*>* AST;
+  Node* AST;
 
   int result;
 
@@ -45,5 +45,7 @@ public:
   void error (const std::string& m);
   void agregarConInicializacion(std::vector<elementoLista>* ids, Categorias categoria, Type* tipo, bool mut);
   void agregarSinInicializacion(std::vector<elementoLista>* ids, Categorias categoria, Type* tipo);
+  bool compare_parameters(std::vector<Parameter*>* list1, std::vector<Parameter*>* list2);
+  void add_function_parameters(std::vector<Parameter*>* listP);
 };
 #endif // ! CALCXX_DRIVER_HH

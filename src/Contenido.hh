@@ -42,6 +42,7 @@ public:
 
     unsigned int getAlcance();
     bool esMutable();
+    Categorias get_categoria() { return _categoria; };
 };
 
 class Contenedor : public Contenido
@@ -74,12 +75,14 @@ public:
             , unsigned int linea
             , unsigned int columna
             , bool def
-            , std::vector<Definition*>* parametros
+            , std::vector<Parameter*>* parametros
             );
 
     std::string to_string();
-
+    bool get_def()  { return _def; };
+    void define()   { _def = true; };
+    std::vector<Parameter*> * get_parameters() { return _parametros; };
 private:
     bool                _def;
-    std::vector<Definition*>* _parametros;
+    std::vector<Parameter*>* _parametros;
 };
