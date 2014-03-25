@@ -82,6 +82,20 @@ std::string Body::to_string()
   return str;
 }
 
+SimpleBody::SimpleBody( std::vector<Statement *>* listSta )
+  : _listSta( listSta )
+  {}
+
+std::string SimpleBody::to_string()
+{
+
+  std::string str = "Lista de Instrucciones: \n";
+  for (unsigned int i=0; i < _listSta->size(); ++i) {
+    str += _listSta->at(i)->to_string() + '\n';
+  }
+  return str;
+}
+
 ComplexFor::ComplexFor(std::string id, Expression* begin, Expression* end, Expression* step, Statement* body)
   : Statement()
   , _id( id )

@@ -125,6 +125,9 @@ std::vector<std::string>* extraerIds(std::vector<elementoLista>* ids);
 %type  <std::string> ListaDefGlobales
 %type  <std::string> DefinicionGlobal
 %type  <Definition*> DefConstante
+%type  <Statement*> bloque
+%type  <Statement*> bloqueSimple
+%type  <Statement*> bloqueEspecial
 %type  <std::vector<Definition*>*> Locales
 %type  <Definition*> DefVariable
 %type  <DefArray*> DefCueva
@@ -205,7 +208,7 @@ DefFuncion: ID "(" DefParametros ")" "=>" Tipo                       { $$ = new 
                                                     }
                                                   }
                                                 }
-          Instruccion           { $$ = new DefFunction($1, $3, $6, $8); }
+          bloqueEspecial           { $$ = new DefFunction($1, $3, $6, $8); }
           ;
 
 Locales: Locales DefLocales ";"  { $$ = $1; $$->push_back($2);                             }
@@ -333,19 +336,34 @@ Tipo: PANDA       { $$ = new PandaType();      }
 /*    | ID          { $$ = $1; }*/
     ;
 
+bloqueEspecial: "{" Locales Instrucciones "}" { $$ = new Body($2, $3);  }
+              | bloqueSimple                  { $$ = $1;                }
+              ;
+
+bloqueSimple: "{" Instrucciones         "}" { $$ = new SimpleBody($2);  }
+            | Instruccion ";"                   { $$ = $1;                 }
+            ;
+
+bloque: "{" { driver.tabla.enter_scope(); } Locales Instrucciones "}"     {
+                                                                            $$ = new Body($3, $4);
+                                                                            driver.tabla.exit_scope();
+                                                                          }
+      | bloqueSimple                                                      { $$ = $1; }
+      ;
+
 Instrucciones: Instruccion ";"               { $$ = new std::vector<Statement*>(); $$->push_back($1); }
              | Instrucciones Instruccion ";" { $$ = $1; $$->push_back($2);                            }
              | error                         { $$ = new std::vector<Statement*>(); yyerrok;           }
              ;
 
 %right ENTONCES SINO;
-Instruccion: LValues "=" Expresiones                                                  {
-                                                                                        if (!($1->size() == $3->size())) {
-                                                                                          driver.error(@1, @3, "El numero de identificadores y de expresiones en la asignación no se corresponde.");
-                                                                                        }
-                                                                                        $$ = new Assign($1, $3);
+Instruccion: LValues"=" Expresiones                                                 {
+                                                                                      if (!($1->size() == $3->size())) {
+                                                                                        driver.error(@1, @3, "El numero de identificadores y de expresiones en la asignación no se corresponde.");
                                                                                       }
-           | LEER "(" ID ")"                                                        {
+                                                                                      $$ = new Assign($1, $3);
+                                                                                     }
+           | LEER "(" ID ")"                                                         {
                                                                                       Contenido* c = driver.tabla.find_symbol($3);
                                                                                       if (!c) {
                                                                                         driver.error(@1, @4, "Se intenta leer la variable " + $3 + " que no se encuentra definida.");
@@ -357,38 +375,35 @@ Instruccion: LValues "=" Expresiones                                            
                                                                                       } else {
                                                                                         $$ = new Read($3);
                                                                                       }
-                                                                                    }
+                                                                                      }
            | ESCRIBIR "(" Expresion ")"                                               { $$ = new Write($3); }
 /*           | Funcion                                                                  { $$ = "Funcion:\n" + $1 + ";";        }*/
-           | SI Expresion ENTONCES Instruccion                                        { $$ = new If($2, $4);                 }
-           | SI Expresion ENTONCES Instruccion SINO Instruccion                       { $$ = new IfElse($2, $4, $6);         }
-           | "{"                                                                      { driver.tabla.enter_scope();          }
-             Locales Instrucciones "}"                                                {
-                                                                                        $$ = new Body($3, $4);
-                                                                                        driver.tabla.exit_scope();           }
-           | PARA ID EN "(" Expresion ";" Expresion ")" Instruccion                         {
-                                                                                              PolarType* p = new PolarType();
-                                                                                              driver.tabla.add_symbol($2, p, Var, @2.begin.line, @2.begin.column, @2.end.line, @2.end.column, false);
-                                                                                              $$ = new SimpleFor($2, $5, $7, $9);
-                                                                                            }
+           | SI Expresion ENTONCES bloque                                        { $$ = new If($2, $4);                 }
+           | SI Expresion ENTONCES bloque SINO bloque                       { $$ = new IfElse($2, $4, $6);         }
+
+           | PARA ID EN "(" Expresion ";" Expresion ")" bloqueEspecial                   {
+                                                                                        PolarType* p = new PolarType();
+                                                                                        driver.tabla.add_symbol($2, p, Var, @2.begin.line, @2.begin.column, @2.end.line, @2.end.column, false);
+                                                                                        $$ = new SimpleFor($2, $5, $7, $9);
+                                                                                      }
 /*
  Tenemos un hermoso problema, hay que lograr agregar el ID en el mismo scope que las instrucciones pero no sabemos como asi que por ahora fuck it, hay juego de futbol yy stuff..
 */
-           | PARA ID EN "(" Expresion ";" Expresion ";" Expresion ")" Instruccion           {
-                                                                                              PolarType* p = new PolarType();
-                                                                                              driver.tabla.add_symbol($2, p, Var, @2.begin.line, @2.begin.column, @2.end.line, @2.end.column, false);
-                                                                                              $$ = new ComplexFor($2, $5, $9, $7, $11);
-                                                                                            }
-/*           | PARA ID EN ID "{" Cuerpo  "}"                                                  { $$ = "Iteración acotada:\nVariable de iteración: " + $2 + "\nArreglo sobre el cual iterar: " + $4 + "\nInstrucciones:\n" + $6;                     }
-           | IteracionIndeterminada                                                         { $$ = "Iteración indeterminada:\n" + $1;                                                                                                            }
-           | ID "++"                                                                        { $$ = "Incremento de la variable: " + $1 + ";";                                                                                                     }
-           | ID "--"                                                                        { $$ = "Decremento de la variable: " + $1 + ";";                                                                                                     }
-           | VOMITA                                                                         { $$ = "Vomita;";                                                                                                                                    }
-           | VOMITA ID                                                                      { $$ = "Vomita a la etiqueta: " + $2 + ";";                                                                                                          }
-           | FONDOBLANCO                                                                    { $$ = "fondoBlanco;";                                                                                                                               }
-           | FONDOBLANCO ID                                                                 { $$ = "fondoBlanco a la etiqueta: " + $2 + ";";                                                                                                     }
-           | ROLOEPEA                                                                       { $$ = "roloePea;";                                                                                                                                  }
-           | ROLOEPEA ID                                                                    { $$ = "roloePea a la etiqueta: " + $2 + ";";                                                                                                        }*/
+           | PARA ID EN "(" Expresion ";" Expresion ";" Expresion ")" bloqueEspecial     {
+                                                                                        PolarType* p = new PolarType();
+                                                                                        driver.tabla.add_symbol($2, p, Var, @2.begin.line, @2.begin.column, @2.end.line, @2.end.column, false);
+                                                                                        $$ = new ComplexFor($2, $5, $9, $7, $11);
+                                                                                      }
+/*           | PARA ID EN ID "{" Cuerpo  "}"                                          { $$ = "Iteración acotada:\nVariable de iteración: " + $2 + "\nArreglo sobre el cual iterar: " + $4 + "\nInstrucciones:\n" + $6;                     }
+           | IteracionIndeterminada                                                   { $$ = "Iteración indeterminada:\n" + $1;                                                                                                            }
+           | ID "++"                                                                  { $$ = "Incremento de la variable: " + $1 + ";";                                                                                                     }
+           | ID "--"                                                                  { $$ = "Decremento de la variable: " + $1 + ";";                                                                                                     }
+           | VOMITA                                                                   { $$ = "Vomita;";                                                                                                                                    }
+           | VOMITA ID                                                                { $$ = "Vomita a la etiqueta: " + $2 + ";";                                                                                                          }
+           | FONDOBLANCO                                                              { $$ = "fondoBlanco;";                                                                                                                               }
+           | FONDOBLANCO ID                                                           { $$ = "fondoBlanco a la etiqueta: " + $2 + ";";                                                                                                     }
+           | ROLOEPEA                                                                 { $$ = "roloePea;";                                                                                                                                  }
+           | ROLOEPEA ID                                                              { $$ = "roloePea a la etiqueta: " + $2 + ";";                                                                                                        }*/
            ;
 /*
 IteracionIndeterminada: ID ":" MIENTRAS "(" Expresion ")" Instruccion    { $$ = "Etiqueta: " + $1 + "\nCondición: " + $5 + "\nInstrucciones: " + $8; }

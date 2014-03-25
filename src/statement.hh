@@ -86,6 +86,16 @@ class Body : public Statement
     std::vector<Statement *>  * _listSta;
 };
 
+class SimpleBody : public Statement
+{
+  public:
+    SimpleBody( std::vector<Statement *>* listSta );
+    std::string to_string();
+
+  private:
+    std::vector<Statement *>  * _listSta;
+};
+
 class ComplexFor : public Statement
 {
   public:
