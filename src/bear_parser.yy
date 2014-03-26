@@ -38,7 +38,6 @@ typedef struct {
 {
 # include "bear_driver.hh"
 
-bool chequearLongitudListas(std::vector<elementoLista>* ids, std::vector<Expression*>* expr);
 std::vector<std::string>* extraerIds(std::vector<elementoLista>* ids);
 
 }
@@ -141,7 +140,8 @@ std::vector<std::string>* extraerIds(std::vector<elementoLista>* ids);
 %type  <std::vector<Parameter*>*> DefParametros
 %type  <Parameter*> DefParametro
 %type  <std::string> ParametroCueva
-%type  <CuevaExpr*>  AccesoCueva
+%type  <std::vector<Expression*>*>  AccesoCueva
+%type  <std::vector<Expression*>*>  MaybeCueva
 %type  <std::string> FuncionPredef
 %type  <std::string> Funcion
 %type  <std::string> Cuerpo
@@ -152,7 +152,7 @@ std::vector<std::string>* extraerIds(std::vector<elementoLista>* ids);
 %%
 %start Programa;
 
-Programa : DefFuncion { $$ = $1; driver.AST = $$; }
+Programa : DefCompleja { $$ = $1; driver.AST = $$; }
 /*
 Programa: Definiciones "oso" "(" ")" "=>" EXTINTO "{" Cuerpo "}" { $$ = $1 + $8; std::cout << $1 << "Funcion principal oso:" << std::endl << $8; }
         ;
@@ -174,7 +174,7 @@ DefinicionGlobal: DefConstante  { $$ = $1;                             }
 */
 
 DefFuncion: ID "(" DefParametros ")" "=>" Tipo                       { $$ = new DecFunction($1, $3, $6);
-                                                                       driver.tabla.add_function($1, $6, @1.begin.line, @1.begin.column, $3, false);
+                                                                       driver.tabla.add_function($1, $6, @1.begin.line, @1.begin.column, $3);
                                                                      }
           | ID "(" DefParametros ")" "=>" Tipo {
                                                   Funcion* f = driver.tabla.get_function($1);
@@ -184,7 +184,7 @@ DefFuncion: ID "(" DefParametros ")" "=>" Tipo                       { $$ = new 
                                                     {
                                                       if (driver.compare_parameters($3, f->get_parameters()))
                                                       {
-                                                        f->define();
+                                                        f->define(@1.begin.line, @1.begin.column);
                                                         driver.tabla.enter_scope();
                                                         for(std::vector<Parameter*>::iterator it = $3->begin(); it != $3->end(); ++it)
                                                         {
@@ -192,7 +192,7 @@ DefFuncion: ID "(" DefParametros ")" "=>" Tipo                       { $$ = new 
                                                         }
                                                       } else
                                                       {
-                                                        driver.error(@3, " parameters in function definition don't matches function declaration" + $1 + " ");
+                                                        driver.error(@3, "Parameters in function definition don't match the ones in declaration" + $1 + " ");
                                                       }
                                                     } else
                                                     {
@@ -200,7 +200,7 @@ DefFuncion: ID "(" DefParametros ")" "=>" Tipo                       { $$ = new 
                                                     }
                                                   } else
                                                   {
-                                                    driver.tabla.add_function($1,$6,@1.begin.line,@1.end.column,$3, true);
+                                                    driver.tabla.add_function($1,$6,@1.begin.line,@1.begin.column, @1.begin.line, @1.begin.column, $3);
                                                     driver.tabla.enter_scope();
                                                     for(std::vector<Parameter*>::iterator it = $3->begin(); it != $3->end(); ++it)
                                                     {
@@ -236,14 +236,14 @@ ParametroCueva: CUEVA "[" "]" DE                           { $$ = $1 + " [] " + 
 */
 
 DefConstante: CONST Tipo Identificadores "=" Expresiones {
-                                                            if (chequearLongitudListas ($3,$5))
+                                                            if ($3->size() == $5->size())
                                                             {
                                                               driver.agregarConInicializacion($3, Const, $2, false);
                                                               std::vector<string>* l = extraerIds($3);
                                                               $$ = new ConstDef($2, l, $5);
                                                             } else
                                                             {
-                                                              driver.error(@1, @5, "El numero de identificadores y de expresiones no se corresponde.");
+                                                              driver.error(@1, @5, "The number of l-values and expressions is not the same.");
                                                               $$ = nullptr;
                                                             }
                                                          }
@@ -251,14 +251,14 @@ DefConstante: CONST Tipo Identificadores "=" Expresiones {
 
 
 DefVariable: Tipo Identificadores "=" Expresiones {
-                                                    if (chequearLongitudListas ($2,$4))
+                                                    if ($2->size() == $4->size())
                                                     {
                                                       driver.agregarConInicializacion($2, Var, $1, true);
                                                       std::vector<string>* l = extraerIds($2);
                                                       $$ = new DefVar($1, l, $4);
                                                     } else
                                                     {
-                                                      driver.error(@1, @4, "El numero de identificadores y de expresiones no se corresponde.");
+                                                      driver.error(@1, @4, "The number of l-values and expressions is not the same.");
                                                       $$ = nullptr;
                                                     }
                                                   }
@@ -294,12 +294,25 @@ DefCompleja: PARDO ID "{" { driver.tabla.enter_scope(); }
                             int alcanceCampos = driver.tabla.get_actual_scope();
                             driver.tabla.exit_scope();
                             PardoType* p = new PardoType($5, $2);
-                            if (driver.tabla.check_scope($2)) {
-                              driver.error(@1, @6, "Se intenta redefinir el tipo " + $2 + ".");
+                            Contenedor* c = driver.tabla.find_container($2);
+                            if (c) {
+                              if (c->getDef()) {
+                                driver.error(@1, @6, "Attempt to redefine the type " + $2 + ".");
+                              } else {
+                                driver.tabla.update_container($2, p, @1.begin.line, @1.begin.column, alcanceCampos);
+                              }
                             } else {
-                              driver.tabla.add_container($2, p, Compuesto, @1.begin.line, @1.begin.column, alcanceCampos);
+                              driver.tabla.add_container($2, p, Compuesto, @1.begin.line, @1.begin.column, @1.begin.line, @1.begin.column, alcanceCampos);
                             }
                             $$ = nullptr;
+                          }
+
+           | PARDO ID ";" {
+                            // FIXME Aqui falta revisar que pasa cuando el find_symbol si devuelva algo :s error o que?
+                            Contenedor* c = driver.tabla.find_container($2);
+                            if (!c) {
+                              driver.tabla.add_container($2, Compuesto, @1.begin.line, @1.begin.column);
+                            }
                           }
 
            | GRIZZLI ID "{" { driver.tabla.enter_scope(); }
@@ -307,13 +320,26 @@ DefCompleja: PARDO ID "{" { driver.tabla.enter_scope(); }
                           int alcanceCampos = driver.tabla.get_actual_scope();
                           driver.tabla.exit_scope();
                           GrizzliType* g = new GrizzliType($5, $2);
-                            if (driver.tabla.check_scope($2)) {
-                              driver.error(@1, @6, "Se intenta redefinir el tipo " + $2 + ".");
+                          Contenedor* c = driver.tabla.find_container($2);
+                            if (c) {
+                              if (c->getDef()) {
+                                driver.error(@1, @6, "Attempt to redefine the type " + $2 + ".");
+                              } else {
+                                driver.tabla.update_container($2, g, @1.begin.line, @1.begin.column, alcanceCampos);
+                              }
                             } else {
-                              driver.tabla.add_container($2, g, Compuesto, @1.begin.line, @1.begin.column, alcanceCampos);
+                              driver.tabla.add_container($2, g, Compuesto, @1.begin.line, @1.begin.column, @1.begin.line, @1.begin.column, alcanceCampos);
                             }
                           $$ = nullptr;
                         }
+
+           | GRIZZLI ID ";" {
+                              // FIXME Aqui falta revisar que pasa cuando el find_symbol si devuelva algo :s error o que?
+                              Contenedor* c = driver.tabla.find_container($2);
+                              if (!c) {
+                                driver.tabla.add_container($2, Compuesto, @1.begin.line, @1.begin.column);
+                              }
+                            }
            ;
 
 Campos: Tipo ID ";"        {
@@ -359,18 +385,18 @@ Instrucciones: Instruccion ";"               { $$ = new std::vector<Statement*>(
 %right ENTONCES SINO;
 Instruccion: LValues"=" Expresiones                                                 {
                                                                                       if (!($1->size() == $3->size())) {
-                                                                                        driver.error(@1, @3, "El numero de identificadores y de expresiones en la asignación no se corresponde.");
+                                                                                        driver.error(@1, @3, "The number of l-values and expressions is not the same.");
                                                                                       }
                                                                                       $$ = new Assign($1, $3);
                                                                                      }
            | LEER "(" ID ")"                                                         {
                                                                                       Contenido* c = driver.tabla.find_symbol($3);
                                                                                       if (!c) {
-                                                                                        driver.error(@1, @4, "Se intenta leer la variable " + $3 + " que no se encuentra definida.");
+                                                                                        driver.error(@1, @4, "Trying to read variable " + $3 + " which is not defined.");
                                                                                         $$ =  new Empty();
                                                                                       }
                                                                                       else if (!c->esMutable()) {
-                                                                                        driver.error(@1, @4, "Se intenta inicializar la variable " + $3 + ", que no es mutable.");
+                                                                                        driver.error(@1, @4, "Trying to initialize variable " + $3 + ", which is not mutable.");
                                                                                         $$ =  new Empty();
                                                                                       } else {
                                                                                         $$ = new Read($3);
@@ -414,26 +440,47 @@ LValues: LValue             { $$ = new std::vector<Expression*>(); $$->push_back
        | LValues "," LValue { $$ = $1; $$->push_back($3);                             }
        ;
 
-%left "->" ".";
-LValue: ID                 {
-                             Contenido* c = driver.tabla.find_symbol($1);
-                             if (!c) {
-                               driver.error(@1, "Se intenta inicializar la variable " + $1 + ", que no se encuentra definida.");
-                             }
-                             else if (!c->esMutable()) {
-                               driver.error(@1, "Se intenta inicializar la variable " + $1 + ", que no es mutable.");
-                             }
-                             $$ = new IDExpr($1);
-                           }
-/*      | LValue "->" LValue { $$ = new PardoExpr($1, $3);   }
-      | LValue "."  LValue { $$ = new GrizzliExpr($1, $3); }
-      | AccesoCueva        { $$ = $1;                      }*/
+/* Necesito ayuda para hacer esta parte¸ me confunde un poco como vamos a manejar la tabla */
+LValue: ID MaybeCueva              {
+                                     Contenido* c = driver.tabla.find_symbol($1);
+                                     if (!c) {
+                                       driver.error(@1, "Trying to initialize variable " + $1 + ", which is not defined.");
+                                     }
+                                     else if (!c->esMutable()) {
+                                       driver.error(@1, "Trying to initialize variable " + $1 + ", which is not mutable.");
+                                     }
+                                     if (nullptr == $2) {
+                                       $$ = new IDExpr($1);
+                                     } else {
+                                       $$ = new CuevaExpr($1, $2);
+                                     }
+                                   }
+      | LValue "->" ID MaybeCueva {
+                                   /*  if (nullptr == $4) {
+                                       $$ = new IDExpr($3);
+                                     } else {
+                                       $$ = new CuevaExpr($3, $4);
+                                     }
+                                    $$ = new PardoExpr($1, $3);*/
+                                  }
+      | LValue "."  ID MaybeCueva {
+                                  /*   if (nullptr == $4) {
+                                       $$ = new IDExpr($3);
+                                     } else {
+                                       $$ = new CuevaExpr($3, $4);
+                                     }
+                                    $$ = new GrizzliExpr($1, $3);*/
+                                  }
       ;
-/*
-AccesoCueva: ID "[" Expresion "]"          { $$ = new CuevaExpr($1, $3); }
-           | AccesoCueva "[" Expresion "]" { $$ = $1; $$->addDimension($3); }
+
+MaybeCueva:             { $$ = nullptr; }
+          | AccesoCueva { $$ = $1;      }
+          ;
+
+AccesoCueva:  "[" Expresion "]"            { $$ = new std::vector<Expression*>(); $$->push_back($2); }
+           | AccesoCueva "[" Expresion "]" { $$ = $1; $$->push_back($3); }
            ;
-*/
+
 
 Expresiones: Expresion                 { $$ = new std::vector<Expression*>(); $$->push_back($1); }
            | Expresiones "," Expresion { $$ = $1; $$->push_back($3); }
@@ -497,8 +544,6 @@ void yy::bear_parser::error ( const location_type& l,
 {
   driver.error (l, m);
 }
-
-bool chequearLongitudListas(std::vector<elementoLista>* ids, std::vector<Expression*>* expr){ return ids->size() == expr->size(); }
 
 std::vector<std::string>* extraerIds(std::vector<elementoLista>* ids)
 {
