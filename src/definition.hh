@@ -16,6 +16,14 @@ public :
     virtual std::string to_string(){ return "DEFINICIÓN:"; };
 };
 
+class EmptyDef : public Definition
+{
+  public:
+    EmptyDef(){};
+    std::string to_string() { return "Empty definition"; };
+
+};
+
 class DefWithInit : public Definition
 {
   public:

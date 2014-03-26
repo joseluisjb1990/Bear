@@ -113,16 +113,16 @@ std::vector<std::string>* extraerIds(std::vector<elementoLista>* ids);
 %token <std::string> AMALAYO
 %token <std::string> LON
 %token <std::string> MIENTRAS
-%type  <Node*> Programa
+%type  <std::vector<Definition*>*> Programa
 %type  <Expression*> Expresion
 %type  <std::vector<Expression*>*> Expresiones
 %type  <std::vector<Statement*>*> Instrucciones
 %type  <Statement*> Instruccion
 %type  <LValueExpr*> LValue
 %type  <std::vector<Expression*>*> LValues
-%type  <std::string> Definiciones
-%type  <std::string> ListaDefGlobales
-%type  <std::string> DefinicionGlobal
+%type  <std::vector<Definition*>*> Definiciones
+%type  <std::vector<Definition*>*> ListaDefGlobales
+%type  <Definition*> DefinicionGlobal
 %type  <Definition*> DefConstante
 %type  <Statement*> bloque
 %type  <Statement*> bloqueSimple
@@ -152,26 +152,24 @@ std::vector<std::string>* extraerIds(std::vector<elementoLista>* ids);
 %%
 %start Programa;
 
-Programa : DefCompleja { $$ = $1; driver.AST = $$; }
+Programa : Definiciones { $$ = $1;/* driver.AST = $$;*/ }
 /*
 Programa: Definiciones "oso" "(" ")" "=>" EXTINTO "{" Cuerpo "}" { $$ = $1 + $8; std::cout << $1 << "Funcion principal oso:" << std::endl << $8; }
         ;
-
+*/
 Definiciones:
-            | ListaDefGlobales   { $$ = "Definiciones:\n" + $1; }
+            | ListaDefGlobales   { $$ = $1; }
             ;
 
-ListaDefGlobales: DefinicionGlobal ";"                  { $$ = $1 + ";\n";      }
-                | ListaDefGlobales DefinicionGlobal ";" { $$ = $1 + $2 + ";\n"; }
+ListaDefGlobales: DefinicionGlobal ";"                  { $$ = new std::vector<Definition*>(); $$->push_back($1); }
+                | ListaDefGlobales DefinicionGlobal ";" { $$ = $1; $$->push_back($2);                             }
                 ;
 
-DefinicionGlobal: DefConstante  { $$ = $1;                             }
-                | DefVariable   { $$ = $1;                             }
-                | DefFuncion    { $$ = $1;                             }
-                | DefCompleja   { $$ = "Declaración compleja:\n" + $1; }
+DefinicionGlobal: DefConstante  { $$ = $1; }
+                | DefVariable   { $$ = $1; }
+                | DefFuncion    { $$ = $1; }
+                | DefCompleja   { $$ = $1; }
                 ;
-
-*/
 
 DefFuncion: ID "(" DefParametros ")" "=>" Tipo                       { $$ = new DecFunction($1, $3, $6);
                                                                        driver.tabla.add_function($1, $6, @1.begin.line, @1.begin.column, $3);
@@ -180,7 +178,7 @@ DefFuncion: ID "(" DefParametros ")" "=>" Tipo                       { $$ = new 
                                                   Funcion* f = driver.tabla.get_function($1);
                                                   if(f)
                                                   {
-                                                    if (!(f->get_def()))
+                                                    if (!(f->getDef()))
                                                     {
                                                       if (driver.compare_parameters($3, f->get_parameters()))
                                                       {
@@ -208,7 +206,7 @@ DefFuncion: ID "(" DefParametros ")" "=>" Tipo                       { $$ = new 
                                                     }
                                                   }
                                                 }
-          bloqueEspecial           { $$ = new DefFunction($1, $3, $6, $8); }
+          bloqueEspecial           { driver.tabla.exit_scope(); $$ = new DefFunction($1, $3, $6, $8); }
           ;
 
 Locales: Locales DefLocales ";"  { $$ = $1; $$->push_back($2);                             }
@@ -244,7 +242,7 @@ DefConstante: CONST Tipo Identificadores "=" Expresiones {
                                                             } else
                                                             {
                                                               driver.error(@1, @5, "The number of l-values and expressions is not the same.");
-                                                              $$ = nullptr;
+                                                              $$ = new EmptyDef();
                                                             }
                                                          }
             ;
@@ -259,7 +257,7 @@ DefVariable: Tipo Identificadores "=" Expresiones {
                                                     } else
                                                     {
                                                       driver.error(@1, @4, "The number of l-values and expressions is not the same.");
-                                                      $$ = nullptr;
+                                                      $$ = new EmptyDef();
                                                     }
                                                   }
            | Tipo Identificadores                 {
@@ -304,15 +302,16 @@ DefCompleja: PARDO ID "{" { driver.tabla.enter_scope(); }
                             } else {
                               driver.tabla.add_container($2, p, Compuesto, @1.begin.line, @1.begin.column, @1.begin.line, @1.begin.column, alcanceCampos);
                             }
-                            $$ = nullptr;
+                            $$ = new EmptyDef();
                           }
 
-           | PARDO ID ";" {
+           | PARDO ID     {
                             // FIXME Aqui falta revisar que pasa cuando el find_symbol si devuelva algo :s error o que?
                             Contenedor* c = driver.tabla.find_container($2);
                             if (!c) {
                               driver.tabla.add_container($2, Compuesto, @1.begin.line, @1.begin.column);
                             }
+                            $$ = new EmptyDef();
                           }
 
            | GRIZZLI ID "{" { driver.tabla.enter_scope(); }
@@ -330,15 +329,16 @@ DefCompleja: PARDO ID "{" { driver.tabla.enter_scope(); }
                             } else {
                               driver.tabla.add_container($2, g, Compuesto, @1.begin.line, @1.begin.column, @1.begin.line, @1.begin.column, alcanceCampos);
                             }
-                          $$ = nullptr;
+                          $$ = new EmptyDef();
                         }
 
-           | GRIZZLI ID ";" {
+           | GRIZZLI ID     {
                               // FIXME Aqui falta revisar que pasa cuando el find_symbol si devuelva algo :s error o que?
                               Contenedor* c = driver.tabla.find_container($2);
                               if (!c) {
                                 driver.tabla.add_container($2, Compuesto, @1.begin.line, @1.begin.column);
                               }
+                              $$ = new EmptyDef();
                             }
            ;
 
@@ -395,7 +395,7 @@ Instruccion: LValues"=" Expresiones                                             
                                                                                         driver.error(@1, @4, "Trying to read variable " + $3 + " which is not defined.");
                                                                                         $$ =  new Empty();
                                                                                       }
-                                                                                      else if (!c->esMutable()) {
+                                                                                      else if (!c->getMutabilidad()) {
                                                                                         driver.error(@1, @4, "Trying to initialize variable " + $3 + ", which is not mutable.");
                                                                                         $$ =  new Empty();
                                                                                       } else {
@@ -407,19 +407,24 @@ Instruccion: LValues"=" Expresiones                                             
            | SI Expresion ENTONCES bloque                                        { $$ = new If($2, $4);                 }
            | SI Expresion ENTONCES bloque SINO bloque                       { $$ = new IfElse($2, $4, $6);         }
 
-           | PARA ID EN "(" Expresion ";" Expresion ")" bloqueEspecial                   {
-                                                                                        PolarType* p = new PolarType();
-                                                                                        driver.tabla.add_symbol($2, p, Var, @2.begin.line, @2.begin.column, @2.end.line, @2.end.column, false);
-                                                                                        $$ = new SimpleFor($2, $5, $7, $9);
-                                                                                      }
+           | PARA ID EN "(" Expresion ";" Expresion ")"                     { driver.tabla.enter_scope();
+                                                                              PolarType* p = new PolarType();
+                                                                              driver.tabla.add_symbol($2, p, Var, @2.begin.line, @2.begin.column, @2.end.line, @2.end.column, false);
+                                                                            }
+             bloqueEspecial                                                 {
+                                                                              driver.tabla.exit_scope();
+                                                                              $$ = new SimpleFor($2, $5, $7, $10);
+                                                                            }
 /*
  Tenemos un hermoso problema, hay que lograr agregar el ID en el mismo scope que las instrucciones pero no sabemos como asi que por ahora fuck it, hay juego de futbol yy stuff..
 */
-           | PARA ID EN "(" Expresion ";" Expresion ";" Expresion ")" bloqueEspecial     {
-                                                                                        PolarType* p = new PolarType();
-                                                                                        driver.tabla.add_symbol($2, p, Var, @2.begin.line, @2.begin.column, @2.end.line, @2.end.column, false);
-                                                                                        $$ = new ComplexFor($2, $5, $9, $7, $11);
-                                                                                      }
+           | PARA ID EN "(" Expresion ";" Expresion ";" Expresion ")"      { driver.tabla.enter_scope();
+                                                                             PolarType* p = new PolarType();
+                                                                             driver.tabla.add_symbol($2, p, Var, @2.begin.line, @2.begin.column, @2.end.line, @2.end.column, false);
+                                                                           }
+             bloqueEspecial                                                { driver.tabla.exit_scope();
+                                                                             $$ = new ComplexFor($2, $5, $9, $7, $12);
+                                                                           }
 /*           | PARA ID EN ID "{" Cuerpo  "}"                                          { $$ = "Iteración acotada:\nVariable de iteración: " + $2 + "\nArreglo sobre el cual iterar: " + $4 + "\nInstrucciones:\n" + $6;                     }
            | IteracionIndeterminada                                                   { $$ = "Iteración indeterminada:\n" + $1;                                                                                                            }
            | ID "++"                                                                  { $$ = "Incremento de la variable: " + $1 + ";";                                                                                                     }
@@ -446,7 +451,7 @@ LValue: ID MaybeCueva              {
                                      if (!c) {
                                        driver.error(@1, "Trying to initialize variable " + $1 + ", which is not defined.");
                                      }
-                                     else if (!c->esMutable()) {
+                                     else if (!c->getMutabilidad()) {
                                        driver.error(@1, "Trying to initialize variable " + $1 + ", which is not mutable.");
                                      }
                                      if (nullptr == $2) {
