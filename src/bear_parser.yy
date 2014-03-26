@@ -113,7 +113,7 @@ std::vector<std::string>* extraerIds(std::vector<elementoLista>* ids);
 %token <std::string> AMALAYO
 %token <std::string> LON
 %token <std::string> MIENTRAS
-%type  <std::vector<Definition*>*> Programa
+%type  <Statement*> Programa
 %type  <Expression*> Expresion
 %type  <std::vector<Expression*>*> Expresiones
 %type  <std::vector<Statement*>*> Instrucciones
@@ -152,11 +152,15 @@ std::vector<std::string>* extraerIds(std::vector<elementoLista>* ids);
 %%
 %start Programa;
 
-Programa : Definiciones { $$ = $1;/* driver.AST = $$;*/ }
-/*
-Programa: Definiciones "oso" "(" ")" "=>" EXTINTO "{" Cuerpo "}" { $$ = $1 + $8; std::cout << $1 << "Funcion principal oso:" << std::endl << $8; }
-        ;
-*/
+Programa : Definiciones "oso" "(" ")" "=>" EXTINTO { driver.tabla.enter_scope();
+                                                     std::vector<Parameter*>* paramVacio = new std::vector<Parameter*>();
+                                                     driver.tabla.add_function("oso",new ExtintoType(),@2.begin.line,@2.begin.column, @2.begin.line, @2.begin.column, paramVacio);
+                                                   }
+           bloqueEspecial                          { driver.tabla.exit_scope();
+                                                     $$ = $8;/* driver.AST = $$;*/
+                                                   }
+         ;
+
 Definiciones:
             | ListaDefGlobales   { $$ = $1; }
             ;
@@ -367,7 +371,7 @@ bloqueEspecial: "{" Locales Instrucciones "}" { $$ = new Body($2, $3);  }
               ;
 
 bloqueSimple: "{" Instrucciones         "}" { $$ = new SimpleBody($2);  }
-            | Instruccion ";"                   { $$ = $1;                 }
+            | Instruccion ";"               { $$ = $1;                  }
             ;
 
 bloque: "{" { driver.tabla.enter_scope(); } Locales Instrucciones "}"     {
