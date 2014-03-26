@@ -1,7 +1,7 @@
 #include "type.hh"
 #include "definition.hh"
 
-typedef enum { Var, Const, Proc, Campo, Cueva, Compuesto} Categorias;
+typedef enum { Var, Const, Proc, Campo, Cueva, Compuesto, Etiqueta} Categorias;
 
 class Contenido
 {

@@ -145,7 +145,7 @@ std::vector<std::string>* extraerIds(std::vector<elementoLista>* ids);
 %type  <std::string> FuncionPredef
 %type  <std::string> Funcion
 %type  <std::string> Cuerpo
-%type  <std::string> IteracionIndeterminada
+%type  <Statement*> IteracionIndeterminada
 
 /* %printer { yyoutput << $$; } <*>; */
 
@@ -419,9 +419,6 @@ Instruccion: LValues"=" Expresiones                                             
                                                                               driver.tabla.exit_scope();
                                                                               $$ = new SimpleFor($2, $5, $7, $10);
                                                                             }
-/*
- Tenemos un hermoso problema, hay que lograr agregar el ID en el mismo scope que las instrucciones pero no sabemos como asi que por ahora fuck it, hay juego de futbol yy stuff..
-*/
            | PARA ID EN "(" Expresion ";" Expresion ";" Expresion ")"      { driver.tabla.enter_scope();
                                                                              PolarType* p = new PolarType();
                                                                              driver.tabla.add_symbol($2, p, Var, @2.begin.line, @2.begin.column, @2.end.line, @2.end.column, false);
@@ -429,9 +426,9 @@ Instruccion: LValues"=" Expresiones                                             
              bloqueEspecial                                                { driver.tabla.exit_scope();
                                                                              $$ = new ComplexFor($2, $5, $9, $7, $12);
                                                                            }
-/*           | PARA ID EN ID "{" Cuerpo  "}"                                          { $$ = "Iteración acotada:\nVariable de iteración: " + $2 + "\nArreglo sobre el cual iterar: " + $4 + "\nInstrucciones:\n" + $6;                     }
-           | IteracionIndeterminada                                                   { $$ = "Iteración indeterminada:\n" + $1;                                                                                                            }
-           | ID "++"                                                                  { $$ = "Incremento de la variable: " + $1 + ";";                                                                                                     }
+/*           | PARA ID EN ID "{" Cuerpo  "}"                                          { $$ = "Iteración acotada:\nVariable de iteración: " + $2 + "\nArreglo sobre el cual iterar: " + $4 + "\nInstrucciones:\n" + $6;                     }*/
+           | IteracionIndeterminada                                                   { $$ = $1; }
+/*           | ID "++"                                                                  { $$ = "Incremento de la variable: " + $1 + ";";                                                                                                     }
            | ID "--"                                                                  { $$ = "Decremento de la variable: " + $1 + ";";                                                                                                     }
            | VOMITA                                                                   { $$ = "Vomita;";                                                                                                                                    }
            | VOMITA ID                                                                { $$ = "Vomita a la etiqueta: " + $2 + ";";                                                                                                          }
@@ -440,11 +437,20 @@ Instruccion: LValues"=" Expresiones                                             
            | ROLOEPEA                                                                 { $$ = "roloePea;";                                                                                                                                  }
            | ROLOEPEA ID                                                              { $$ = "roloePea a la etiqueta: " + $2 + ";";                                                                                                        }*/
            ;
-/*
-IteracionIndeterminada: ID ":" MIENTRAS "(" Expresion ")" Instruccion    { $$ = "Etiqueta: " + $1 + "\nCondición: " + $5 + "\nInstrucciones: " + $8; }
-                      | MIENTRAS "(" Expresion ")" Instruccion           { $$ = "Condición: " + $3 + "\nInstrucciones: " + $6;                       }
+
+IteracionIndeterminada: ID ":" MIENTRAS "(" Expresion ")" bloque    { Contenido* c = driver.tabla.find_symbol($1);
+                                                                      TagType* t = new TagType();
+                                                                      if (!c) {
+                                                                        driver.tabla.add_symbol($1, t, Etiqueta, @1.begin.line, @1.begin.column, @1.end.line, @1.end.column, false);
+                                                                        $$ = new TagWhile($1, $5, $7);
+                                                                      } else {
+                                                                        driver.error(@1, "Tag " + $1 + " is already defined.");
+                                                                        $$ = new Empty();
+                                                                      }
+                                                                    }
+                      | MIENTRAS "(" Expresion ")" bloque           { $$ = new While($3, $5); }
                       ;
-*/
+
 LValues: LValue             { $$ = new std::vector<Expression*>(); $$->push_back($1); }
        | LValues "," LValue { $$ = $1; $$->push_back($3);                             }
        ;

@@ -162,4 +162,12 @@ std::string ErrorType::to_string()
   return "error";
 }
 
+TagType::TagType()
+  : Type(4)
+  {}
+
+std::string TagType::to_string()
+{
+  return "etiqueta";
+}
 #endif
