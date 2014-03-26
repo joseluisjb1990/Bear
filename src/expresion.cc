@@ -82,13 +82,11 @@ std::string GrizzliExpr::to_string()
   return "Acceso a grizzli: Izquierda: " + _izquierda->to_string() + " Derecha: " + _derecha->to_string() + "\n";
 }
 
-CuevaExpr::CuevaExpr(std::string nombre, Expression* dimension)
+CuevaExpr::CuevaExpr(std::string nombre, std::vector<Expression*>* dimensions)
   : LValueExpr()
-  , _nombre       ( nombre )
-  {
-    _dimensions = new std::vector<Expression*>();
-    _dimensions->push_back(dimension);
-  }
+  , _nombre     ( nombre     )
+  , _dimensions ( dimensions )
+  {}
 
 std::string CuevaExpr::to_string()
 {

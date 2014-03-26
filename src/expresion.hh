@@ -112,7 +112,7 @@ class GrizzliExpr : public LValueExpr
 class CuevaExpr : public LValueExpr
 {
   public:
-    CuevaExpr(std::string nombre, Expression* dimension);
+    CuevaExpr(std::string nombre, std::vector<Expression*>* dimensions);
     std::string to_string();
     void addDimension(Expression* dimension);
 
