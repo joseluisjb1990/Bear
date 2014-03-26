@@ -15,6 +15,7 @@ private:
     unsigned int _lineaDef;
     unsigned int _columnaDef;
     bool _mutable;
+    bool _definido;
 
    //Posiblemente haya otros dependiendo del tipo o la categoria.
 
@@ -40,9 +41,17 @@ public:
 
     virtual std::string to_string();
 
-    unsigned int getAlcance();
-    bool esMutable();
-    Categorias get_categoria() { return _categoria; };
+    void addType(Type* tipo);
+    void define(unsigned int linea, unsigned int columna);
+    bool getDef() { return _definido; };
+    Type* getTipo() { return _tipo; };
+    bool getMutabilidad() { return _mutable; };
+    unsigned int getAlcance() { return _alcance; };
+    unsigned int getLineaDec() { return _lineaDec; };
+    unsigned int getColumnaDec() { return _columnaDec; };
+    unsigned int getLineaDef() { return _lineaDef; };
+    unsigned int getColumnaDef() { return _columnaDef; };
+    Categorias getCategoria() { return _categoria; };
 };
 
 class Contenedor : public Contenido
@@ -54,15 +63,25 @@ private:
 
 public:
 
-  Contenedor  ( Type*         tipo
-              , Categorias    categoria
-              , unsigned int  alcance
-              , unsigned int  linea
-              , unsigned int  columna
-              , unsigned int  alcanceCampos
+  Contenedor  ( Type*        tipo
+              , Categorias   categoria
+              , unsigned int alcance
+              , unsigned int linea
+              , unsigned int columna
+              );
+
+  Contenedor  ( Type*        tipo
+              , Categorias   categoria
+              , unsigned int alcance
+              , unsigned int lineaDec
+              , unsigned int columnaDec
+              , unsigned int lineaDef
+              , unsigned int columnaDef
+              , unsigned int alcanceCampos
               );
 
   virtual std::string to_string();
+  void define(unsigned int linea, unsigned int columna, Type* tipo, unsigned int alcanceCampos);
   void set_alcanceCampos(unsigned int alcanceCampos) { _alcanceCampos = alcanceCampos; };
 };
 
@@ -74,15 +93,21 @@ public:
             , unsigned int alcance
             , unsigned int linea
             , unsigned int columna
-            , bool def
+            , std::vector<Parameter*>* parametros
+            );
+
+    Funcion ( Type* tipo
+            , unsigned int alcance
+            , unsigned int lineaDec
+            , unsigned int columnaDec
+            , unsigned int lineaDef
+            , unsigned int columnaDef
             , std::vector<Parameter*>* parametros
             );
 
     std::string to_string();
-    bool get_def()  { return _def; };
-    void define()   { _def = true; };
     std::vector<Parameter*> * get_parameters() { return _parametros; };
+
 private:
-    bool                _def;
     std::vector<Parameter*>* _parametros;
 };
