@@ -1,1 +1,23 @@
-swap(polar primero, polar segundo) => extinto primero = segundo;
+prueba(polar a, panda b) => kodiak {
+  mientras (blanco) {
+    polar foo;
+    foo = 42;
+  };
+
+  etiqueta1: mientras (negro) {
+    panda e;
+    e++;
+    roloePea;
+    roloePea etiqueta1;
+    vomita;
+    vomita etiqueta1;
+    fondoBlanco;
+    fondoBlanco etiqueta1;
+  };
+
+};
+
+oso() => extinto {
+  polar a;
+  a = 42;
+}
