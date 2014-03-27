@@ -1,4 +1,7 @@
 #include "TablaSimbolos.hh"
+#include <algorithm>
+
+using namespace std;
 
 Contenedor* TablaSimbolos::add_container (std::string nombre, Categorias categoria, unsigned int linea, unsigned int columna)
 {
@@ -68,17 +71,28 @@ unsigned int TablaSimbolos::enter_scope()
   return _alcance;
 }
 
+typedef std::pair<std::string, Contenido*> pair_str_cont;
+typedef std::vector<pair_str_cont> vector_str_cont;
+
+bool compare_pairs(pair_str_cont pair1, pair_str_cont pair2)
+{
+  return pair1.second->getAlcance() < pair2.second->getAlcance();
+}
+
 std::ostream& operator<<(std::ostream& os, TablaSimbolos &ts)
 {
+  vector_str_cont pairs_vector;
+
   for (Diccionario::iterator pos = ts._dicc.begin(); pos != ts._dicc.end(); ++pos)
   {
-    os << pos->first << " : " << pos->second->to_string() << '\n';
+    pairs_vector.push_back(std::make_pair(std::string(pos->first), pos->second));
   }
-  os << ts._alcance << '\n';
 
-  for (Stack::iterator pos = ts._pila.begin(); pos != ts._pila.end(); ++pos)
+  std::sort(pairs_vector.begin(), pairs_vector.end(), compare_pairs);
+
+  for (vector_str_cont::iterator pos = pairs_vector.begin(); pos != pairs_vector.end(); ++pos)
   {
-    os << *pos << " ";
+    os << pos->first << " : " << pos->second->to_string() << '\n';
   }
 
   os << '\n';
