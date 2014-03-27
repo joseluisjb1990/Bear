@@ -120,4 +120,10 @@ class ErrorType : public Type
     std::string to_string();
 };
 
+class TagType : public Type
+{
+  public:
+    TagType();
+    std::string to_string();
+};
 #endif
