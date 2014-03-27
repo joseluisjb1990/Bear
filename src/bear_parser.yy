@@ -428,9 +428,33 @@ Instruccion: LValues"=" Expresiones                                             
                                                                            }
 /*           | PARA ID EN ID "{" Cuerpo  "}"                                          { $$ = "Iteración acotada:\nVariable de iteración: " + $2 + "\nArreglo sobre el cual iterar: " + $4 + "\nInstrucciones:\n" + $6;                     }*/
            | IteracionIndeterminada                                                   { $$ = $1; }
-/*           | ID "++"                                                                  { $$ = "Incremento de la variable: " + $1 + ";";                                                                                                     }
-           | ID "--"                                                                  { $$ = "Decremento de la variable: " + $1 + ";";                                                                                                     }
-           | VOMITA                                                                   { $$ = "Vomita;";                                                                                                                                    }
+           | ID "++"                                                                  { Contenido* c = driver.tabla.find_symbol($1);
+                                                                                        if (c) {
+                                                                                          if (c->getMutabilidad()) {
+                                                                                            $$ = new Increase($1);
+                                                                                          } else {
+                                                                                            driver.error(@1, @2, "Attempt to increase variable " + $1 + ", which is not mutable.");
+                                                                                            $$ = new Empty();
+                                                                                          }
+                                                                                        } else {
+                                                                                          driver.error(@1, @2, "Attempt to increase variable " + $1 + ", which is not declared.");
+                                                                                          $$ = new Empty();
+                                                                                        }
+                                                                                      }
+           | ID "--"                                                                  { Contenido* c = driver.tabla.find_symbol($1);
+                                                                                        if (c) {
+                                                                                          if (c->getMutabilidad()) {
+                                                                                            $$ = new Decrement($1);
+                                                                                          } else {
+                                                                                            driver.error(@1, @2, "Attempt to decrease variable " + $1 + ", which is not mutable.");
+                                                                                            $$ = new Empty();
+                                                                                          }
+                                                                                        } else {
+                                                                                          driver.error(@1, @2, "Attempt to decrease variable " + $1 + ", which is not declared.");
+                                                                                          $$ = new Empty();
+                                                                                        }
+                                                                                      }
+/*           | VOMITA                                                                   { $$ = "Vomita;";                                                                                                                                    }
            | VOMITA ID                                                                { $$ = "Vomita a la etiqueta: " + $2 + ";";                                                                                                          }
            | FONDOBLANCO                                                              { $$ = "fondoBlanco;";                                                                                                                               }
            | FONDOBLANCO ID                                                           { $$ = "fondoBlanco a la etiqueta: " + $2 + ";";                                                                                                     }
