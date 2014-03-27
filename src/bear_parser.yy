@@ -454,24 +454,46 @@ Instruccion: LValues"=" Expresiones                                             
                                                                                           $$ = new Empty();
                                                                                         }
                                                                                       }
-/*           | VOMITA                                                                   { $$ = "Vomita;";                                                                                                                                    }
-           | VOMITA ID                                                                { $$ = "Vomita a la etiqueta: " + $2 + ";";                                                                                                          }
-           | FONDOBLANCO                                                              { $$ = "fondoBlanco;";                                                                                                                               }
-           | FONDOBLANCO ID                                                           { $$ = "fondoBlanco a la etiqueta: " + $2 + ";";                                                                                                     }
-           | ROLOEPEA                                                                 { $$ = "roloePea;";                                                                                                                                  }
-           | ROLOEPEA ID                                                              { $$ = "roloePea a la etiqueta: " + $2 + ";";                                                                                                        }*/
+           | VOMITA                                                                   { $$ = new Return(); }
+/* Aqui hay aun el problema de que se necesita un find exclusivo para tags */
+           | VOMITA ID                                                                { Contenido* c = driver.tabla.find_symbol($2);
+                                                                                        if (c) {
+                                                                                          $$ = new ReturnID($2);
+                                                                                        } else {
+                                                                                          driver.error(@1, @2, "Attempt to return to tag " + $2 + ", which is not declared.");
+                                                                                          $$ = new Empty();
+                                                                                        }
+                                                                                      }
+           | FONDOBLANCO                                                              { $$ = new Continue(); }
+           | FONDOBLANCO ID                                                           { Contenido* c = driver.tabla.find_symbol($2);
+                                                                                        if (c) {
+                                                                                          $$ = new ContinueID($2);
+                                                                                        } else {
+                                                                                          driver.error(@1, @2, "Attempt to continue to tag " + $2 + ", which is not declared.");
+                                                                                          $$ = new Empty();
+                                                                                        }
+                                                                                      }
+           | ROLOEPEA                                                                 { $$ = new Break(); }
+           | ROLOEPEA ID                                                              { Contenido* c = driver.tabla.find_symbol($2);
+                                                                                        if (c) {
+                                                                                          $$ = new BreakID($2);
+                                                                                        } else {
+                                                                                          driver.error(@1, @2, "Attempt to break to tag " + $2 + ", which is not declared.");
+                                                                                          $$ = new Empty();
+                                                                                        }
+                                                                                      }
            ;
 
-IteracionIndeterminada: ID ":" MIENTRAS "(" Expresion ")" bloque    { Contenido* c = driver.tabla.find_symbol($1);
-                                                                      TagType* t = new TagType();
-                                                                      if (!c) {
-                                                                        driver.tabla.add_symbol($1, t, Etiqueta, @1.begin.line, @1.begin.column, @1.end.line, @1.end.column, false);
-                                                                        $$ = new TagWhile($1, $5, $7);
-                                                                      } else {
-                                                                        driver.error(@1, "Tag " + $1 + " is already defined.");
-                                                                        $$ = new Empty();
-                                                                      }
-                                                                    }
+IteracionIndeterminada: ID ":" MIENTRAS "(" Expresion ")"   { Contenido* c = driver.tabla.find_symbol($1);
+                                                              TagType* t = new TagType();
+                                                              if (!c) {
+                                                                driver.tabla.add_symbol($1, t, Etiqueta, @1.begin.line, @1.begin.column, @1.end.line, @1.end.column, false);
+                                                              } else {
+                                                                driver.error(@1, "Tag " + $1 + " is already defined.");
+                                                              }
+                                                            }
+                        bloque                              { $$ = new TagWhile($1, $5, $8); }
+
                       | MIENTRAS "(" Expresion ")" bloque           { $$ = new While($3, $5); }
                       ;
 
