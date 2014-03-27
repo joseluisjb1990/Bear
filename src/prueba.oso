@@ -1,10 +1,10 @@
 prueba(polar a, panda b) => kodiak {
   mientras (blanco) {
     polar foo;
-    foo = 42;
+    foo  42;
   };
 
-  etiqueta1: mientras (negro) {
+  etiqueta: mientras (negro) {
     panda e;
     e++;
     roloePea;
@@ -19,5 +19,5 @@ prueba(polar a, panda b) => kodiak {
 
 oso() => extinto {
   polar a;
-  a = 42;
+  a  42;
 }

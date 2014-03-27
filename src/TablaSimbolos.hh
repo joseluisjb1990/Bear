@@ -37,5 +37,5 @@ public:
     bool check_scope(string nombre);
     unsigned int get_actual_scope();
     Funcion* get_function(std::string nombre);
-    Contenido* find_symbol(string nombre);
+    Contenido* find_symbol(std::string nombre, Categorias cat);
 };

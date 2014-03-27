@@ -175,7 +175,7 @@ DefinicionGlobal: DefConstante  { $$ = $1; }
                 | DefCompleja   { $$ = $1; }
                 ;
 
-DefFuncion: ID "(" DefParametros ")" "=>" Tipo                       { $$ = new DecFunction($1, $3, $6);
+DefFuncion: ID "(" DefParametros ")" "=>" Tipo ";"                   { $$ = new DecFunction($1, $3, $6);
                                                                        driver.tabla.add_function($1, $6, @1.begin.line, @1.begin.column, $3);
                                                                      }
           | ID "(" DefParametros ")" "=>" Tipo {
@@ -213,8 +213,8 @@ DefFuncion: ID "(" DefParametros ")" "=>" Tipo                       { $$ = new 
           bloqueEspecial           { driver.tabla.exit_scope(); $$ = new DefFunction($1, $3, $6, $8); }
           ;
 
-Locales: Locales DefLocales ";"  { $$ = $1; $$->push_back($2);                             }
-       | DefLocales ";"          { $$ = new std::vector<Definition*>(); $$->push_back($1); }
+Locales: Locales DefLocales   { $$ = $1; $$->push_back($2);                             }
+       | DefLocales           { $$ = new std::vector<Definition*>(); $$->push_back($1); }
        ;
 
 
@@ -237,11 +237,11 @@ ParametroCueva: CUEVA "[" "]" DE                           { $$ = $1 + " [] " + 
               ;
 */
 
-DefConstante: CONST Tipo Identificadores "=" Expresiones {
-                                                            if ($3->size() == $5->size())
-                                                            {
-                                                              driver.agregarConInicializacion($3, Const, $2, false);
-                                                              std::vector<string>* l = extraerIds($3);
+DefConstante: CONST Tipo Identificadores "=" Expresiones ";" {
+                                                                if ($3->size() == $5->size())
+                                                                {
+                                                                  driver.agregarConInicializacion($3, Var, $2, false);
+                                                                std::vector<string>* l = extraerIds($3);
                                                               $$ = new ConstDef($2, l, $5);
                                                             } else
                                                             {
@@ -252,7 +252,7 @@ DefConstante: CONST Tipo Identificadores "=" Expresiones {
             ;
 
 
-DefVariable: Tipo Identificadores "=" Expresiones {
+DefVariable: Tipo Identificadores "=" Expresiones ";" {
                                                     if ($2->size() == $4->size())
                                                     {
                                                       driver.agregarConInicializacion($2, Var, $1, true);
@@ -264,12 +264,12 @@ DefVariable: Tipo Identificadores "=" Expresiones {
                                                       $$ = new EmptyDef();
                                                     }
                                                   }
-           | Tipo Identificadores                 {
+           | Tipo Identificadores ";"                 {
                                                       driver.agregarSinInicializacion($2, Var, $1);
                                                       std::vector<string>* l = extraerIds($2);
                                                       $$ = new DefVarNoInit($1, l);
                                                   }
-           | DefCueva                             { $$ = $1;                                                      }
+           | DefCueva ";"                            { $$ = $1;                                                      }
            ;
 
 
@@ -309,7 +309,7 @@ DefCompleja: PARDO ID "{" { driver.tabla.enter_scope(); }
                             $$ = new EmptyDef();
                           }
 
-           | PARDO ID     {
+           | PARDO ID ";"   {
                             // FIXME Aqui falta revisar que pasa cuando el find_symbol si devuelva algo :s error o que?
                             Contenedor* c = driver.tabla.find_container($2);
                             if (!c) {
@@ -336,7 +336,7 @@ DefCompleja: PARDO ID "{" { driver.tabla.enter_scope(); }
                           $$ = new EmptyDef();
                         }
 
-           | GRIZZLI ID     {
+           | GRIZZLI ID ";"    {
                               // FIXME Aqui falta revisar que pasa cuando el find_symbol si devuelva algo :s error o que?
                               Contenedor* c = driver.tabla.find_container($2);
                               if (!c) {
@@ -381,20 +381,22 @@ bloque: "{" { driver.tabla.enter_scope(); } Locales Instrucciones "}"     {
       | bloqueSimple                                                      { $$ = $1; }
       ;
 
-Instrucciones: Instruccion ";"               { $$ = new std::vector<Statement*>(); $$->push_back($1); }
-             | Instrucciones Instruccion ";" { $$ = $1; $$->push_back($2);                            }
-             | error                         { $$ = new std::vector<Statement*>(); yyerrok;           }
+Instrucciones: Instruccion                { $$ = new std::vector<Statement*>(); $$->push_back($1); }
+             | Instrucciones Instruccion  { $$ = $1; $$->push_back($2);                            }
+             | error ";"                  { $$ = new std::vector<Statement*>(); yyerrok;           }
              ;
 
 %right ENTONCES SINO;
-Instruccion: LValues"=" Expresiones                                                 {
+Instruccion: LValues"=" Expresiones ";"                                             {
                                                                                       if (!($1->size() == $3->size())) {
                                                                                         driver.error(@1, @3, "The number of l-values and expressions is not the same.");
                                                                                       }
                                                                                       $$ = new Assign($1, $3);
                                                                                      }
-           | LEER "(" ID ")"                                                         {
-                                                                                      Contenido* c = driver.tabla.find_symbol($3);
+            | LValues error Expresiones ";"                                           { $$ = new Empty(); yyerrok; }
+
+            | LEER "(" ID ")"   ";"                                                   {
+                                                                                      Contenido* c = driver.tabla.find_symbol($3,Var);
                                                                                       if (!c) {
                                                                                         driver.error(@1, @4, "Trying to read variable " + $3 + " which is not defined.");
                                                                                         $$ =  new Empty();
@@ -406,7 +408,7 @@ Instruccion: LValues"=" Expresiones                                             
                                                                                         $$ = new Read($3);
                                                                                       }
                                                                                       }
-           | ESCRIBIR "(" Expresion ")"                                               { $$ = new Write($3); }
+           | ESCRIBIR "(" Expresion ")" ";"                                           { $$ = new Write($3); }
 /*           | Funcion                                                                  { $$ = "Funcion:\n" + $1 + ";";        }*/
            | SI Expresion ENTONCES bloque                                        { $$ = new If($2, $4);                 }
            | SI Expresion ENTONCES bloque SINO bloque                       { $$ = new IfElse($2, $4, $6);         }
@@ -428,7 +430,7 @@ Instruccion: LValues"=" Expresiones                                             
                                                                            }
 /*           | PARA ID EN ID "{" Cuerpo  "}"                                          { $$ = "Iteración acotada:\nVariable de iteración: " + $2 + "\nArreglo sobre el cual iterar: " + $4 + "\nInstrucciones:\n" + $6;                     }*/
            | IteracionIndeterminada                                                   { $$ = $1; }
-           | ID "++"                                                                  { Contenido* c = driver.tabla.find_symbol($1);
+           | ID "++" ";"                                                              { Contenido* c = driver.tabla.find_symbol($1,Var);
                                                                                         if (c) {
                                                                                           if (c->getMutabilidad()) {
                                                                                             $$ = new Increase($1);
@@ -441,7 +443,7 @@ Instruccion: LValues"=" Expresiones                                             
                                                                                           $$ = new Empty();
                                                                                         }
                                                                                       }
-           | ID "--"                                                                  { Contenido* c = driver.tabla.find_symbol($1);
+           | ID "--" ";"                                                              { Contenido* c = driver.tabla.find_symbol($1,Var);
                                                                                         if (c) {
                                                                                           if (c->getMutabilidad()) {
                                                                                             $$ = new Decrement($1);
@@ -454,9 +456,8 @@ Instruccion: LValues"=" Expresiones                                             
                                                                                           $$ = new Empty();
                                                                                         }
                                                                                       }
-           | VOMITA                                                                   { $$ = new Return(); }
-/* Aqui hay aun el problema de que se necesita un find exclusivo para tags */
-           | VOMITA ID                                                                { Contenido* c = driver.tabla.find_symbol($2);
+           | VOMITA     ";"                                                           { $$ = new Return(); }
+           | VOMITA ID  ";"                                                           { Contenido* c = driver.tabla.find_symbol($2,Etiqueta);
                                                                                         if (c) {
                                                                                           $$ = new ReturnID($2);
                                                                                         } else {
@@ -464,8 +465,8 @@ Instruccion: LValues"=" Expresiones                                             
                                                                                           $$ = new Empty();
                                                                                         }
                                                                                       }
-           | FONDOBLANCO                                                              { $$ = new Continue(); }
-           | FONDOBLANCO ID                                                           { Contenido* c = driver.tabla.find_symbol($2);
+           | FONDOBLANCO    ";"                                                       { $$ = new Continue(); }
+           | FONDOBLANCO ID ";"                                                       { Contenido* c = driver.tabla.find_symbol($2,Etiqueta);
                                                                                         if (c) {
                                                                                           $$ = new ContinueID($2);
                                                                                         } else {
@@ -473,8 +474,8 @@ Instruccion: LValues"=" Expresiones                                             
                                                                                           $$ = new Empty();
                                                                                         }
                                                                                       }
-           | ROLOEPEA                                                                 { $$ = new Break(); }
-           | ROLOEPEA ID                                                              { Contenido* c = driver.tabla.find_symbol($2);
+           | ROLOEPEA    ";"                                                          { $$ = new Break(); }
+           | ROLOEPEA ID ";"                                                          { Contenido* c = driver.tabla.find_symbol($2,Etiqueta);
                                                                                         if (c) {
                                                                                           $$ = new BreakID($2);
                                                                                         } else {
@@ -484,7 +485,7 @@ Instruccion: LValues"=" Expresiones                                             
                                                                                       }
            ;
 
-IteracionIndeterminada: ID ":" MIENTRAS "(" Expresion ")"   { Contenido* c = driver.tabla.find_symbol($1);
+IteracionIndeterminada: ID ":" MIENTRAS "(" Expresion ")"   { Contenido* c = driver.tabla.find_symbol($1,Etiqueta);
                                                               TagType* t = new TagType();
                                                               if (!c) {
                                                                 driver.tabla.add_symbol($1, t, Etiqueta, @1.begin.line, @1.begin.column, @1.end.line, @1.end.column, false);
@@ -503,7 +504,7 @@ LValues: LValue             { $$ = new std::vector<Expression*>(); $$->push_back
 
 /* Necesito ayuda para hacer esta parte¸ me confunde un poco como vamos a manejar la tabla */
 LValue: ID MaybeCueva              {
-                                     Contenido* c = driver.tabla.find_symbol($1);
+                                     Contenido* c = driver.tabla.find_symbol($1,Var);
                                      if (!c) {
                                        driver.error(@1, "Trying to initialize variable " + $1 + ", which is not defined.");
                                      }

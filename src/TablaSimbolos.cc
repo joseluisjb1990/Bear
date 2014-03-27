@@ -21,7 +21,7 @@ TablaSimbolos::TablaSimbolos ()
   :_alcance( 0 )
   { _pila.push_back( 0 ); }
 
-Contenido* TablaSimbolos::find_symbol(std::string nombre)
+Contenido* TablaSimbolos::find_symbol(std::string nombre, Categorias cat)
 {
   Contenido* constante = nullptr;
   Contenido* mejor = nullptr;
@@ -29,7 +29,7 @@ Contenido* TablaSimbolos::find_symbol(std::string nombre)
 
   for(Diccionario::iterator it = _dicc.lower_bound(nombre); it != _dicc.upper_bound(nombre); ++it)
   {
-    if (it->first == nombre)
+    if (it->first == nombre and it->second->getCategoria() == cat)
     {
       e = it->second;
       if ( e->getAlcance() == 0 ) { constante = e; }
