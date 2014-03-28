@@ -357,20 +357,27 @@ Campos: Tipo ID ";"        {
                             }
       ;
 
-Tipo: PANDA       { $$ = new PandaType();      }
-    | POLAR       { $$ = new PolarType();      }
-    | KODIAK      { $$ = new KodiakType();     }
-    | MALAYO      { $$ = new MalayoType();     }
-    | HORMIGUERO  { $$ = new HormigueroType(); }
-    | EXTINTO     { $$ = new ExtintoType();    }
-/*    | ID          { $$ = $1; }*/
+Tipo: PANDA       { $$ = new PandaType();                                   }
+    | POLAR       { $$ = new PolarType();                                   }
+    | KODIAK      { $$ = new KodiakType();                                  }
+    | MALAYO      { $$ = new MalayoType();                                  }
+    | HORMIGUERO  { $$ = new HormigueroType();                              }
+    | EXTINTO     { $$ = new ExtintoType();                                 }
+    | ID          { Contenedor* c = driver.tabla.find_container($1);
+                    if (!c) {
+                      driver.error(@1, "Type " + $1 + " is not defined.");
+                      $$ = new ErrorType();
+                    } else {
+                      $$ = c->getTipo();
+                    }
+                  }
     ;
 
 bloqueEspecial: "{" Locales Instrucciones "}" { $$ = new Body($2, $3);  }
               | bloqueSimple                  { $$ = $1;                }
               ;
 
-bloqueSimple: "{" Instrucciones         "}" { $$ = new SimpleBody($2);  }
+bloqueSimple: "{" Instrucciones "}"         { $$ = new SimpleBody($2);  }
             | Instruccion ";"               { $$ = $1;                  }
             ;
 
@@ -504,20 +511,25 @@ LValues: LValue             { $$ = new std::vector<Expression*>(); $$->push_back
 
 /* Necesito ayuda para hacer esta parte¸ me confunde un poco como vamos a manejar la tabla */
 LValue: ID MaybeCueva              {
-                                     Contenido* c = driver.tabla.find_symbol($1,Var);
+                                    /* Contenido* c = driver.tabla.find_symbol($1,Var);
                                      if (!c) {
-                                       driver.error(@1, "Trying to initialize variable " + $1 + ", which is not defined.");
+                                       driver.error(@1, "Variable " + $1 + " is not defined.");
+                                       $$ = -1;
                                      }
                                      else if (!c->getMutabilidad()) {
-                                       driver.error(@1, "Trying to initialize variable " + $1 + ", which is not mutable.");
+                                       driver.error(@1, "Variable " + $1 + " is not mutable.");
+                                       $$ = -1;
                                      }
+//TODO
                                      if (nullptr == $2) {
-                                       $$ = new IDExpr($1);
+                                       //$$ = new IDExpr($1);
+                                       $$ = c.getAlcance();
                                      } else {
                                        $$ = new CuevaExpr($1, $2);
-                                     }
+                                     }*/
                                    }
       | LValue "->" ID MaybeCueva {
+                                    
                                    /*  if (nullptr == $4) {
                                        $$ = new IDExpr($3);
                                      } else {
