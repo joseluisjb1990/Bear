@@ -165,8 +165,8 @@ Definiciones:
             | ListaDefGlobales   { $$ = $1; }
             ;
 
-ListaDefGlobales: DefinicionGlobal ";"                  { $$ = new std::vector<Definition*>(); $$->push_back($1); }
-                | ListaDefGlobales DefinicionGlobal ";" { $$ = $1; $$->push_back($2);                             }
+ListaDefGlobales: DefinicionGlobal                   { $$ = new std::vector<Definition*>(); $$->push_back($1); }
+                | ListaDefGlobales DefinicionGlobal  { $$ = $1; $$->push_back($2);                             }
                 ;
 
 DefinicionGlobal: DefConstante  { $$ = $1; }
