@@ -63,30 +63,11 @@ std::string Read::to_string()
   return "Read : " + _id + '\n';
 }
 
-Body::Body(std::vector<Definition *>* listDef, std::vector<Statement *>* listSta)
-  : _listDef( listDef )
-  , _listSta( listSta )
-  {}
-
-std::string Body::to_string()
-{
-
-  std::string str = "Lista de Definiciones:\n ";
-  for (unsigned int i=0; i < _listDef->size(); ++i) {
-    str += _listDef->at(i)->to_string() + '\n';
-  }
-  str += "Lista de Instrucciones: \n";
-  for (unsigned int i=0; i < _listSta->size(); ++i) {
-    str += _listSta->at(i)->to_string() + '\n';
-  }
-  return str;
-}
-
-SimpleBody::SimpleBody( std::vector<Statement *>* listSta )
+Body::Body( std::vector<Statement *>* listSta )
   : _listSta( listSta )
   {}
 
-std::string SimpleBody::to_string()
+std::string Body::to_string()
 {
 
   std::string str = "Lista de Instrucciones: \n";
@@ -267,19 +248,4 @@ std::string Empty::to_string()
   return "vacia";
 }
 
-DefFunction::DefFunction ( std::string               id
-                         , std::vector<Parameter*>*  parameters
-                         , Type*                     type
-                         , Statement*                statements
-                         )
-  : _id         ( id )
-  , _parameters ( parameters )
-  , _type       ( type )
-  , _statements ( statements )
-  {}
-
-std::string DefFunction::to_string()
-{
-  return "Defincion de funcion\nNombre: " + _id + "\nParametros: " + "CICLO DE LOS PARAMETROS" + "\nTipo: " + _type->to_string() + "\nInstrucciones: " + _statements->to_string();
-}
 #endif

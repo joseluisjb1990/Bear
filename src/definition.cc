@@ -97,4 +97,19 @@ std::string Parameter::get_id()   { return _id;   }
 Type*       Parameter::get_tipo() { return _tipo; }
 bool        Parameter::get_ref()  { return _ref;  }
 
+DefFunction::DefFunction ( std::string               id
+                         , std::vector<Parameter*>*  parameters
+                         , Type*                     type
+                         , Statement*                statements
+                         )
+  : _id         ( id )
+  , _parameters ( parameters )
+  , _type       ( type )
+  , _statements ( statements )
+  {}
+
+std::string DefFunction::to_string()
+{
+  return "Defincion de funcion\nNombre: " + _id + "\nParametros: " + "CICLO DE LOS PARAMETROS" + "\nTipo: " + _type->to_string() + "\nInstrucciones: " + _statements->to_string();
+}
 #endif

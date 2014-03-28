@@ -3,12 +3,13 @@
 #include <string>
 #include <vector>
 #include "expresion.hh"
+#include "statement.hh"
 #include "node.hh"
 #include "type.hh"
 
 using namespace std;
 
-class Definition : public Node
+class Definition : public Statement
 {
 public :
 
@@ -111,4 +112,21 @@ class DecFunction : public Definition
 
 };
 
+class DefFunction : public Definition
+{
+  public:
+    DefFunction( std::string               id
+               , std::vector<Parameter*>*  parameters
+               , Type*                     type
+               , Statement*                statements
+               );
+
+    std::string to_string();
+
+  private:
+    std::string               _id;
+    std::vector<Parameter*>*  _parameters;
+    Type*                     _type;
+    Statement*                _statements;
+};
 #endif

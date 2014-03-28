@@ -4,7 +4,6 @@
 #include <vector>
 #include "expresion.hh"
 #include "node.hh"
-#include "definition.hh"
 
 using namespace std;
 
@@ -78,18 +77,7 @@ class Read : public Statement
 class Body : public Statement
 {
   public:
-    Body(std::vector<Definition *>* listDef, std::vector<Statement *>* listSta);
-    std::string to_string();
-
-  private:
-    std::vector<Definition *> * _listDef;
-    std::vector<Statement *>  * _listSta;
-};
-
-class SimpleBody : public Statement
-{
-  public:
-    SimpleBody( std::vector<Statement *>* listSta );
+    Body( std::vector<Statement *>* listSta );
     std::string to_string();
 
   private:
@@ -107,7 +95,7 @@ class ComplexFor : public Statement
     Expression* _begin;
     Expression* _end;
     Expression* _step;
-    Statement*       _body;
+    Statement*  _body;
 };
 
 class SimpleFor : public Statement
@@ -237,21 +225,4 @@ class Empty : public Statement
     std::string to_string();
 };
 
-class DefFunction : public Definition
-{
-  public:
-    DefFunction( std::string               id
-               , std::vector<Parameter*>*  parameters
-               , Type*                     type
-               , Statement*                statements
-               );
-
-    std::string to_string();
-
-  private:
-    std::string               _id;
-    std::vector<Parameter*>*  _parameters;
-    Type*                     _type;
-    Statement*                _statements;
-};
 #endif

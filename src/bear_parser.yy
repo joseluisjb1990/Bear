@@ -373,19 +373,15 @@ Tipo: PANDA       { $$ = new PandaType();                                   }
                   }
     ;
 
-bloqueEspecial: "{" Locales Instrucciones "}" { $$ = new Body($2, $3);  }
-              | bloqueSimple                  { $$ = $1;                }
+bloqueEspecial: "{" Instrucciones "}" { $$ = new Body($2);  }
+              | Instruccion ";"       { $$ = $1;                }
               ;
 
-bloqueSimple: "{" Instrucciones "}"         { $$ = new SimpleBody($2);  }
-            | Instruccion ";"               { $$ = $1;                  }
-            ;
-
-bloque: "{" { driver.tabla.enter_scope(); } Locales Instrucciones "}"     {
-                                                                            $$ = new Body($3, $4);
+bloque: "{" { driver.tabla.enter_scope(); } Instrucciones "}"     {
+                                                                            $$ = new Body($3);
                                                                             driver.tabla.exit_scope();
                                                                           }
-      | bloqueSimple                                                      { $$ = $1; }
+      | Instruccion ";"                                                      { $$ = $1; }
       ;
 
 Instrucciones: Instruccion                { $$ = new std::vector<Statement*>(); $$->push_back($1); }
@@ -394,30 +390,31 @@ Instrucciones: Instruccion                { $$ = new std::vector<Statement*>(); 
              ;
 
 %right ENTONCES SINO;
-Instruccion: LValues"=" Expresiones ";"                                             {
-                                                                                      if (!($1->size() == $3->size())) {
-                                                                                        driver.error(@1, @3, "The number of l-values and expressions is not the same.");
-                                                                                      }
-                                                                                      $$ = new Assign($1, $3);
-                                                                                     }
-            | LValues error Expresiones ";"                                           { $$ = new Empty(); yyerrok; }
+Instruccion: DefVariable                                                  { $$ = $1; }
+            | LValues"=" Expresiones ";"                                  {
+                                                                           if (!($1->size() == $3->size())) {
+                                                                             driver.error(@1, @3, "The number of l-values and expressions is not the same.");
+                                                                           }
+                                                                           $$ = new Assign($1, $3);
+                                                                          }
+            | LValues error Expresiones ";"                                { $$ = new Empty(); yyerrok; }
 
-            | LEER "(" ID ")"   ";"                                                   {
-                                                                                      Contenido* c = driver.tabla.find_symbol($3,Var);
-                                                                                      if (!c) {
-                                                                                        driver.error(@1, @4, "Trying to read variable " + $3 + " which is not defined.");
-                                                                                        $$ =  new Empty();
-                                                                                      }
-                                                                                      else if (!c->getMutabilidad()) {
-                                                                                        driver.error(@1, @4, "Trying to initialize variable " + $3 + ", which is not mutable.");
-                                                                                        $$ =  new Empty();
-                                                                                      } else {
-                                                                                        $$ = new Read($3);
-                                                                                      }
-                                                                                      }
-           | ESCRIBIR "(" Expresion ")" ";"                                           { $$ = new Write($3); }
-/*           | Funcion                                                                  { $$ = "Funcion:\n" + $1 + ";";        }*/
-           | SI Expresion ENTONCES bloque                                        { $$ = new If($2, $4);                 }
+            | LEER "(" ID ")"   ";"                                        {
+                                                                           Contenido* c = driver.tabla.find_symbol($3,Var);
+                                                                           if (!c) {
+                                                                             driver.error(@1, @4, "Trying to read variable " + $3 + " which is not defined.");
+                                                                             $$ =  new Empty();
+                                                                           }
+                                                                           else if (!c->getMutabilidad()) {
+                                                                             driver.error(@1, @4, "Trying to initialize variable " + $3 + ", which is not mutable.");
+                                                                             $$ =  new Empty();
+                                                                           } else {
+                                                                             $$ = new Read($3);
+                                                                           }
+                                                                           }
+           | ESCRIBIR "(" Expresion ")" ";"                                { $$ = new Write($3); }
+/*           | Funcion                                                     { $$ = "Funcion:\n" + $1 + ";";        }*/
+           | SI Expresion ENTONCES bloque                                  { $$ = new If($2, $4);                 }
            | SI Expresion ENTONCES bloque SINO bloque                       { $$ = new IfElse($2, $4, $6);         }
 
            | PARA ID EN "(" Expresion ";" Expresion ")"                     { driver.tabla.enter_scope();
@@ -435,61 +432,61 @@ Instruccion: LValues"=" Expresiones ";"                                         
              bloqueEspecial                                                { driver.tabla.exit_scope();
                                                                              $$ = new ComplexFor($2, $5, $9, $7, $12);
                                                                            }
-/*           | PARA ID EN ID "{" Cuerpo  "}"                                          { $$ = "Iteración acotada:\nVariable de iteración: " + $2 + "\nArreglo sobre el cual iterar: " + $4 + "\nInstrucciones:\n" + $6;                     }*/
-           | IteracionIndeterminada                                                   { $$ = $1; }
-           | ID "++" ";"                                                              { Contenido* c = driver.tabla.find_symbol($1,Var);
-                                                                                        if (c) {
-                                                                                          if (c->getMutabilidad()) {
-                                                                                            $$ = new Increase($1);
-                                                                                          } else {
-                                                                                            driver.error(@1, @2, "Attempt to increase variable " + $1 + ", which is not mutable.");
-                                                                                            $$ = new Empty();
-                                                                                          }
-                                                                                        } else {
-                                                                                          driver.error(@1, @2, "Attempt to increase variable " + $1 + ", which is not declared.");
-                                                                                          $$ = new Empty();
-                                                                                        }
-                                                                                      }
-           | ID "--" ";"                                                              { Contenido* c = driver.tabla.find_symbol($1,Var);
-                                                                                        if (c) {
-                                                                                          if (c->getMutabilidad()) {
-                                                                                            $$ = new Decrement($1);
-                                                                                          } else {
-                                                                                            driver.error(@1, @2, "Attempt to decrease variable " + $1 + ", which is not mutable.");
-                                                                                            $$ = new Empty();
-                                                                                          }
-                                                                                        } else {
-                                                                                          driver.error(@1, @2, "Attempt to decrease variable " + $1 + ", which is not declared.");
-                                                                                          $$ = new Empty();
-                                                                                        }
-                                                                                      }
-           | VOMITA     ";"                                                           { $$ = new Return(); }
-           | VOMITA ID  ";"                                                           { Contenido* c = driver.tabla.find_symbol($2,Etiqueta);
-                                                                                        if (c) {
-                                                                                          $$ = new ReturnID($2);
-                                                                                        } else {
-                                                                                          driver.error(@1, @2, "Attempt to return to tag " + $2 + ", which is not declared.");
-                                                                                          $$ = new Empty();
-                                                                                        }
-                                                                                      }
-           | FONDOBLANCO    ";"                                                       { $$ = new Continue(); }
-           | FONDOBLANCO ID ";"                                                       { Contenido* c = driver.tabla.find_symbol($2,Etiqueta);
-                                                                                        if (c) {
-                                                                                          $$ = new ContinueID($2);
-                                                                                        } else {
-                                                                                          driver.error(@1, @2, "Attempt to continue to tag " + $2 + ", which is not declared.");
-                                                                                          $$ = new Empty();
-                                                                                        }
-                                                                                      }
-           | ROLOEPEA    ";"                                                          { $$ = new Break(); }
-           | ROLOEPEA ID ";"                                                          { Contenido* c = driver.tabla.find_symbol($2,Etiqueta);
-                                                                                        if (c) {
-                                                                                          $$ = new BreakID($2);
-                                                                                        } else {
-                                                                                          driver.error(@1, @2, "Attempt to break to tag " + $2 + ", which is not declared.");
-                                                                                          $$ = new Empty();
-                                                                                        }
-                                                                                      }
+/*           | PARA ID EN ID "{" Cuerpo  "}"                               { $$ = "Iteración acotada:\nVariable de iteración: " + $2 + "\nArreglo sobre el cual iterar: " + $4 + "\nInstrucciones:\n" + $6;                     }*/
+           | IteracionIndeterminada                                        { $$ = $1; }
+           | ID "++" ";"                                                   { Contenido* c = driver.tabla.find_symbol($1,Var);
+                                                                             if (c) {
+                                                                               if (c->getMutabilidad()) {
+                                                                                 $$ = new Increase($1);
+                                                                               } else {
+                                                                                 driver.error(@1, @2, "Attempt to increase variable " + $1 + ", which is not mutable.");
+                                                                                 $$ = new Empty();
+                                                                               }
+                                                                             } else {
+                                                                               driver.error(@1, @2, "Attempt to increase variable " + $1 + ", which is not declared.");
+                                                                               $$ = new Empty();
+                                                                             }
+                                                                           }
+           | ID "--" ";"                                                   { Contenido* c = driver.tabla.find_symbol($1,Var);
+                                                                             if (c) {
+                                                                               if (c->getMutabilidad()) {
+                                                                                 $$ = new Decrement($1);
+                                                                               } else {
+                                                                                 driver.error(@1, @2, "Attempt to decrease variable " + $1 + ", which is not mutable.");
+                                                                                 $$ = new Empty();
+                                                                               }
+                                                                             } else {
+                                                                               driver.error(@1, @2, "Attempt to decrease variable " + $1 + ", which is not declared.");
+                                                                               $$ = new Empty();
+                                                                             }
+                                                                           }
+           | VOMITA     ";"                                                { $$ = new Return(); }
+           | VOMITA ID  ";"                                                { Contenido* c = driver.tabla.find_symbol($2,Etiqueta);
+                                                                             if (c) {
+                                                                               $$ = new ReturnID($2);
+                                                                             } else {
+                                                                               driver.error(@1, @2, "Attempt to return to tag " + $2 + ", which is not declared.");
+                                                                               $$ = new Empty();
+                                                                             }
+                                                                           }
+           | FONDOBLANCO    ";"                                            { $$ = new Continue(); }
+           | FONDOBLANCO ID ";"                                            { Contenido* c = driver.tabla.find_symbol($2,Etiqueta);
+                                                                             if (c) {
+                                                                               $$ = new ContinueID($2);
+                                                                             } else {
+                                                                               driver.error(@1, @2, "Attempt to continue to tag " + $2 + ", which is not declared.");
+                                                                               $$ = new Empty();
+                                                                             }
+                                                                           }
+           | ROLOEPEA    ";"                                               { $$ = new Break(); }
+           | ROLOEPEA ID ";"                                               { Contenido* c = driver.tabla.find_symbol($2,Etiqueta);
+                                                                             if (c) {
+                                                                               $$ = new BreakID($2);
+                                                                             } else {
+                                                                               driver.error(@1, @2, "Attempt to break to tag " + $2 + ", which is not declared.");
+                                                                               $$ = new Empty();
+                                                                             }
+                                                                           }
            ;
 
 IteracionIndeterminada: ID ":" MIENTRAS "(" Expresion ")"   { Contenido* c = driver.tabla.find_symbol($1,Etiqueta);
