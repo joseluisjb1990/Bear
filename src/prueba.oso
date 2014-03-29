@@ -29,8 +29,6 @@ prueba(cueva [] de polar a, cueva [] de cueva [4] de panda b) => kodiak {
 
 }
 
-oso(kodiak k) => panda;
-
 oso() => extinto {
   polar a;
   cueva [5] de bleh cuevita;
