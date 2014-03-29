@@ -42,19 +42,14 @@ std::string DefVarNoInit::to_string()
   return str;
 }
 
-DefArray::DefArray(Type* tipo, std::string id, std::vector<std::string>* dimensiones)
+DefArray::DefArray(Type* tipo, std::string id)
   : _tipo( tipo )
   , _id( id )
-  , _dimensiones( dimensiones )
   {}
 
 std::string DefArray::to_string()
 {
-  std::string str =  "Definicion de cueva : \n Tipo : " + _tipo->to_string() + "\n Dimensiones : ";
- for (unsigned int i=0; i < _dimensiones->size(); ++i) {
-    str += _dimensiones->at(i) + " ";
-  }
-  return str;
+  return "Definicion de cueva : \n Nombre: " + _id + ", Tipo : " + _tipo->to_string();
 }
 
 DecFunction::DecFunction ( std::string         name

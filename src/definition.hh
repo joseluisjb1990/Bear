@@ -67,13 +67,12 @@ class DefVarNoInit : public Definition
 class DefArray : public Definition
 {
   public:
-    DefArray(Type* tipo, std::string id, std::vector<std::string>* dimensiones);
+    DefArray(Type* tipo, std::string id);
     std::string to_string();
 
   private:
     Type* _tipo;
     std::string _id;
-    std::vector<std::string>* _dimensiones;
 };
 
 class Parameter : public Definition

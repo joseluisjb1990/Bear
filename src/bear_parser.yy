@@ -23,6 +23,7 @@ typedef struct {
   unsigned int lineaF;
   unsigned int columnaF;
 } elementoLista;
+
 }
 // The parsing context.
 %param { bear_driver& driver }
@@ -37,6 +38,7 @@ typedef struct {
 %code
 {
 # include "bear_driver.hh"
+int ALCANCE_LVALUE;
 
 std::vector<std::string>* extraerIds(std::vector<elementoLista>* ids);
 
@@ -129,20 +131,21 @@ std::vector<std::string>* extraerIds(std::vector<elementoLista>* ids);
 %type  <Statement*> bloqueEspecial
 %type  <std::vector<Definition*>*> Locales
 %type  <Definition*> DefVariable
-%type  <DefArray*> DefCueva
+%type  <Type*> DefCueva
 %type  <Definition*> DefCompleja
 %type  <Definition*> DefFuncion
 %type  <Definition*> DefLocales
 %type  <std::vector<std::string>*> Cuevas
 %type  <std::vector<elementoLista>*> Identificadores
 %type  <Type*> Tipo
-%type  <std::vector<CampoType*>*> Campos
+%type  <std::vector<Type*>*> Campos
+%type  <Type*> Campo
 %type  <std::vector<Parameter*>*> DefParametros
 %type  <Parameter*> DefParametro
 %type  <std::string> ParametroCueva
 %type  <std::vector<Expression*>*>  AccesoCueva
 %type  <std::vector<Expression*>*>  MaybeCueva
-%type  <std::string> FuncionPredef
+%type  <Expression*> FuncionPredef
 %type  <std::string> Funcion
 %type  <std::string> Cuerpo
 %type  <Statement*> IteracionIndeterminada
@@ -269,7 +272,9 @@ DefVariable: Tipo Identificadores "=" Expresiones ";" {
                                                       std::vector<string>* l = extraerIds($2);
                                                       $$ = new DefVarNoInit($1, l);
                                                   }
-           | DefCueva ";"                            { $$ = $1;                                                      }
+           | DefCueva ID ";"                      { $$ = new DefArray($1, $2);
+                                                    driver.tabla.add_symbol($2, $1, Cueva, @2.begin.line, @2.begin.column, true);
+                                                  }
            ;
 
 
@@ -279,11 +284,7 @@ Identificadores: ID                     { $$ = new std::vector<elementoLista>();
 
 
 
-DefCueva: Cuevas Tipo ID {
-                            $$ = new DefArray($2,$3,$1);
-                            Type* tipoCueva = new CuevaType($2,$1);
-                            driver.tabla.add_symbol($3,tipoCueva,Cueva, @3.begin.line, @3.begin.column, true);
-                          }
+DefCueva: Cuevas Tipo { $$ = new CuevaType($2,$1); }
         ;
 
 Cuevas: CUEVA "[" CONSTPOLAR "]" DE          { $$ = new std::vector<std::string>(); $$->push_back($3);      }
@@ -346,16 +347,21 @@ DefCompleja: PARDO ID "{" { driver.tabla.enter_scope(); }
                             }
            ;
 
-Campos: Tipo ID ";"        {
-                              $$ = new std::vector<CampoType*>; CampoType* p = new CampoType($1,$2); $$->push_back(p);
-                              driver.tabla.add_symbol($2, $1, Campo, @2.begin.line, @2.begin.column, true);
+Campos: Campo ";"        { $$ = new std::vector<Type*>; $$->push_back($1); }
+      | Campos Campo ";" { $$ = $1; $$->push_back($2); }
+      ;
+
+Campo: Tipo ID            { $$ = new CampoType($1,$2);
+                            driver.tabla.add_symbol($2, $1, Campo, @2.begin.line, @2.begin.column, true);
                            }
 
-      | Campos Tipo ID ";" {
-                              $$ = $1; CampoType* p = new CampoType($2, $3); $$->push_back(p);
-                              driver.tabla.add_symbol($3, $2, Campo, @2.begin.line, @2.begin.column, true);
-                            }
+/* Por ahora pasamos un nullptr pero esta mal esto, tenemos que conseguir la manera de no hacer tan caliche esto,
+   para fines practicos y de la entrega, la tabla va a funcionar con esto pero hay que arreglarlo */
+      | DefCueva ID        { $$ = $1;
+                             driver.tabla.add_symbol($2, $1, Cueva, @2.begin.line, @2.begin.column, true);
+                           }
       ;
+
 
 Tipo: PANDA       { $$ = new PandaType();                                   }
     | POLAR       { $$ = new PolarType();                                   }
@@ -413,7 +419,14 @@ Instruccion: DefVariable                                                  { $$ =
                                                                            }
                                                                            }
            | ESCRIBIR "(" Expresion ")" ";"                                { $$ = new Write($3); }
-/*           | Funcion                                                     { $$ = "Funcion:\n" + $1 + ";";        }*/
+           | ID "(" Expresiones ")" ";"                                    { Funcion* f = driver.tabla.get_function($1);
+                                                                             if (!f) {
+                                                                               driver.error(@1,@4,"Function " + $1 + " is not defined.");
+                                                                               $$ = new Empty();
+                                                                             } else {
+                                                                               $$ = new Function($1, $3);
+                                                                             }
+                                                                           }
            | SI Expresion ENTONCES bloque                                  { $$ = new If($2, $4);                 }
            | SI Expresion ENTONCES bloque SINO bloque                       { $$ = new IfElse($2, $4, $6);         }
 
@@ -508,39 +521,102 @@ LValues: LValue             { $$ = new std::vector<Expression*>(); $$->push_back
 
 /* Necesito ayuda para hacer esta parte¸ me confunde un poco como vamos a manejar la tabla */
 LValue: ID MaybeCueva              {
-                                    /* Contenido* c = driver.tabla.find_symbol($1,Var);
+                                     Contenido* c;
+                                     if (nullptr == $2) {
+                                       c = driver.tabla.find_symbol($1, Var);
+                                       $$ = new IDExpr($1);
+                                     } else {
+                                       c = driver.tabla.find_symbol($1, Cueva);
+                                       $$ = new CuevaExpr($1, $2);
+                                     }
+
                                      if (!c) {
                                        driver.error(@1, "Variable " + $1 + " is not defined.");
-                                       $$ = -1;
+                                       ALCANCE_LVALUE = -1;
+                                       $$ = new EmptyExpr();
                                      }
                                      else if (!c->getMutabilidad()) {
                                        driver.error(@1, "Variable " + $1 + " is not mutable.");
-                                       $$ = -1;
-                                     }
-//TODO
-                                     if (nullptr == $2) {
-                                       //$$ = new IDExpr($1);
-                                       $$ = c.getAlcance();
+                                       ALCANCE_LVALUE = -1;
+                                       $$ = new EmptyExpr();
                                      } else {
-                                       $$ = new CuevaExpr($1, $2);
-                                     }*/
+                                        if (!c->getTipo()->isSimple()) {
+                                          Contenedor* tipo = driver.tabla.find_container(c->getTipo()->getName());
+                                          ALCANCE_LVALUE = tipo->get_alcanceCampos();
+                                        } else {
+                                          if (nullptr == $2) {
+                                            ALCANCE_LVALUE = c->getAlcance();
+                                          } else {
+                                            CuevaType* cueva = (CuevaType*) c->getTipo();
+                                            Contenedor* tipo = driver.tabla.find_container(cueva->getTipo()->getName());
+                                            ALCANCE_LVALUE = tipo->get_alcanceCampos();
+                                          }
+                                        }
+                                     }
                                    }
       | LValue "->" ID MaybeCueva {
-                                    
-                                   /*  if (nullptr == $4) {
+                                    if (-1 != ALCANCE_LVALUE) {
+                                     Contenido* c;
+                                     if (nullptr == $4) {
+                                       c = driver.tabla.find_scope($3, Campo, ALCANCE_LVALUE);
                                        $$ = new IDExpr($3);
                                      } else {
+                                       c = driver.tabla.find_scope($3, Cueva, ALCANCE_LVALUE);
                                        $$ = new CuevaExpr($3, $4);
                                      }
-                                    $$ = new PardoExpr($1, $3);*/
+
+                                     if (!c) {
+                                       driver.error(@3, "Variable " + $3 + " is not in scope.");
+                                       ALCANCE_LVALUE = -1;
+                                       $$ = new EmptyExpr();
+                                     }
+                                     else if (!c->getMutabilidad()) {
+                                       driver.error(@3, "Variable " + $3 + " is not mutable.");
+                                       ALCANCE_LVALUE = -1;
+                                       $$ = new EmptyExpr();
+                                     } else {
+                                        if (!c->getTipo()->isSimple()) {
+                                          Contenedor* tipo = driver.tabla.find_container(c->getTipo()->getName());
+                                          ALCANCE_LVALUE = tipo->get_alcanceCampos();
+                                        } else {
+                                          ALCANCE_LVALUE = c->getAlcance();
+                                        }
+                                     }
+                                    } else {
+                                      $$ = new EmptyExpr();
+                                    }
                                   }
       | LValue "."  ID MaybeCueva {
-                                  /*   if (nullptr == $4) {
+                                    if (-1 != ALCANCE_LVALUE) {
+                                     Contenido* c;
+                                     if (nullptr == $4) {
+                                       c = driver.tabla.find_scope($3, Campo, ALCANCE_LVALUE);
                                        $$ = new IDExpr($3);
                                      } else {
+                                       c = driver.tabla.find_scope($3, Cueva, ALCANCE_LVALUE);
                                        $$ = new CuevaExpr($3, $4);
                                      }
-                                    $$ = new GrizzliExpr($1, $3);*/
+
+                                     if (!c) {
+                                       driver.error(@3, "Variable " + $3 + " is not in scope.");
+                                       ALCANCE_LVALUE = -1;
+                                       $$ = new EmptyExpr();
+                                     }
+                                     else if (!c->getMutabilidad()) {
+                                       driver.error(@3, "Variable " + $3 + " is not mutable.");
+                                       ALCANCE_LVALUE = -1;
+                                       $$ = new EmptyExpr();
+                                     } else {
+                                        if (!c->getTipo()->isSimple()) {
+                                          Contenedor* tipo = driver.tabla.find_container(c->getTipo()->getName());
+                                          ALCANCE_LVALUE = tipo->get_alcanceCampos();
+                                        } else {
+                                          ALCANCE_LVALUE = c->getAlcance();
+                                        }
+                                     }
+                                    } else {
+                                      $$ = new EmptyExpr();
+                                    }
                                   }
       ;
 
@@ -568,46 +644,52 @@ Expresiones: Expresion                 { $$ = new std::vector<Expression*>(); $$
 %nonassoc UNARIO;
 %right "**";
 
-Expresion: CONSTPOLAR                            { $$ = new ConstantExpr(std::string("polar")     , $1); }
-         | CONSTKODIAK                           { $$ = new ConstantExpr(std::string("kodiak")    , $1); }
-         | CONSTHORMIGUERO                       { $$ = new ConstantExpr(std::string("hormiguero"), $1); }
-         | CONSTMALAYO                           { $$ = new ConstantExpr(std::string("malayo")    , $1); }
-         | LValue                                { $$ = $1;                                               }
-        /* | Funcion                             { $$ = $1;                                                                }*/
-        /* | FuncionPredef                       { $$ = $1;                                                                }*/
-         | BLANCO                                { $$ = new ConstantExpr(std::string("panda"), $1    );  }
-         | NEGRO                                 { $$ = new ConstantExpr(std::string("panda"), $1    );  }
-         | Expresion "<"   Expresion             { $$ = new BinaryExpr  (std::string("<"  )  , $1, $3);  }
-         | Expresion "=<"  Expresion             { $$ = new BinaryExpr  (std::string("=<" )  , $1, $3);  }
-         | Expresion ">"   Expresion             { $$ = new BinaryExpr  (std::string(">"  )  , $1, $3);  }
-         | Expresion ">="  Expresion             { $$ = new BinaryExpr  (std::string(">=" )  , $1, $3);  }
-         | Expresion "=="  Expresion             { $$ = new BinaryExpr  (std::string("==" )  , $1, $3);  }
-         | Expresion "=/=" Expresion             { $$ = new BinaryExpr  (std::string("=/=")  , $1, $3);  }
-         | Expresion "|"   Expresion             { $$ = new BinaryExpr  (std::string("|"  )  , $1, $3);  }
-         | Expresion "&"   Expresion             { $$ = new BinaryExpr  (std::string("&"  )  , $1, $3);  }
-         | "no" Expresion                        { $$ = new UnaryExpr   (std::string("no" )  , $2    );  }
-         | Expresion "+"  Expresion              { $$ = new BinaryExpr  (std::string("+"  )  , $1, $3);  }
-         | Expresion "-"  Expresion              { $$ = new BinaryExpr  (std::string("-"  )  , $1, $3);  }
-         | Expresion "**" Expresion              { $$ = new BinaryExpr  (std::string("**" )  , $1, $3);  }
-         | Expresion "*"  Expresion              { $$ = new BinaryExpr  (std::string("*"  )  , $1, $3);  }
-         | Expresion "/"  Expresion              { $$ = new BinaryExpr  (std::string("/"  )  , $1, $3);  }
-         | Expresion "%"  Expresion              { $$ = new BinaryExpr  (std::string("%"  )  , $1, $3);  }
-         | "-" Expresion %prec UNARIO            { $$ = new UnaryExpr   (std::string("-"  )  , $2    );  }
-         | "(" Expresion ")"                     { $$ = $2;                                                                       }
-         | Expresion "?" Expresion ":" Expresion { $$ = new SelectorExpr ($1                  , $3, $5);  }
+Expresion: CONSTPOLAR                            { $$ = new ConstantExpr(std::string("polar")     , $1);      }
+         | CONSTKODIAK                           { $$ = new ConstantExpr(std::string("kodiak")    , $1);      }
+         | CONSTHORMIGUERO                       { $$ = new ConstantExpr(std::string("hormiguero"), $1);      }
+         | CONSTMALAYO                           { $$ = new ConstantExpr(std::string("malayo")    , $1);      }
+         | LValue                                { $$ = $1;                                                   }
+         | ID "(" Expresiones ")"                { Funcion* f = driver.tabla.get_function($1);
+                                                   if (!f) {
+                                                     driver.error(@1,@4,"Function " + $1 + " is not defined.");
+                                                     $$ = new EmptyExpr();
+                                                   } else {
+                                                     $$ = new FunctionExpr($1, $3);
+                                                   }
+                                                 }
+         | FuncionPredef                         { $$ = $1;                                                   }
+         | BLANCO                                { $$ = new ConstantExpr(std::string("panda"), $1    );       }
+         | NEGRO                                 { $$ = new ConstantExpr(std::string("panda"), $1    );       }
+         | Expresion "<"   Expresion             { $$ = new BinaryExpr  (std::string("<"  )  , $1, $3);       }
+         | Expresion "=<"  Expresion             { $$ = new BinaryExpr  (std::string("=<" )  , $1, $3);       }
+         | Expresion ">"   Expresion             { $$ = new BinaryExpr  (std::string(">"  )  , $1, $3);       }
+         | Expresion ">="  Expresion             { $$ = new BinaryExpr  (std::string(">=" )  , $1, $3);       }
+         | Expresion "=="  Expresion             { $$ = new BinaryExpr  (std::string("==" )  , $1, $3);       }
+         | Expresion "=/=" Expresion             { $$ = new BinaryExpr  (std::string("=/=")  , $1, $3);       }
+         | Expresion "|"   Expresion             { $$ = new BinaryExpr  (std::string("|"  )  , $1, $3);       }
+         | Expresion "&"   Expresion             { $$ = new BinaryExpr  (std::string("&"  )  , $1, $3);       }
+         | "no" Expresion                        { $$ = new UnaryExpr   (std::string("no" )  , $2    );       }
+         | Expresion "+"  Expresion              { $$ = new BinaryExpr  (std::string("+"  )  , $1, $3);       }
+         | Expresion "-"  Expresion              { $$ = new BinaryExpr  (std::string("-"  )  , $1, $3);       }
+         | Expresion "**" Expresion              { $$ = new BinaryExpr  (std::string("**" )  , $1, $3);       }
+         | Expresion "*"  Expresion              { $$ = new BinaryExpr  (std::string("*"  )  , $1, $3);       }
+         | Expresion "/"  Expresion              { $$ = new BinaryExpr  (std::string("/"  )  , $1, $3);       }
+         | Expresion "%"  Expresion              { $$ = new BinaryExpr  (std::string("%"  )  , $1, $3);       }
+         | "-" Expresion %prec UNARIO            { $$ = new UnaryExpr   (std::string("-"  )  , $2    );       }
+         | "(" Expresion ")"                     { $$ = $2;                                                   }
+         | Expresion "?" Expresion ":" Expresion { $$ = new SelectorExpr ($1                  , $3, $5);      }
          ;
 
-/*
-Funcion: ID "(" Expresiones ")" { $$ = "Nombre de funcion: " + $1 + "\nArgumentos:\n"; }
 
-FuncionPredef: APANDA  "(" Expresion ")" { $$ = "Funcion predefinida: " + $1 + ". Argumento: "  }
-             | AKODIAK "(" Expresion ")" { $$ = "Funcion predefinida: " + $1 + ". Argumento: "  }
-             | AMALAYO "(" Expresion ")" { $$ = "Funcion predefinida: " + $1 + ". Argumento: "  }
-             | APOLAR  "(" Expresion ")" { $$ = "Funcion predefinida: " + $1 + ". Argumento: "  }
-             | LON     "(" Expresion ")" { $$ = "Funcion predefinida: " + $1 + ". Argumento: "  }
+
+
+FuncionPredef: APANDA  "(" Expresion ")" { $$ = new UnaryExpr($1, $3); }
+             | AKODIAK "(" Expresion ")" { $$ = new UnaryExpr($1, $3); }
+             | AMALAYO "(" Expresion ")" { $$ = new UnaryExpr($1, $3); }
+             | APOLAR  "(" Expresion ")" { $$ = new UnaryExpr($1, $3); }
+             | LON     "(" Expresion ")" { $$ = new UnaryExpr($1, $3); }
              ;
 
-*/
 %%
 
 void yy::bear_parser::error ( const location_type& l,

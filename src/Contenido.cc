@@ -94,7 +94,7 @@ std::string Contenedor::to_string()
 {
   std::string alcanceCampos = std::to_string(_alcanceCampos);
   if (getDef()) {
-    return this->Contenido::to_string() + alcanceCampos       + std::string(SMALL_WIDTH   - 0     , ' ') + SEPARADOR;
+    return this->Contenido::to_string() + ", Alcance Campos: " + std::to_string(_alcanceCampos);
   } else {
     return " Categoria: " + std::to_string(getCategoria()) + ", Alcance: " + std::to_string(getAlcance()) + ", Linea de Declaración: " + std::to_string(getLineaDec()) + ", Columna de Declaración: " + std::to_string(getColumnaDec()) + ", Mutabilidad: " + std::to_string(getMutabilidad()) + "\n";
   }

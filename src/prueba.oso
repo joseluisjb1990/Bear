@@ -1,10 +1,20 @@
+ pardo blah {
+  polar b;
+  cueva [7] de kodiak cuevota;
+}
+
+ grizzli bleh {
+  panda d;
+  blah f;
+}
+--<3
 prueba(polar a, panda b) => kodiak {
   mientras (blanco) {
     polar foo;
-    foo  42;
-  };
+    foo = 42;
+  }
 
-  etiqueta: mientras (negro) {
+  etiqueta1: mientras (negro) {
     panda e;
     e++;
     roloePea;
@@ -13,11 +23,16 @@ prueba(polar a, panda b) => kodiak {
     vomita etiqueta1;
     fondoBlanco;
     fondoBlanco etiqueta1;
-  };
+  }
 
-};
+  blah e;
 
+}
+<3->
 oso() => extinto {
   polar a;
-  a  42;
+  cueva [5] de bleh cuevita;
+  cuevita[2]->f.b = cuevita[3]->f.cuevota[4];
+  a = a_polar(45.6);
+  funcionRandom(678,897);
 }

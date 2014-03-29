@@ -48,6 +48,19 @@ Contenido* TablaSimbolos::find_symbol(std::string nombre, Categorias cat)
   else if (constante != nullptr) { return constante; }
   else { return nullptr; }
 }
+
+Contenido* TablaSimbolos::find_scope(std::string nombre, Categorias cat, unsigned int alcance)
+{
+  for(Diccionario::iterator it = _dicc.lower_bound(nombre); it != _dicc.upper_bound(nombre); ++it)
+  {
+    if (it->first == nombre and it->second->getCategoria() == cat and it->second->getAlcance() == alcance)
+    {
+      return it->second;
+    }
+  }
+  return nullptr;
+}
+
 bool TablaSimbolos::check_scope(std::string nombre)
 {
   Contenido *cont;

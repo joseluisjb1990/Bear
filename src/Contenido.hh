@@ -87,6 +87,7 @@ public:
   virtual std::string to_string();
   void define(unsigned int linea, unsigned int columna, Type* tipo, unsigned int alcanceCampos);
   void set_alcanceCampos(unsigned int alcanceCampos) { _alcanceCampos = alcanceCampos; };
+  unsigned int get_alcanceCampos() { return _alcanceCampos; };
 };
 
 class Funcion : public Contenido

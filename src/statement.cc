@@ -20,6 +20,20 @@ std::string Assign::to_string()
   return str;
 }
 
+Function::Function(std::string name, std::vector<Expression*>* parameters)
+  : Statement()
+  , _name       ( name       )
+  , _parameters ( parameters )
+  {}
+
+std::string Function::to_string()
+{
+  std::string str = "Nombre: " + _name + ", Parametros: ";
+  for (unsigned int i=0; i < _parameters->size(); ++i)
+    str += _parameters->at(i)->to_string();
+  return str;
+}
+
 If::If(Expression* condicion, Statement* instrucciones)
   : Statement()
   , _condicion     ( condicion     )
