@@ -27,6 +27,17 @@ class Assign : public Statement
 
 };
 
+class Function : public Statement
+{
+  public:
+    Function(std::string name, std::vector<Expression*>* parameters);
+    std::string to_string();
+
+  private:
+    std::string               _name;
+    std::vector<Expression*>* _parameters;
+};
+
 class If : public Statement
 {
   public:

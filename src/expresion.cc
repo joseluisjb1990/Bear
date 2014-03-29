@@ -60,6 +60,20 @@ std::string IDExpr::to_string()
   return "Nombre del ID: " + _nombre;
 }
 
+FunctionExpr::FunctionExpr(std::string name, std::vector<Expression*>* parameters)
+  : Expression()
+  , _name       ( name       )
+  , _parameters ( parameters )
+  {}
+
+std::string FunctionExpr::to_string()
+{
+  std::string str = "Nombre: " + _name + ", Parametros: ";
+  for (unsigned int i=0; i < _parameters->size(); ++i)
+    str += _parameters->at(i)->to_string();
+  return str;
+}
+
 PardoExpr::PardoExpr(LValueExpr* izquierda, LValueExpr* derecha)
   : LValueExpr()
   , _izquierda( izquierda )

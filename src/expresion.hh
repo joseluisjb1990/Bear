@@ -91,6 +91,17 @@ class IDExpr : public LValueExpr
 
 };
 
+class FunctionExpr : public Expression
+{
+  public:
+    FunctionExpr(std::string name, std::vector<Expression*>* parameters);
+    std::string to_string();
+
+  private:
+    std::string               _name;
+    std::vector<Expression*>* _parameters;
+};
+
 class PardoExpr : public LValueExpr
 {
   public:

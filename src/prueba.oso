@@ -33,4 +33,6 @@ oso() => extinto {
   polar a;
   cueva [5] de bleh cuevita;
   cuevita[2]->f.b = cuevita[3]->f.cuevota[4];
+  a = a_polar(45.6);
+  funcionRandom(678,897);
 }
