@@ -74,6 +74,12 @@ class LValueExpr : public Expression
     LValueExpr(){};
 };
 
+class EmptyExpr : public LValueExpr
+{
+  public:
+    EmptyExpr(){};
+};
+
 class IDExpr : public LValueExpr
 {
   public:

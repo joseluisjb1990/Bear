@@ -14,6 +14,8 @@ class Type
     Type(int tam);
     virtual std::string to_string();
     virtual int getSize();
+    virtual bool isSimple() = 0;
+    virtual std::string getName() { return ""; }
 };
 
 class PandaType : public Type
@@ -21,6 +23,7 @@ class PandaType : public Type
   public:
     PandaType();
     std::string to_string();
+    bool isSimple();
 };
 
 class PolarType : public Type
@@ -28,6 +31,7 @@ class PolarType : public Type
   public:
     PolarType();
     std::string to_string();
+    bool isSimple();
 };
 
 class KodiakType : public Type
@@ -35,6 +39,7 @@ class KodiakType : public Type
   public:
     KodiakType();
     std::string to_string();
+    bool isSimple();
 };
 
 class MalayoType : public Type
@@ -42,6 +47,7 @@ class MalayoType : public Type
   public:
     MalayoType();
     std::string to_string();
+    bool isSimple();
 };
 
 class ExtintoType : public Type
@@ -49,6 +55,7 @@ class ExtintoType : public Type
   public:
     ExtintoType();
     std::string to_string();
+    bool isSimple();
 };
 
 class HormigueroType : public Type
@@ -56,6 +63,7 @@ class HormigueroType : public Type
   public:
     HormigueroType();
     std::string to_string();
+    bool isSimple();
 };
 
 class CuevaType : public Type
@@ -68,6 +76,8 @@ class CuevaType : public Type
     CuevaType(Type* tipo, std::vector<std::string>* longitudes);
     int getSize();
     std::string to_string();
+    bool isSimple();
+    Type* getTipo();
 };
 
 class CampoType : public Type
@@ -80,6 +90,7 @@ class CampoType : public Type
     CampoType(Type* tipo, std::string nombre);
     std::string to_string();
     int getSize();
+    bool isSimple();
 };
 
 class PardoType : public Type
@@ -92,6 +103,8 @@ class PardoType : public Type
     PardoType(std::vector<CampoType*>* campos, std::string nombre);
     std::string to_string();
     int getSize();
+    bool isSimple();
+    std::string getName();
 };
 
 class GrizzliType : public Type
@@ -104,13 +117,8 @@ class GrizzliType : public Type
     GrizzliType(std::vector<CampoType*>* campos, std::string nombre);
     std::string to_string();
     int getSize();
-};
-
-class Grizzli : public Type
-{
-  public:
-    Grizzli() : Type(0) {};
-    std::string to_string() { return std::string("grizzli"); };
+    bool isSimple();
+    std::string getName();
 };
 
 class ErrorType : public Type
@@ -118,6 +126,7 @@ class ErrorType : public Type
   public:
     ErrorType();
     std::string to_string();
+    bool isSimple();
 };
 
 class TagType : public Type
@@ -125,5 +134,6 @@ class TagType : public Type
   public:
     TagType();
     std::string to_string();
+    bool isSimple();
 };
 #endif

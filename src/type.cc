@@ -27,6 +27,11 @@ std::string PandaType::to_string()
   return "panda";
 }
 
+bool PandaType::isSimple()
+{
+  return true;
+}
+
 PolarType::PolarType()
   : Type(4)
   {}
@@ -34,6 +39,11 @@ PolarType::PolarType()
 std::string PolarType::to_string()
 {
   return "polar";
+}
+
+bool PolarType::isSimple()
+{
+  return true;
 }
 
 KodiakType::KodiakType()
@@ -45,6 +55,11 @@ std::string KodiakType::to_string()
   return "kodiak";
 }
 
+bool KodiakType::isSimple()
+{
+  return true;
+}
+
 MalayoType::MalayoType()
   : Type(4)
   {}
@@ -52,6 +67,11 @@ MalayoType::MalayoType()
 std::string MalayoType::to_string()
 {
   return "malayo";
+}
+
+bool MalayoType::isSimple()
+{
+  return true;
 }
 
 ExtintoType::ExtintoType()
@@ -63,6 +83,11 @@ std::string ExtintoType::to_string()
   return "extinto";
 }
 
+bool ExtintoType::isSimple()
+{
+  return true;
+}
+
 HormigueroType::HormigueroType()
   : Type(4)
   {}
@@ -70,6 +95,11 @@ HormigueroType::HormigueroType()
 std::string HormigueroType::to_string()
 {
   return "hormiguero";
+}
+
+bool HormigueroType::isSimple()
+{
+  return true;
 }
 
 CuevaType::CuevaType(Type* tipo, std::vector<std::string>* longitudes)
@@ -88,7 +118,17 @@ int CuevaType::getSize()
 
 std::string CuevaType::to_string()
 {
-  return "cueva";
+  return "cueva de " + _tipo->to_string();
+}
+
+bool CuevaType::isSimple()
+{
+  return true;
+}
+
+Type* CuevaType::getTipo()
+{
+  return _tipo;
 }
 
 CampoType::CampoType(Type* tipo, std::string nombre)
@@ -105,6 +145,11 @@ std::string CampoType::to_string()
 int CampoType::getSize()
 {
   return _tipo->getSize();
+}
+
+bool CampoType::isSimple()
+{
+  return true;
 }
 
 PardoType::PardoType(std::vector<CampoType*>* campos, std::string nombre)
@@ -127,6 +172,16 @@ int PardoType::getSize()
   for (unsigned int i=0; i < _campos->size(); ++i)
     size += _campos->at(i)->getSize();
   return size;
+}
+
+bool PardoType::isSimple()
+{
+  return false;
+}
+
+std::string PardoType::getName()
+{
+  return _nombre;
 }
 
 GrizzliType::GrizzliType(std::vector<CampoType*>* campos, std::string nombre)
@@ -153,6 +208,16 @@ int GrizzliType::getSize()
   return max;
 }
 
+bool GrizzliType::isSimple()
+{
+  return false;
+}
+
+std::string GrizzliType::getName()
+{
+  return _nombre;
+}
+
 ErrorType::ErrorType()
   : Type(4)
   {}
@@ -162,6 +227,11 @@ std::string ErrorType::to_string()
   return "error";
 }
 
+bool ErrorType::isSimple()
+{
+  return true;
+}
+
 TagType::TagType()
   : Type(4)
   {}
@@ -169,5 +239,10 @@ TagType::TagType()
 std::string TagType::to_string()
 {
   return "etiqueta";
+}
+
+bool TagType::isSimple()
+{
+  return true;
 }
 #endif
