@@ -131,14 +131,15 @@ std::vector<std::string>* extraerIds(std::vector<elementoLista>* ids);
 %type  <Statement*> bloqueEspecial
 %type  <std::vector<Definition*>*> Locales
 %type  <Definition*> DefVariable
-%type  <DefArray*> DefCueva
+%type  <Type*> DefCueva
 %type  <Definition*> DefCompleja
 %type  <Definition*> DefFuncion
 %type  <Definition*> DefLocales
 %type  <std::vector<std::string>*> Cuevas
 %type  <std::vector<elementoLista>*> Identificadores
 %type  <Type*> Tipo
-%type  <std::vector<CampoType*>*> Campos
+%type  <std::vector<Type*>*> Campos
+%type  <Type*> Campo
 %type  <std::vector<Parameter*>*> DefParametros
 %type  <Parameter*> DefParametro
 %type  <std::string> ParametroCueva
@@ -271,7 +272,9 @@ DefVariable: Tipo Identificadores "=" Expresiones ";" {
                                                       std::vector<string>* l = extraerIds($2);
                                                       $$ = new DefVarNoInit($1, l);
                                                   }
-           | DefCueva ";"                            { $$ = $1;                                                      }
+           | DefCueva ID ";"                      { $$ = new DefArray($1, $2);
+                                                    driver.tabla.add_symbol($2, $1, Cueva, @2.begin.line, @2.begin.column, true);
+                                                  }
            ;
 
 
@@ -281,11 +284,7 @@ Identificadores: ID                     { $$ = new std::vector<elementoLista>();
 
 
 
-DefCueva: Cuevas Tipo ID {
-                            $$ = new DefArray($2,$3,$1);
-                            Type* tipoCueva = new CuevaType($2,$1);
-                            driver.tabla.add_symbol($3,tipoCueva,Cueva, @3.begin.line, @3.begin.column, true);
-                          }
+DefCueva: Cuevas Tipo { $$ = new CuevaType($2,$1); }
         ;
 
 Cuevas: CUEVA "[" CONSTPOLAR "]" DE          { $$ = new std::vector<std::string>(); $$->push_back($3);      }
@@ -348,20 +347,21 @@ DefCompleja: PARDO ID "{" { driver.tabla.enter_scope(); }
                             }
            ;
 
-Campos: Tipo ID ";"        {
-                              $$ = new std::vector<CampoType*>; CampoType* p = new CampoType($1,$2); $$->push_back(p);
-                              driver.tabla.add_symbol($2, $1, Campo, @2.begin.line, @2.begin.column, true);
+Campos: Campo ";"        { $$ = new std::vector<Type*>; $$->push_back($1); }
+      | Campos Campo ";" { $$ = $1; $$->push_back($2); }
+      ;
+
+Campo: Tipo ID            { $$ = new CampoType($1,$2);
+                            driver.tabla.add_symbol($2, $1, Campo, @2.begin.line, @2.begin.column, true);
                            }
 
 /* Por ahora pasamos un nullptr pero esta mal esto, tenemos que conseguir la manera de no hacer tan caliche esto,
    para fines practicos y de la entrega, la tabla va a funcionar con esto pero hay que arreglarlo */
-      | DefCueva           { $$ = nullptr; }
-
-      | Campos Tipo ID ";" {
-                              $$ = $1; CampoType* p = new CampoType($2, $3); $$->push_back(p);
-                              driver.tabla.add_symbol($3, $2, Campo, @2.begin.line, @2.begin.column, true);
-                            }
+      | DefCueva ID        { $$ = $1;
+                             driver.tabla.add_symbol($2, $1, Cueva, @2.begin.line, @2.begin.column, true);
+                           }
       ;
+
 
 Tipo: PANDA       { $$ = new PandaType();                                   }
     | POLAR       { $$ = new PolarType();                                   }
@@ -583,7 +583,6 @@ LValue: ID MaybeCueva              {
                                     if (-1 != ALCANCE_LVALUE) {
                                      Contenido* c;
                                      if (nullptr == $4) {
-                                       cout << ALCANCE_LVALUE << std::endl;
                                        c = driver.tabla.find_scope($3, Campo, ALCANCE_LVALUE);
                                        $$ = new IDExpr($3);
                                      } else {
