@@ -151,7 +151,7 @@ Para la descripción de la gramática se utilizará la notación de Backus-Naur 
                 | \<expresion\> **+** \<expresion\>
                 | \<expresion\> **-** \<expresion\>
                 | \<expresion\> **\*\*** \<expresion\>
-                | \<expresion\> ***** \<expresion\>
+                | \<expresion\> **\*** \<expresion\>
                 | \<expresion\> **/** \<expresion\>
                 | \<expresion\> **%** \<expresion\>
                 | **-** \<expresion\>

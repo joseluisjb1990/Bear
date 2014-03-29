@@ -87,7 +87,7 @@
                 | \<expresion\> **+** \<expresion\>
                 | \<expresion\> **-** \<expresion\>
                 | \<expresion\> **\*\*** \<expresion\>
-                | \<expresion\> ***** \<expresion\>
+                | \<expresion\> **\*** \<expresion\>
                 | \<expresion\> **/** \<expresion\>
                 | \<expresion\> **%** \<expresion\>
                 | **-** \<expresion\>
