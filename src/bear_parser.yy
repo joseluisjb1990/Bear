@@ -23,6 +23,7 @@ typedef struct {
   unsigned int lineaF;
   unsigned int columnaF;
 } elementoLista;
+
 }
 // The parsing context.
 %param { bear_driver& driver }
@@ -37,6 +38,7 @@ typedef struct {
 %code
 {
 # include "bear_driver.hh"
+int ALCANCE_LVALUE;
 
 std::vector<std::string>* extraerIds(std::vector<elementoLista>* ids);
 
@@ -351,6 +353,10 @@ Campos: Tipo ID ";"        {
                               driver.tabla.add_symbol($2, $1, Campo, @2.begin.line, @2.begin.column, true);
                            }
 
+/* Por ahora pasamos un nullptr pero esta mal esto, tenemos que conseguir la manera de no hacer tan caliche esto,
+   para fines practicos y de la entrega, la tabla va a funcionar con esto pero hay que arreglarlo */
+      | DefCueva           { $$ = nullptr; }
+
       | Campos Tipo ID ";" {
                               $$ = $1; CampoType* p = new CampoType($2, $3); $$->push_back(p);
                               driver.tabla.add_symbol($3, $2, Campo, @2.begin.line, @2.begin.column, true);
@@ -508,39 +514,103 @@ LValues: LValue             { $$ = new std::vector<Expression*>(); $$->push_back
 
 /* Necesito ayuda para hacer esta parte¸ me confunde un poco como vamos a manejar la tabla */
 LValue: ID MaybeCueva              {
-                                    /* Contenido* c = driver.tabla.find_symbol($1,Var);
+                                     Contenido* c;
+                                     if (nullptr == $2) {
+                                       c = driver.tabla.find_symbol($1, Var);
+                                       $$ = new IDExpr($1);
+                                     } else {
+                                       c = driver.tabla.find_symbol($1, Cueva);
+                                       $$ = new CuevaExpr($1, $2);
+                                     }
+
                                      if (!c) {
                                        driver.error(@1, "Variable " + $1 + " is not defined.");
-                                       $$ = -1;
+                                       ALCANCE_LVALUE = -1;
+                                       $$ = new EmptyExpr();
                                      }
                                      else if (!c->getMutabilidad()) {
                                        driver.error(@1, "Variable " + $1 + " is not mutable.");
-                                       $$ = -1;
-                                     }
-//TODO
-                                     if (nullptr == $2) {
-                                       //$$ = new IDExpr($1);
-                                       $$ = c.getAlcance();
+                                       ALCANCE_LVALUE = -1;
+                                       $$ = new EmptyExpr();
                                      } else {
-                                       $$ = new CuevaExpr($1, $2);
-                                     }*/
+                                        if (!c->getTipo()->isSimple()) {
+                                          Contenedor* tipo = driver.tabla.find_container(c->getTipo()->getName());
+                                          ALCANCE_LVALUE = tipo->get_alcanceCampos();
+                                        } else {
+                                          if (nullptr == $2) {
+                                            ALCANCE_LVALUE = c->getAlcance();
+                                          } else {
+                                            CuevaType* cueva = (CuevaType*) c->getTipo();
+                                            Contenedor* tipo = driver.tabla.find_container(cueva->getTipo()->getName());
+                                            ALCANCE_LVALUE = tipo->get_alcanceCampos();
+                                          }
+                                        }
+                                     }
                                    }
       | LValue "->" ID MaybeCueva {
-                                    
-                                   /*  if (nullptr == $4) {
+                                    if (-1 != ALCANCE_LVALUE) {
+                                     Contenido* c;
+                                     if (nullptr == $4) {
+                                       c = driver.tabla.find_scope($3, Campo, ALCANCE_LVALUE);
                                        $$ = new IDExpr($3);
                                      } else {
+                                       c = driver.tabla.find_scope($3, Cueva, ALCANCE_LVALUE);
                                        $$ = new CuevaExpr($3, $4);
                                      }
-                                    $$ = new PardoExpr($1, $3);*/
+
+                                     if (!c) {
+                                       driver.error(@3, "Variable " + $3 + " is not in scope.");
+                                       ALCANCE_LVALUE = -1;
+                                       $$ = new EmptyExpr();
+                                     }
+                                     else if (!c->getMutabilidad()) {
+                                       driver.error(@3, "Variable " + $3 + " is not mutable.");
+                                       ALCANCE_LVALUE = -1;
+                                       $$ = new EmptyExpr();
+                                     } else {
+                                        if (!c->getTipo()->isSimple()) {
+                                          Contenedor* tipo = driver.tabla.find_container(c->getTipo()->getName());
+                                          ALCANCE_LVALUE = tipo->get_alcanceCampos();
+                                        } else {
+                                          ALCANCE_LVALUE = c->getAlcance();
+                                        }
+                                     }
+                                    } else {
+                                      $$ = new EmptyExpr();
+                                    }
                                   }
       | LValue "."  ID MaybeCueva {
-                                  /*   if (nullptr == $4) {
+                                    if (-1 != ALCANCE_LVALUE) {
+                                     Contenido* c;
+                                     if (nullptr == $4) {
+                                       cout << ALCANCE_LVALUE << std::endl;
+                                       c = driver.tabla.find_scope($3, Campo, ALCANCE_LVALUE);
                                        $$ = new IDExpr($3);
                                      } else {
+                                       c = driver.tabla.find_scope($3, Cueva, ALCANCE_LVALUE);
                                        $$ = new CuevaExpr($3, $4);
                                      }
-                                    $$ = new GrizzliExpr($1, $3);*/
+
+                                     if (!c) {
+                                       driver.error(@3, "Variable " + $3 + " is not in scope.");
+                                       ALCANCE_LVALUE = -1;
+                                       $$ = new EmptyExpr();
+                                     }
+                                     else if (!c->getMutabilidad()) {
+                                       driver.error(@3, "Variable " + $3 + " is not mutable.");
+                                       ALCANCE_LVALUE = -1;
+                                       $$ = new EmptyExpr();
+                                     } else {
+                                        if (!c->getTipo()->isSimple()) {
+                                          Contenedor* tipo = driver.tabla.find_container(c->getTipo()->getName());
+                                          ALCANCE_LVALUE = tipo->get_alcanceCampos();
+                                        } else {
+                                          ALCANCE_LVALUE = c->getAlcance();
+                                        }
+                                     }
+                                    } else {
+                                      $$ = new EmptyExpr();
+                                    }
                                   }
       ;
 
