@@ -127,14 +127,11 @@ std::vector<std::string>* extraerIds(std::vector<elementoLista>* ids);
 %type  <Definition*> DefinicionGlobal
 %type  <Definition*> DefConstante
 %type  <Statement*> bloque
-%type  <Statement*> bloqueSimple
 %type  <Statement*> bloqueEspecial
-%type  <std::vector<Definition*>*> Locales
 %type  <Definition*> DefVariable
 %type  <Type*> DefCueva
 %type  <Definition*> DefCompleja
 %type  <Definition*> DefFuncion
-%type  <Definition*> DefLocales
 %type  <std::vector<std::string>*> Cuevas
 %type  <std::vector<elementoLista>*> Identificadores
 %type  <Type*> Tipo
@@ -142,12 +139,11 @@ std::vector<std::string>* extraerIds(std::vector<elementoLista>* ids);
 %type  <Type*> Campo
 %type  <std::vector<Parameter*>*> DefParametros
 %type  <Parameter*> DefParametro
-%type  <std::string> ParametroCueva
+%type  <std::vector<std::string>*> ParametroCueva
+%type  <Type*> tipoCueva
 %type  <std::vector<Expression*>*>  AccesoCueva
 %type  <std::vector<Expression*>*>  MaybeCueva
 %type  <Expression*> FuncionPredef
-%type  <std::string> Funcion
-%type  <std::string> Cuerpo
 %type  <Statement*> IteracionIndeterminada
 
 /* %printer { yyoutput << $$; } <*>; */
@@ -164,7 +160,7 @@ Programa : Definiciones "oso" "(" ")" "=>" EXTINTO { driver.tabla.enter_scope();
                                                    }
          ;
 
-Definiciones:
+Definiciones:                    { $$ = $$; }
             | ListaDefGlobales   { $$ = $1; }
             ;
 
@@ -216,29 +212,22 @@ DefFuncion: ID "(" DefParametros ")" "=>" Tipo ";"                   { $$ = new 
           bloqueEspecial           { driver.tabla.exit_scope(); $$ = new DefFunction($1, $3, $6, $8); }
           ;
 
-Locales: Locales DefLocales   { $$ = $1; $$->push_back($2);                             }
-       | DefLocales           { $$ = new std::vector<Definition*>(); $$->push_back($1); }
-       ;
-
-
-DefLocales: DefVariable  { $$ = $1; }
-          | DefConstante { $$ = $1; }
-          ;
-
 DefParametros: DefParametro                   { $$ = new std::vector<Parameter*> (); $$->push_back($1);               }
              | DefParametros "," DefParametro { $$ = $1; $$->push_back($3);                                           }
              ;
 
-DefParametro: Tipo ID                  { $$ = new Parameter($2, $1, false);       }
-            | "^" Tipo ID              { $$ = new Parameter($3, $2, true);        }
-           /* | ParametroCueva Tipo ID   { $$ = "Tipo: " + $1 + $2 + " Nombre: " + $3; }*/
+DefParametro: Tipo ID        { $$ = new Parameter($2, $1, false); }
+            | "^" Tipo ID    { $$ = new Parameter($3, $2, true);  }
+            | tipoCueva ID   { $$ = new Parameter($2, $1, false); }
             ;
 
-/*
-ParametroCueva: CUEVA "[" "]" DE                           { $$ = $1 + " [] " + $4 + " ";                }
-              | ParametroCueva CUEVA "[" CONSTPOLAR "]" DE { $$ = $1 + $2 + " [" + $4 + "] " + $6 + " "; }
+tipoCueva: ParametroCueva Tipo { $$ = new CuevaType($2, $1); }
+         ;
+
+/* Aqui voy a devolver "vacio" para el caso base porque puedo, seguro hay que cambiarlo */
+ParametroCueva: CUEVA "[" "]" DE                           { $$ = new std::vector<std::string>(); $$->push_back("vacio"); }
+              | ParametroCueva CUEVA "[" CONSTPOLAR "]" DE { $$ = $1; $$->push_back($4);                                  }
               ;
-*/
 
 DefConstante: CONST Tipo Identificadores "=" Expresiones ";" {
                                                                 if ($3->size() == $5->size())
@@ -287,8 +276,8 @@ Identificadores: ID                     { $$ = new std::vector<elementoLista>();
 DefCueva: Cuevas Tipo { $$ = new CuevaType($2,$1); }
         ;
 
-Cuevas: CUEVA "[" CONSTPOLAR "]" DE          { $$ = new std::vector<std::string>(); $$->push_back($3);      }
-       |  Cuevas CUEVA "[" CONSTPOLAR "]" DE { $$ = $1; $$->push_back($4); }
+Cuevas: CUEVA "[" CONSTPOLAR "]" DE          { $$ = new std::vector<std::string>(); $$->push_back($3); }
+       |  Cuevas CUEVA "[" CONSTPOLAR "]" DE { $$ = $1; $$->push_back($4);                             }
        ;
 
 
@@ -355,8 +344,6 @@ Campo: Tipo ID            { $$ = new CampoType($1,$2);
                             driver.tabla.add_symbol($2, $1, Campo, @2.begin.line, @2.begin.column, true);
                            }
 
-/* Por ahora pasamos un nullptr pero esta mal esto, tenemos que conseguir la manera de no hacer tan caliche esto,
-   para fines practicos y de la entrega, la tabla va a funcionar con esto pero hay que arreglarlo */
       | DefCueva ID        { $$ = $1;
                              driver.tabla.add_symbol($2, $1, Cueva, @2.begin.line, @2.begin.column, true);
                            }
@@ -380,7 +367,7 @@ Tipo: PANDA       { $$ = new PandaType();                                   }
     ;
 
 bloqueEspecial: "{" Instrucciones "}" { $$ = new Body($2);  }
-              | Instruccion ";"       { $$ = $1;                }
+              | Instruccion ";"       { $$ = $1;            }
               ;
 
 bloque: "{" { driver.tabla.enter_scope(); } Instrucciones "}"     {
@@ -397,27 +384,28 @@ Instrucciones: Instruccion                { $$ = new std::vector<Statement*>(); 
 
 %right ENTONCES SINO;
 Instruccion: DefVariable                                                  { $$ = $1; }
-            | LValues"=" Expresiones ";"                                  {
-                                                                           if (!($1->size() == $3->size())) {
-                                                                             driver.error(@1, @3, "The number of l-values and expressions is not the same.");
-                                                                           }
-                                                                           $$ = new Assign($1, $3);
+           | DefConstante                                                 { $$ = $1; }
+           | LValues"=" Expresiones ";"                                  {
+                                                                          if (!($1->size() == $3->size())) {
+                                                                            driver.error(@1, @3, "The number of l-values and expressions is not the same.");
                                                                           }
-            | LValues error Expresiones ";"                                { $$ = new Empty(); yyerrok; }
+                                                                          $$ = new Assign($1, $3);
+                                                                         }
+           | LValues error Expresiones ";"                                { $$ = new Empty(); yyerrok; }
 
-            | LEER "(" ID ")"   ";"                                        {
-                                                                           Contenido* c = driver.tabla.find_symbol($3,Var);
-                                                                           if (!c) {
-                                                                             driver.error(@1, @4, "Trying to read variable " + $3 + " which is not defined.");
-                                                                             $$ =  new Empty();
-                                                                           }
-                                                                           else if (!c->getMutabilidad()) {
-                                                                             driver.error(@1, @4, "Trying to initialize variable " + $3 + ", which is not mutable.");
-                                                                             $$ =  new Empty();
-                                                                           } else {
-                                                                             $$ = new Read($3);
-                                                                           }
-                                                                           }
+           | LEER "(" ID ")"   ";"                                        {
+                                                                          Contenido* c = driver.tabla.find_symbol($3,Var);
+                                                                          if (!c) {
+                                                                            driver.error(@1, @4, "Trying to read variable " + $3 + " which is not defined.");
+                                                                            $$ =  new Empty();
+                                                                          }
+                                                                          else if (!c->getMutabilidad()) {
+                                                                            driver.error(@1, @4, "Trying to initialize variable " + $3 + ", which is not mutable.");
+                                                                            $$ =  new Empty();
+                                                                          } else {
+                                                                            $$ = new Read($3);
+                                                                          }
+                                                                          }
            | ESCRIBIR "(" Expresion ")" ";"                                { $$ = new Write($3); }
            | ID "(" Expresiones ")" ";"                                    { Funcion* f = driver.tabla.get_function($1);
                                                                              if (!f) {
@@ -445,7 +433,18 @@ Instruccion: DefVariable                                                  { $$ =
              bloqueEspecial                                                { driver.tabla.exit_scope();
                                                                              $$ = new ComplexFor($2, $5, $9, $7, $12);
                                                                            }
-/*           | PARA ID EN ID "{" Cuerpo  "}"                               { $$ = "Iteración acotada:\nVariable de iteración: " + $2 + "\nArreglo sobre el cual iterar: " + $4 + "\nInstrucciones:\n" + $6;                     }*/
+           | PARA ID EN ID                                                 { Contenido* c = driver.tabla.find_symbol($4, Cueva);
+                                                                             if (!c) {
+                                                                               driver.error(@4,"Cueva " + $4 + " is not declared.");
+                                                                             }
+                                                                             CuevaType* cuevita = (CuevaType*) c->getTipo();
+                                                                             Type* tipo = cuevita->getTipo();
+                                                                             driver.tabla.enter_scope();
+                                                                             driver.tabla.add_symbol($2, tipo, Cueva, @2.begin.line, @2.begin.column, @2.end.line, @2.end.column, false);
+                                                                           }
+            bloqueEspecial                                                 { driver.tabla.exit_scope();
+                                                                             $$ = new IdFor($2, $4, $6);
+                                                                           }
            | IteracionIndeterminada                                        { $$ = $1; }
            | ID "++" ";"                                                   { Contenido* c = driver.tabla.find_symbol($1,Var);
                                                                              if (c) {
@@ -519,7 +518,6 @@ LValues: LValue             { $$ = new std::vector<Expression*>(); $$->push_back
        | LValues "," LValue { $$ = $1; $$->push_back($3);                             }
        ;
 
-/* Necesito ayuda para hacer esta parte¸ me confunde un poco como vamos a manejar la tabla */
 LValue: ID MaybeCueva              {
                                      Contenido* c;
                                      if (nullptr == $2) {

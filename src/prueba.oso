@@ -7,8 +7,8 @@
   panda d;
   blah f;
 }
---<3
-prueba(polar a, panda b) => kodiak {
+
+prueba(cueva [] de polar a, cueva [] de cueva [4] de panda b) => kodiak {
   mientras (blanco) {
     polar foo;
     foo = 42;
@@ -28,11 +28,16 @@ prueba(polar a, panda b) => kodiak {
   blah e;
 
 }
-<3->
+
 oso() => extinto {
   polar a;
   cueva [5] de bleh cuevita;
   cuevita[2]->f.b = cuevita[3]->f.cuevota[4];
   a = a_polar(45.6);
-  funcionRandom(678,897);
+  <3 funcionRandom(678,897);
+
+  para i en cuevita {
+    a = a_kodiak(56);
+  }
+  const polar u = 1;
 }

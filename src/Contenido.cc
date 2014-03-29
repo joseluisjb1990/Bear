@@ -48,6 +48,8 @@ std::string Contenido::to_string()
 
   if(_definido)
   {
+     return "Tipo: " + _tipo->to_string() + ", Categoria: " + std::to_string(_categoria) + ", Alcance: " + std::to_string(_alcance) + ", Linea de Declaración: " + std::to_string(_lineaDec) + ", Columna de Declaración: " + std::to_string(_columnaDec) + ", Linea de Definición: " + std::to_string(_lineaDef) + ", Columna de Definición: " + std::to_string(_columnaDef) + ", Mutabilidad: " + std::to_string(_mutable) + "\n";
+/* 
     return  tipo        + std::string(BIG_WIDTH / 2 - tipo.length()       , ' ') + SEPARADOR
           + categoria   + std::string(SMALL_WIDTH   - categoria.length()  , ' ') + SEPARADOR
           + alcance     + std::string(SMALL_WIDTH   - alcance.length()    , ' ') + SEPARADOR
@@ -56,11 +58,12 @@ std::string Contenido::to_string()
           + lineaDef    + std::string(SMALL_WIDTH   - lineaDef.length()   , ' ') + SEPARADOR
           + columnaDef  + std::string(SMALL_WIDTH   - columnaDef.length() , ' ') + SEPARADOR
           + mutab       + std::string(SMALL_WIDTH   - mutab.length()      , ' ') + SEPARADOR
-          ;
+          ;*/
   }
   else
   {
-    return  tipo        + std::string(BIG_WIDTH / 2 - tipo.length()       , ' ') + SEPARADOR
+     return "Tipo: " + _tipo->to_string() + ", Categoria: " + std::to_string(_categoria) + ", Alcance: " + std::to_string(_alcance) + ", Linea de Declaración: " + std::to_string(_lineaDec) + ", Columna de Declaración: " + std::to_string(_columnaDec) + ", Mutabilidad: " + std::to_string(_mutable) + "\n";
+/*    return  tipo        + std::string(BIG_WIDTH / 2 - tipo.length()       , ' ') + SEPARADOR
           + categoria   + std::string(SMALL_WIDTH   - categoria.length()  , ' ') + SEPARADOR
           + alcance     + std::string(SMALL_WIDTH   - alcance.length()    , ' ') + SEPARADOR
           + lineaDec    + std::string(SMALL_WIDTH   - lineaDec.length()   , ' ') + SEPARADOR
@@ -68,7 +71,7 @@ std::string Contenido::to_string()
           +               std::string(SMALL_WIDTH                         , ' ') + SEPARADOR
           +               std::string(SMALL_WIDTH                         , ' ') + SEPARADOR
           + mutab       + std::string(SMALL_WIDTH   - mutab.length()      , ' ') + SEPARADOR
-          ;
+          ;*/
 
   }
 }
