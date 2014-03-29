@@ -38,4 +38,5 @@ public:
     unsigned int get_actual_scope();
     Funcion* get_function(std::string nombre);
     Contenido* find_symbol(std::string nombre, Categorias cat);
+    Contenido* find_scope(std::string nombre, Categorias cat, unsigned int alcance);
 };
