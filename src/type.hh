@@ -96,11 +96,11 @@ class CampoType : public Type
 class PardoType : public Type
 {
   private:
-    std::vector<CampoType*>* _campos;
+    std::vector<Type*>* _campos;
     std::string              _nombre;
 
   public:
-    PardoType(std::vector<CampoType*>* campos, std::string nombre);
+    PardoType(std::vector<Type*>* campos, std::string nombre);
     std::string to_string();
     int getSize();
     bool isSimple();
@@ -110,11 +110,11 @@ class PardoType : public Type
 class GrizzliType : public Type
 {
   private:
-    std::vector<CampoType*>* _campos;
+    std::vector<Type*>* _campos;
     std::string              _nombre;
 
   public:
-    GrizzliType(std::vector<CampoType*>* campos, std::string nombre);
+    GrizzliType(std::vector<Type*>* campos, std::string nombre);
     std::string to_string();
     int getSize();
     bool isSimple();

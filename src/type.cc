@@ -118,7 +118,11 @@ int CuevaType::getSize()
 
 std::string CuevaType::to_string()
 {
-  return "cueva de " + _tipo->to_string();
+  std::string str = "cueva ";
+  for (unsigned int i=0; i<_longitudes->size(); ++i)
+    str += "[" + _longitudes->at(i) + "]";
+  str += " de " + _tipo->to_string();
+  return str;
 }
 
 bool CuevaType::isSimple()
@@ -152,7 +156,7 @@ bool CampoType::isSimple()
   return true;
 }
 
-PardoType::PardoType(std::vector<CampoType*>* campos, std::string nombre)
+PardoType::PardoType(std::vector<Type*>* campos, std::string nombre)
   : Type(0)
   , _campos ( campos )
   , _nombre ( nombre )
@@ -184,7 +188,7 @@ std::string PardoType::getName()
   return _nombre;
 }
 
-GrizzliType::GrizzliType(std::vector<CampoType*>* campos, std::string nombre)
+GrizzliType::GrizzliType(std::vector<Type*>* campos, std::string nombre)
   : Type(0)
   , _campos ( campos )
   , _nombre ( nombre )
