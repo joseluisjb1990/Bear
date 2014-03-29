@@ -4,7 +4,6 @@
 %define parser_class_name {bear_parser}
 %define api.token.constructor
 %define api.value.type variant
-%define parse.assert
 %code requires
 {
 # include <string>
@@ -151,21 +150,30 @@ std::vector<std::string>* extraerIds(std::vector<elementoLista>* ids);
 %%
 %start programa;
 
-programa : definiciones "oso" "(" ")" "=>" EXTINTO { driver.tabla.enter_scope();
-                                                     std::vector<Parameter*>* paramVacio = new std::vector<Parameter*>();
-                                                     driver.tabla.add_function("oso",new ExtintoType(),@2.begin.line,@2.begin.column, @2.begin.line, @2.begin.column, paramVacio);
-                                                   }
-           bloqueespecial                          { driver.tabla.exit_scope();
-                                                     $$ = $8;/* driver.AST = $$;*/
-                                                   }
-         | definiciones "oso" "(" error            { driver.error(@4, "Main function oso must not recieve parameters.");
-                                                     yyerrok;
-                                                     $$ = new Empty();
-                                                   }
-         | definiciones "oso" "(" ")" "=>" error   { driver.error(@6, "Return type for main function oso must be extinto.");
-                                                     yyerrok;
-                                                     $$ = new Empty();
-                                                   }
+programa : definiciones "oso" "(" ")" "=>" EXTINTO                       { driver.tabla.enter_scope();
+                                                                           std::vector<Parameter*>* paramVacio = new std::vector<Parameter*>();
+                                                                           driver.tabla.add_function("oso",new ExtintoType(),@2.begin.line,@2.begin.column, @2.begin.line, @2.begin.column, paramVacio);
+                                                                         }
+           bloqueespecial                                                { driver.tabla.exit_scope();
+                                                                           $$ = $8;/* driver.AST = $$;*/
+                                                                         }
+         | definiciones "oso" "(" error ")" "=>" EXTINTO bloqueespecial  { driver.error(@4, "Main function oso must not recieve parameters.");
+                                                                           yyerrok;
+                                                                           $$ = new Empty();
+                                                                         }
+         | definiciones "oso" "(" ")" "=>" error                         { driver.error(@6, "Return type for main function oso must be extinto.");
+                                                                           yyerrok;
+                                                                           $$ = new Empty();
+                                                                         }
+         | definiciones "oso" "(" error ")" "=>" error bloqueespecial    { driver.error(@4, "Main function oso must not recieve parameters.");
+                                                                           driver.error(@7, "The return type for main function oso must be extinto.");
+                                                                           yyerrok;
+                                                                           $$ = new Empty();
+                                                                         }
+         | END                                                           { driver.error(@1, "Program can't be empty, it must have at least the declaration of the main function oso with no parameters and return type extinto.");
+                                                                           yyerrok;
+                                                                           $$ = new Empty();
+                                                                         }
          ;
 
 definiciones:                    { $$ = $$; }
