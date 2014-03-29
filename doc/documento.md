@@ -54,6 +54,71 @@ En Bear los comentarios se realizan con corazones ya que comentar tu código es 
 Al no comentar demuestras poco amor hacia el código y hacia la futura persona que pueda leerlo :(.
 
 
+## Gramática
+
+Para la descripción de la gramática se utilizará la notación de Backus-Naur (BNF).
+
+    <programa> ::= <definiciones> oso "(" ")" => extinto <bloqueespecial>
+    
+    <definiciones> ::= { <listadefglobales> }
+    
+    <listadefglobales> ::= <definicionglobal> { <definicionglobal> }
+    
+    <definicionglobal> ::= <defconstante> | <defvariable> | <deffuncion> | <defcompleja>
+    
+    <deffuncion> ::= id "(" <defparametros> ")" => <tipo> ";" | id "(" <defparametros> ")" => <tipo> bloqueespecial
+    
+    <defparametros> ::= <defparametro> { "," <defparametro> }
+    
+    <defparametro> ::= <tipo> id | "^" <tipo> id | <tipocueva> id
+    
+    <tipocueva> ::= <parametrocueva> <tipo>
+    
+    <parametrocueva> ::= cueva "[" "]" de | <parametrocueva> cueva "[" constpolar "]" de
+    
+    <defconstante> ::= const <tipo> <identificadores> "=" <expresiones> ";"
+    
+    <defvariable> ::= <tipo> <identificadores> "=" <expresiones> ";" | <tipo> <identificadores> ";" | <defcueva> id ";"
+    
+    <identificadores> ::= id { "," id }
+    
+    <defcueva> ::= <cuevas> <tipo>
+    
+    <cuevas> ::= cueva "[" constpolar "]" de { cueva "[" constpolar "]" de }
+    
+    <defcompleja> ::= pardo id "{" <campos> "}" | pardo id ";" | grizzli id "{" <campos> "}" | grizzli id ";"
+    
+    <campos> ::= campo ";" { campo ";" }
+    
+    <campo> ::= <tipo> id | <defcueva> id
+    
+    <tipo> ::= panda | polar | kodiak | malayo | hormiguero | extinto | id
+    
+    <bloqueespecial> ::= "{" <instrucciones> "}" | <instruccion> ";"
+    
+    <bloque> ::= "{" <instrucciones> "}" | <instruccion> ";"
+    
+    <instrucciones> ::= <instruccion> { <instruccion> }
+    
+    <instruccion> ::= <defvariable> | <defconstante> | <lvalues> "=" <expresiones> ";" | leer "(" id ")" ";" | escribir "(" <expresion> ")" ";" | id "(" <expresiones> ")" ";" | si <expresion> entonces <bloque> [ sino <bloque> ] | para id en "(" <expresion> [ ";" <expresion> ] ";" <expresion> ")" <bloqueespecial> | para id en id <bloqueespecial> | <iteracionindeterminada> | id ++ ";" | id -- ";" | vomita [ id ] ";" | fondoblanco [ id ]";" | roloepea [ id ] ";" 
+    
+    <iteracionindeterminada> ::= [ id ":" ] mientras "(" <expresion> ")" <bloque>
+    
+    <lvalues> ::= <lvalue> { "," <lvalue> }
+    
+    <lvalue> ::= id [ <maybecueva> ] { -> id [ <maybecueva> ] | "." id [ <maybecueva> ] }
+    
+    <maybecueva> ::= <accesocueva>
+    
+    <accesocueva> ::= "[" <expresion> "]" { "[" <expresion> "]" }
+    
+    <expresiones> ::= <expresion> { "," <expresion> }
+    
+    <expresion> ::= constpolar | constkodiak | consthormiguero | constmalayo | <lvalue> | id "(" <expresiones> ")" | <funcionpredef> | blanco | negro | <expresion> "<" <expresion> | <expresion> =<  <expresion> | <expresion> ">" <expresion> | <expresion> >=  <expresion> | <expresion> ==  <expresion> | <expresion> =/= <expresion> | <expresion> "|" <expresion> | <expresion> "&" <expresion> | no <expresion> | <expresion> "+" <expresion> | <expresion> "-" <expresion> | <expresion> ** <expresion> | <expresion> "*" <expresion> | <expresion> "/" <expresion> | <expresion> "%" <expresion> | "-" <expresion> | "(" <expresion> ")" | <expresion> "?" <expresion> ":" <expresion>
+    
+    <funcionpredef> ::= a_panda "(" <expresion> ")" | a_kodiak "(" <expresion> ")" | a_malayo "(" <expresion> ")" | a_polar "(" <expresion> ")" | lon "(" <expresion> ")"
+
+
 ## Estructura de un programa
 
 Todo programa escrito en Bear tiene la siguiente estructura:
@@ -173,6 +238,13 @@ Esto debe hacerse separado. La manera correcta es la siguiente:
 
     foo bar, baz;
 
+Se permiten, por lo tanto, forward declarations de un pardo para declarar un tipo pardo y definirlo mas adelante como se indicó anteriormente.
+La sintaxis es la siguiente:
+
+    pardo <nombre>;
+
+Pueden existir tantas declaraciones compatibles como se deseen, pero solamente puede haber una definición del tipo.
+
 Para acceder a un campo del pardo se utiliza el operador `->` seguido del nombre del campo al que se quiere acceder.
 
 
@@ -210,12 +282,19 @@ Esto debe hacerse separado. La manera correcta es la siguiente:
 
     foo bar, baz;
 
+Se permiten, por lo tanto, forward declarations de un grizzli para declarar un tipo grizzli y definirlo mas adelante como se indicó anteriormente.
+La sintaxis es la siguiente:
+
+    grizzli <nombre>;
+
+Pueden existir tantas declaraciones compatibles como se deseen, pero solamente puede haber una definición del tipo.
+
 Debido a su semejanza física mucha gente suele confundir a los osos pardos y grizzli.
-Dado que la declaración de un pardo y un grizzli en bear es semejante (solo varían en la palabra clave `pardo` y `grizzli`) podría ocurrir lo mismo que pasa con estos osos en la vida real.
+Dado que la declaración de un pardo y un grizzli en Bear es semejante (solo varían en la palabra clave `pardo` y `grizzli`) podría ocurrir lo mismo que pasa con estos osos en la vida real.
 Para evitar confusiones presentamos a continuación la diferencia entre ambos.
 En un grizzli solamente uno de los campos definidos puede estar activo a la vez, en cambio en el pardo tenemos una colección de campos.
 
-Para acceder a un campo del pardo se utiliza el operador `.` seguido del nombre del campo al que se quiere acceder.
+Para acceder a un campo del grizzli se utiliza el operador `.` seguido del nombre del campo al que se quiere acceder.
 
 
 ### Especiales:
