@@ -1,6 +1,10 @@
 #include "type.hh"
 #include "definition.hh"
 
+#define BIG_WIDTH     30
+#define SMALL_WIDTH   5
+#define SEPARADOR     "|"
+
 typedef enum { Var, Const, Proc, Campo, Cueva, Compuesto, Etiqueta} Categorias;
 
 class Contenido

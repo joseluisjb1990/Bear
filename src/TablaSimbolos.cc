@@ -90,9 +90,13 @@ std::ostream& operator<<(std::ostream& os, TablaSimbolos &ts)
 
   std::sort(pairs_vector.begin(), pairs_vector.end(), compare_pairs);
 
+  os << std::setw(50) << "TABLA DE SIMBOLOS" << std::endl << std::left;
+  os << std::setw(BIG_WIDTH) << "V"   << SEPARADOR << std::setw(BIG_WIDTH / 2) << "T"  << SEPARADOR << std::setw(SMALL_WIDTH) << "C"  << SEPARADOR << std::setw(SMALL_WIDTH)  << "A" << SEPARADOR << std::setw(SMALL_WIDTH) << "LD" << SEPARADOR ;
+  os << std::setw(SMALL_WIDTH) << "CD"  << SEPARADOR << std::setw(SMALL_WIDTH) << "LD" << SEPARADOR << std::setw(SMALL_WIDTH) << "CF" << SEPARADOR << std::setw(SMALL_WIDTH)  << "M" << SEPARADOR << std::setw(SMALL_WIDTH) << "AC" << SEPARADOR << std::setw(SMALL_WIDTH) << "P" << std::endl ;
+
   for (vector_str_cont::iterator pos = pairs_vector.begin(); pos != pairs_vector.end(); ++pos)
   {
-    os << pos->first << " : " << pos->second->to_string() << '\n';
+    os << std::setw(BIG_WIDTH) << pos->first << SEPARADOR << pos->second->to_string() << '\n';
   }
 
   os << '\n';

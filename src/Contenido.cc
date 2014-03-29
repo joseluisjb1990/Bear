@@ -37,12 +37,42 @@ void Contenido::define(unsigned int linea, unsigned int columna) {
 
 std::string Contenido::to_string()
 {
-  if (getDef()) {
-    return "Tipo: " + _tipo->to_string() + ", Categoria: " + std::to_string(_categoria) + ", Alcance: " + std::to_string(_alcance) + ", Linea de Declaración: " + std::to_string(_lineaDec) + ", Columna de Declaración: " + std::to_string(_columnaDec) + ", Linea de Definición: " + std::to_string(_lineaDef) + ", Columna de Definición: " + std::to_string(_columnaDef) + ", Mutabilidad: " + std::to_string(_mutable) + "\n";
-  } else {
-    return "Tipo: " + _tipo->to_string() + ", Categoria: " + std::to_string(_categoria) + ", Alcance: " + std::to_string(_alcance) + ", Linea de Declaración: " + std::to_string(_lineaDec) + ", Columna de Declaración: " + std::to_string(_columnaDec) + ", Mutabilidad: " + std::to_string(_mutable) + "\n";
+  std::string tipo        = _tipo->to_string();
+  std::string categoria   = std::to_string(_categoria);
+  std::string alcance     = std::to_string(_alcance);
+  std::string lineaDec    = std::to_string(_lineaDec);
+  std::string columnaDec  = std::to_string(_columnaDec);
+  std::string lineaDef    = std::to_string(_lineaDef);
+  std::string columnaDef  = std::to_string(_columnaDef);
+  std::string mutab       = std::to_string(_mutable);
+
+  if(_definido)
+  {
+    return  tipo        + std::string(BIG_WIDTH / 2 - tipo.length()       , ' ') + SEPARADOR
+          + categoria   + std::string(SMALL_WIDTH   - categoria.length()  , ' ') + SEPARADOR
+          + alcance     + std::string(SMALL_WIDTH   - alcance.length()    , ' ') + SEPARADOR
+          + lineaDec    + std::string(SMALL_WIDTH   - lineaDec.length()   , ' ') + SEPARADOR
+          + columnaDec  + std::string(SMALL_WIDTH   - columnaDec.length() , ' ') + SEPARADOR
+          + lineaDef    + std::string(SMALL_WIDTH   - lineaDef.length()   , ' ') + SEPARADOR
+          + columnaDef  + std::string(SMALL_WIDTH   - columnaDef.length() , ' ') + SEPARADOR
+          + mutab       + std::string(SMALL_WIDTH   - mutab.length()      , ' ') + SEPARADOR
+          ;
+  }
+  else
+  {
+    return  tipo        + std::string(BIG_WIDTH / 2 - tipo.length()       , ' ') + SEPARADOR
+          + categoria   + std::string(SMALL_WIDTH   - categoria.length()  , ' ') + SEPARADOR
+          + alcance     + std::string(SMALL_WIDTH   - alcance.length()    , ' ') + SEPARADOR
+          + lineaDec    + std::string(SMALL_WIDTH   - lineaDec.length()   , ' ') + SEPARADOR
+          + columnaDec  + std::string(SMALL_WIDTH   - columnaDec.length() , ' ') + SEPARADOR
+          +               std::string(SMALL_WIDTH                         , ' ') + SEPARADOR
+          +               std::string(SMALL_WIDTH                         , ' ') + SEPARADOR
+          + mutab       + std::string(SMALL_WIDTH   - mutab.length()      , ' ') + SEPARADOR
+          ;
+
   }
 }
+
 
 Contenedor::Contenedor(Type* tipo, Categorias categoria, unsigned int alcance, unsigned int linea, unsigned int columna)
   : Contenido(tipo, categoria, alcance, linea, columna, true)
@@ -62,8 +92,9 @@ void Contenedor::define(unsigned int linea, unsigned int columna, Type* tipo, un
 
 std::string Contenedor::to_string()
 {
+  std::string alcanceCampos = std::to_string(_alcanceCampos);
   if (getDef()) {
-    return this->Contenido::to_string() + " " + std::to_string(_alcanceCampos);
+    return this->Contenido::to_string() + alcanceCampos       + std::string(SMALL_WIDTH   - 0     , ' ') + SEPARADOR;
   } else {
     return " Categoria: " + std::to_string(getCategoria()) + ", Alcance: " + std::to_string(getAlcance()) + ", Linea de Declaración: " + std::to_string(getLineaDec()) + ", Columna de Declaración: " + std::to_string(getColumnaDec()) + ", Mutabilidad: " + std::to_string(getMutabilidad()) + "\n";
   }
