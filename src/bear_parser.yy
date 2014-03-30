@@ -169,7 +169,21 @@ programa : definiciones "oso" "(" ")" "=>" EXTINTO                       { drive
            bloqueespecial                                                { driver.tabla.exit_scope();
                                                                            $$ = new Empty();
                                                                          }
+         | definiciones "oso" "(" ")" "=>" error error                   { driver.error(@6, "Return type for main function oso must be extinto.");
+                                                                           yyerrok;
+                                                                           driver.tabla.enter_scope();
+                                                                         }
+           bloqueespecial                                                { driver.tabla.exit_scope();
+                                                                           $$ = new Empty();
+                                                                         }
          | definiciones "oso" "(" error ")" "=>" error                   { driver.error(@4, "Main function oso must not recieve parameters.");
+                                                                           driver.error(@7, "The return type for main function oso must be extinto.");
+                                                                           yyerrok;
+                                                                         }
+           bloqueespecial                                                { driver.tabla.exit_scope();
+                                                                           $$ = new Empty();
+                                                                         }
+         | definiciones "oso" "(" error ")" "=>" error error             { driver.error(@4, "Main function oso must not recieve parameters.");
                                                                            driver.error(@7, "The return type for main function oso must be extinto.");
                                                                            yyerrok;
                                                                          }
@@ -401,7 +415,9 @@ tipo: PANDA       { $$ = new PandaType();                                   }
                   }
     ;
 
-bloqueespecial: "{" instrucciones "}" { $$ = new Body($2);  }
+bloqueespecial: "{" instrucciones "}" { $$ = new Body($2);                             }
+              | "{" "}"               { $$ = new Body(new std::vector<Statement*>()); }
+
               ;
 
 bloque: "{" { driver.tabla.enter_scope(); } instrucciones "}"     {
