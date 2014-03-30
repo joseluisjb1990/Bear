@@ -412,13 +412,13 @@ bloque: "{" { driver.tabla.enter_scope(); } instrucciones "}"     {
 
 instrucciones: instruccion                { $$ = new std::vector<Statement*>(); $$->push_back($1); }
              | instrucciones instruccion  { $$ = $1; $$->push_back($2);                            }
-             | error ";"                  { $$ = new std::vector<Statement*>(); yyerrok;           }
              ;
 
 %right ENTONCES SINO;
 instruccion: defvariable                                                  { $$ = $1; }
            | defconstante                                                 { $$ = $1; }
-           | lvalues"=" expresiones ";"                                  {
+           | error ";"                                                    { $$ = new EmptyDef(); yyerrok; }
+           | lvalues "=" expresiones ";"                                  {
                                                                           if (!($1->size() == $3->size())) {
                                                                             driver.error(@1, @3, "The number of l-values and expressions is not the same.");
                                                                           }

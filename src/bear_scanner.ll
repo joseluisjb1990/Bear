@@ -61,7 +61,7 @@ Caracter   '.'|'\\n'
 {Caracter}   { return yy::bear_parser::make_CONSTMALAYO(yytext, loc); }
 
 \"([^\"\n])*\"  { return yy::bear_parser::make_CONSTHORMIGUERO(yytext, loc); }
-\"([^\"\n])*    { driver.error(loc, "Incomplete hormiguero, missing final \".");                }
+\"([^\"\n])*    { driver.error(loc, "Incomplete hormiguero, missing final \"");                }
 
 a_kodiak    { return yy::bear_parser::make_AKODIAK(yytext, loc);     }
 a_malayo    { return yy::bear_parser::make_AMALAYO(yytext, loc);     }
@@ -136,8 +136,6 @@ vomita      { return yy::bear_parser::make_VOMITA(yytext, loc);      }
 
 
 <<EOF>>    return yy::bear_parser::make_END(loc);
-
-    /* Aqui me gustaría poner cual es el caracter que recibe (yytext) en el output del error. No supe hacerlo xD */
 
 .  { driver.error(loc, "Illegal character: " + std::string(yytext)); }
 
