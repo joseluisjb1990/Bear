@@ -92,6 +92,29 @@ bool compare_pairs(pair_str_cont pair1, pair_str_cont pair2)
   return pair1.second->getAlcance() < pair2.second->getAlcance();
 }
 
+void print_header(std::ostream& os)
+{
+  os  << std::setw(BIG_WIDTH)     << "V"    << SEPARADOR  << std::setw(BIG_WIDTH / 2) << "T[DIM]" << SEPARADOR
+      << std::setw(SMALL_WIDTH)   << "A"    << SEPARADOR  << std::setw(SMALL_WIDTH)   << "LDEC"   << SEPARADOR
+      << std::setw(SMALL_WIDTH)   << "CDEC" << SEPARADOR  << std::setw(SMALL_WIDTH)   << "LDEF"   << SEPARADOR
+      << std::setw(SMALL_WIDTH)   << "CDEF" << SEPARADOR  << std::setw(SMALL_WIDTH)   << "M"      << SEPARADOR
+      << std::setw(SMALL_WIDTH)   << "AC"   << SEPARADOR  << std::setw(SMALL_WIDTH)   << "D"      << SEPARADOR
+      << std::setw(SMALL_WIDTH)   << "P"
+      << std::endl;
+}
+
+void print_leyend(std::ostream& os)
+{
+  os  << std::endl << "LEYENDA" << std::endl
+      << "V     : Variable                         T[DIM]  : Tipo y Dimensiones(arreglo)  A     : Alcance de la variable                \n"
+      << "LDEC  : Linea de declaración             CDEC    : Columna de declaración       LDEF  : Linea de definición                   \n"
+      << "CDEF  : Columna de definición            M       : Mutabilidad (1 Si, 0 No)     AC    : Alcance de campos (tipos compuestos)  \n"
+      << "D     : Si V esta definida (1 Si, 0 No)  P       : Parametros                  \n";
+}
+void print_actual_scope(std::ostream& os, int scope)
+{
+  os << std::endl  << std::setw(50)  << ' ' << std::setw(15) << "ALCANCE " + std::to_string(scope)  << std::endl;
+}
 std::ostream& operator<<(std::ostream& os, TablaSimbolos &ts)
 {
   vector_str_cont pairs_vector;
@@ -103,15 +126,67 @@ std::ostream& operator<<(std::ostream& os, TablaSimbolos &ts)
 
   std::sort(pairs_vector.begin(), pairs_vector.end(), compare_pairs);
 
-  os << std::setw(50) << "TABLA DE SIMBOLOS" << std::endl << std::left;
-  os << std::setw(BIG_WIDTH) << "V"   << SEPARADOR << std::setw(BIG_WIDTH / 2) << "T"  << SEPARADOR << std::setw(SMALL_WIDTH) << "C"  << SEPARADOR << std::setw(SMALL_WIDTH)  << "A" << SEPARADOR << std::setw(SMALL_WIDTH) << "LD" << SEPARADOR ;
-  os << std::setw(SMALL_WIDTH) << "CD"  << SEPARADOR << std::setw(SMALL_WIDTH) << "LD" << SEPARADOR << std::setw(SMALL_WIDTH) << "CF" << SEPARADOR << std::setw(SMALL_WIDTH)  << "M" << SEPARADOR << std::setw(SMALL_WIDTH) << "AC" << SEPARADOR << std::setw(SMALL_WIDTH) << "P" << std::endl ;
+  os  << std::left  << std::setw(50)  << ' ' << std::setw(20) << "TABLA DE SIMBOLOS"  << std::endl;
+  print_actual_scope(os, 0);
+  print_header(os);
+
+  unsigned int alcance_ant = 0;
 
   for (vector_str_cont::iterator pos = pairs_vector.begin(); pos != pairs_vector.end(); ++pos)
   {
+    unsigned int alcance_actual = pos->second->getAlcance();
+
+    if(alcance_ant != alcance_actual)
+    {
+      alcance_ant = alcance_actual;
+      print_actual_scope(os, alcance_actual);
+      print_header(os);
+    }
     os << std::setw(BIG_WIDTH) << pos->first << SEPARADOR << pos->second->to_string() << '\n';
   }
 
+  print_leyend(os);
+
+/*  for (vector_str_cont::iterator pos = pairs_vector.begin(); pos != pairs_vector.end(); ++pos)
+  {
+    Categorias categoria = pos->second->getCategoria();
+
+    if(categoria == Var or categoria == Campo)
+    {
+      os << std::setw(BIG_WIDTH) << pos->first << SEPARADOR << pos->second->to_string() << '\n';
+    }
+  }
+
+  os  << std::endl << std::setw(50) << std::right << "ARREGLOS (CUEVAS)" << std::left << std::endl
+      << std::setw(BIG_WIDTH)     << "V"    << SEPARADOR  << std::setw(BIG_WIDTH / 2) << "T[DIM]" << SEPARADOR
+      << std::setw(SMALL_WIDTH)   << "A"    << SEPARADOR  << std::setw(SMALL_WIDTH)   << "LDEC"   << SEPARADOR
+      << std::setw(SMALL_WIDTH)   << "CDEF" << SEPARADOR  << std::setw(SMALL_WIDTH)   << "LDEC"   << SEPARADOR
+      << std::setw(SMALL_WIDTH)   << "CDEF" << SEPARADOR  << std::setw(SMALL_WIDTH)   << "M"      << SEPARADOR
+      << std::endl;
+
+  for (vector_str_cont::iterator pos = pairs_vector.begin(); pos != pairs_vector.end(); ++pos)
+  {
+    if(pos->second->getCategoria() == Cueva)
+    {
+      os << std::setw(BIG_WIDTH) << pos->first << SEPARADOR << pos->second->to_string() << '\n';
+    }
+  }
+
+  os  << std::endl << std::setw(50) << std::right << "TIPOS DEFINIDOS POR EL USUARIO" << std::left << std::endl
+      << std::setw(BIG_WIDTH)     << "V"    << SEPARADOR  << std::setw(BIG_WIDTH / 2) << "T"    << SEPARADOR
+      << std::setw(SMALL_WIDTH)   << "A"    << SEPARADOR  << std::setw(SMALL_WIDTH)   << "LDEC" << SEPARADOR
+      << std::setw(SMALL_WIDTH)   << "CDEF" << SEPARADOR  << std::setw(SMALL_WIDTH)   << "LDEC" << SEPARADOR
+      << std::setw(SMALL_WIDTH)   << "CDEF" << SEPARADOR  << std::setw(SMALL_WIDTH)   << "M"    << SEPARADOR
+      << std::endl;
+
+  for (vector_str_cont::iterator pos = pairs_vector.begin(); pos != pairs_vector.end(); ++pos)
+  {
+    if(pos->second->getCategoria() == Compuesto)
+    {
+      os << std::setw(BIG_WIDTH) << pos->first << SEPARADOR << pos->second->to_string() << '\n';
+    }
+  }
+*/
   os << '\n';
   return os;
 }

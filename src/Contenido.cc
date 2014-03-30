@@ -1,3 +1,4 @@
+# include <iostream>
 # include <string>
 # include "Contenido.hh"
 
@@ -111,7 +112,7 @@ Funcion::Funcion ( Type* tipo
 
 std::string Contenido::to_string()
 {
-  std::string tipo        = _tipo->to_string();
+  std::string tipo        = std::string(_tipo->to_string());
   std::string categoria   = std::to_string(_categoria);
   std::string alcance     = std::to_string(_alcance);
   std::string lineaDec    = std::to_string(_lineaDec);
@@ -119,30 +120,33 @@ std::string Contenido::to_string()
   std::string lineaDef    = std::to_string(_lineaDef);
   std::string columnaDef  = std::to_string(_columnaDef);
   std::string mutab       = std::to_string(_mutable);
+  std::string def         = std::to_string(_definido);
 
   if(_definido)
   {
 
-    return  tipo        + std::string(BIG_WIDTH / 2 - tipo.length()       , ' ') + SEPARADOR
-          + categoria   + std::string(SMALL_WIDTH   - categoria.length()  , ' ') + SEPARADOR
+    return  tipo        + std::string(BIG_WIDTH / 2 - tipo.size()       , ' ') + SEPARADOR
           + alcance     + std::string(SMALL_WIDTH   - alcance.length()    , ' ') + SEPARADOR
           + lineaDec    + std::string(SMALL_WIDTH   - lineaDec.length()   , ' ') + SEPARADOR
           + columnaDec  + std::string(SMALL_WIDTH   - columnaDec.length() , ' ') + SEPARADOR
           + lineaDef    + std::string(SMALL_WIDTH   - lineaDef.length()   , ' ') + SEPARADOR
           + columnaDef  + std::string(SMALL_WIDTH   - columnaDef.length() , ' ') + SEPARADOR
           + mutab       + std::string(SMALL_WIDTH   - mutab.length()      , ' ') + SEPARADOR
+          +               std::string(SMALL_WIDTH                         , ' ') + SEPARADOR
+          + def         + std::string(SMALL_WIDTH   - def.length()        , ' ') + SEPARADOR
           ;
   }
   else
   {
-    return  tipo        + std::string(BIG_WIDTH / 2 - tipo.length()       , ' ') + SEPARADOR
-          + categoria   + std::string(SMALL_WIDTH   - categoria.length()  , ' ') + SEPARADOR
+    return  tipo        + std::string(BIG_WIDTH / 2 - tipo.size()       , ' ') + SEPARADOR
           + alcance     + std::string(SMALL_WIDTH   - alcance.length()    , ' ') + SEPARADOR
           + lineaDec    + std::string(SMALL_WIDTH   - lineaDec.length()   , ' ') + SEPARADOR
           + columnaDec  + std::string(SMALL_WIDTH   - columnaDec.length() , ' ') + SEPARADOR
           +               std::string(SMALL_WIDTH                         , ' ') + SEPARADOR
           +               std::string(SMALL_WIDTH                         , ' ') + SEPARADOR
           + mutab       + std::string(SMALL_WIDTH   - mutab.length()      , ' ') + SEPARADOR
+          +               std::string(SMALL_WIDTH                         , ' ') + SEPARADOR
+          + def         + std::string(SMALL_WIDTH   - def.length()        , ' ') + SEPARADOR
           ;
 
   }
@@ -150,19 +154,96 @@ std::string Contenido::to_string()
 
 std::string Contenedor::to_string()
 {
-  std::string alcanceCampos = std::to_string(_alcanceCampos);
-  if (getDef()) {
-    return this->Contenido::to_string() + ", Alcance Campos: " + std::to_string(_alcanceCampos);
-  } else {
-    return " Categoria: " + std::to_string(getCategoria()) + ", Alcance: " + std::to_string(getAlcance()) + ", Linea de Declaración: " + std::to_string(getLineaDec()) + ", Columna de Declaración: " + std::to_string(getColumnaDec()) + ", Mutabilidad: " + std::to_string(getMutabilidad()) + "\n";
+
+  std::string tipo;
+  if      (dynamic_cast<GrizzliType*>(getTipo())) { tipo = "grizzli"; }
+  else if (dynamic_cast<PardoType*>  (getTipo())) { tipo = "pardo"; }
+
+  std::string categoria     = std::to_string(getCategoria()         );
+  std::string alcance       = std::to_string(getAlcance()           );
+  std::string lineaDec      = std::to_string(getLineaDec()          );
+  std::string columnaDec    = std::to_string(getColumnaDec()        );
+  std::string lineaDef      = std::to_string(getLineaDef()          );
+  std::string columnaDef    = std::to_string(getColumnaDef()        );
+  std::string mutab         = std::to_string(getMutabilidad()       );
+  std::string alcanceCampos = std::to_string(_alcanceCampos         );
+  std::string def           = std::to_string(getDef()               );
+
+  if(getDef())
+  {
+
+    return  tipo          + std::string(BIG_WIDTH / 2 - tipo.size()             , ' ') + SEPARADOR
+          + alcance       + std::string(SMALL_WIDTH   - alcance.length()        , ' ') + SEPARADOR
+          + lineaDec      + std::string(SMALL_WIDTH   - lineaDec.length()       , ' ') + SEPARADOR
+          + columnaDec    + std::string(SMALL_WIDTH   - columnaDec.length()     , ' ') + SEPARADOR
+          + lineaDef      + std::string(SMALL_WIDTH   - lineaDef.length()       , ' ') + SEPARADOR
+          + columnaDef    + std::string(SMALL_WIDTH   - columnaDef.length()     , ' ') + SEPARADOR
+          + mutab         + std::string(SMALL_WIDTH   - mutab.length()          , ' ') + SEPARADOR
+          + alcanceCampos + std::string(SMALL_WIDTH   - alcanceCampos.length()  , ' ') + SEPARADOR
+          + def           + std::string(SMALL_WIDTH   - def.length()            , ' ') + SEPARADOR
+          ;
+  }
+  else
+  {
+    return  tipo          + std::string(BIG_WIDTH / 2 - tipo.size()             , ' ') + SEPARADOR
+          + alcance       + std::string(SMALL_WIDTH   - alcance.length()        , ' ') + SEPARADOR
+          + lineaDec      + std::string(SMALL_WIDTH   - lineaDec.length()       , ' ') + SEPARADOR
+          + columnaDec    + std::string(SMALL_WIDTH   - columnaDec.length()     , ' ') + SEPARADOR
+          +                 std::string(SMALL_WIDTH                             , ' ') + SEPARADOR
+          +                 std::string(SMALL_WIDTH                             , ' ') + SEPARADOR
+          + mutab         + std::string(SMALL_WIDTH   - mutab.length()          , ' ') + SEPARADOR
+          + alcanceCampos + std::string(SMALL_WIDTH   - alcanceCampos.length()  , ' ') + SEPARADOR
+          + def           + std::string(SMALL_WIDTH   - def.length()            , ' ') + SEPARADOR
+          ;
+
   }
 }
 
 std::string Funcion::to_string()
 {
-  std::string str =  "Funcion : " + this->Contenido::to_string() + "Definida: " + std::to_string( this->getDef() ) + " Parametros : ";
-  for (unsigned int i=0; i<_parametros->size(); ++i)
-    str += _parametros->at(i)->to_string() + " ";
+  std::string tipo          = std::string   (getTipo()->to_string()  );
+  std::string categoria     = std::to_string(getCategoria()         );
+  std::string alcance       = std::to_string(getAlcance()           );
+  std::string lineaDec      = std::to_string(getLineaDec()          );
+  std::string columnaDec    = std::to_string(getColumnaDec()        );
+  std::string lineaDef      = std::to_string(getLineaDef()          );
+  std::string columnaDef    = std::to_string(getColumnaDef()        );
+  std::string mutab         = std::to_string(getMutabilidad()       );
+  std::string def           = std::to_string(getDef()               );
 
-  return str;
+  std::string param = "";
+  for(std::vector<Parameter*>::iterator it = _parametros->begin(); it != _parametros->end(); ++it)
+  {
+    param += (*it)->to_string() + SEPARADOR;
+  }
+
+   if(getDef())
+  {
+    return  tipo          + std::string(BIG_WIDTH / 2 - tipo.size()             , ' ') + SEPARADOR
+          + alcance       + std::string(SMALL_WIDTH   - alcance.length()        , ' ') + SEPARADOR
+          + lineaDec      + std::string(SMALL_WIDTH   - lineaDec.length()       , ' ') + SEPARADOR
+          + columnaDec    + std::string(SMALL_WIDTH   - columnaDec.length()     , ' ') + SEPARADOR
+          + lineaDef      + std::string(SMALL_WIDTH   - lineaDef.length()       , ' ') + SEPARADOR
+          + columnaDef    + std::string(SMALL_WIDTH   - columnaDef.length()     , ' ') + SEPARADOR
+          + mutab         + std::string(SMALL_WIDTH   - mutab.length()          , ' ') + SEPARADOR
+          +                 std::string(SMALL_WIDTH                             , ' ') + SEPARADOR
+          + def           + std::string(SMALL_WIDTH   - def.length()            , ' ') + SEPARADOR
+          + param
+          ;
+  }
+  else
+  {
+    return  tipo          + std::string(BIG_WIDTH / 2 - tipo.size()             , ' ') + SEPARADOR
+          + alcance       + std::string(SMALL_WIDTH   - alcance.length()        , ' ') + SEPARADOR
+          + lineaDec      + std::string(SMALL_WIDTH   - lineaDec.length()       , ' ') + SEPARADOR
+          + columnaDec    + std::string(SMALL_WIDTH   - columnaDec.length()     , ' ') + SEPARADOR
+          +                 std::string(SMALL_WIDTH                             , ' ') + SEPARADOR
+          +                 std::string(SMALL_WIDTH                             , ' ') + SEPARADOR
+          + mutab         + std::string(SMALL_WIDTH   - mutab.length()          , ' ') + SEPARADOR
+          +                 std::string(SMALL_WIDTH                             , ' ') + SEPARADOR
+          + def           + std::string(SMALL_WIDTH   - def.length()            , ' ') + SEPARADOR
+          + param
+          ;
+
+  }
 }

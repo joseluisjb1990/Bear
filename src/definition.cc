@@ -85,7 +85,10 @@ Parameter::Parameter ( std::string id
 
 std::string Parameter::to_string()
 {
-  return "Parametro:\n Nombre " + _id + "\n Tipo: " + _tipo->to_string() + "Por Referencia: " + std::to_string( _ref );
+  std::string str;
+  if (_ref) str = "*"; else str = " ";
+  str += _id + " " + _tipo->to_string();
+  return str;
 }
 
 std::string Parameter::get_id()   { return _id;   }

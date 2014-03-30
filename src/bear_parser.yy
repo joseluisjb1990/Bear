@@ -145,8 +145,6 @@ std::vector<std::string>* extraerIds(std::vector<elementoLista>* ids);
 %type  <Expression*>                 funcionpredef
 %type  <Statement*>                  iteracionindeterminada
 
-/* %printer { yyoutput << $$; } <*>; */
-
 %%
 %start programa;
 
@@ -161,11 +159,11 @@ programa : definiciones "oso" "(" ")" "=>" EXTINTO                       { drive
                                                                            yyerrok;
                                                                            $$ = new Empty();
                                                                          }
-         | definiciones "oso" "(" ")" "=>" error                         { driver.error(@6, "Return type for main function oso must be extinto.");
+         | definiciones "oso" "(" ")" "=>" error         bloqueespecial  { driver.error(@6, "Return type for main function oso must be extinto.");
                                                                            yyerrok;
                                                                            $$ = new Empty();
                                                                          }
-         | definiciones "oso" "(" error ")" "=>" error bloqueespecial    { driver.error(@4, "Main function oso must not recieve parameters.");
+         | definiciones "oso" "(" error ")" "=>" error   bloqueespecial  { driver.error(@4, "Main function oso must not recieve parameters.");
                                                                            driver.error(@7, "The return type for main function oso must be extinto.");
                                                                            yyerrok;
                                                                            $$ = new Empty();
@@ -218,7 +216,8 @@ deffuncion: ID "(" defparametros ")" "=>" tipo ";" { $$ = new DecFunction($1, $3
                                                        }
                                                      }
                                                    }
-            bloqueespecial                         { driver.tabla.exit_scope(); $$ = new DefFunction($1, $3, $6, $8); }
+            bloqueespecial                            { driver.tabla.exit_scope(); $$ = new DefFunction($1, $3, $6, $8); }
+          | ID "(" defparametros ")" "=>" tipo error  { driver.error(@6, "expected ;"); yyerrok; }
           ;
 
 defparametros: defparametro                   { $$ = new std::vector<Parameter*> (); $$->push_back($1);               }
@@ -234,7 +233,7 @@ tipocueva: parametrocueva tipo { $$ = new CuevaType($2, $1); }
          ;
 
 /* Aqui voy a devolver "vacio" para el caso base porque puedo, seguro hay que cambiarlo */
-parametrocueva: CUEVA "[" "]" DE                           { $$ = new std::vector<std::string>(); $$->push_back("vacio"); }
+parametrocueva: CUEVA "[" "]" DE                           { $$ = new std::vector<std::string>(); $$->push_back(""); }
               | parametrocueva CUEVA "[" CONSTPOLAR "]" DE { $$ = $1; $$->push_back($4);                                  }
               ;
 
@@ -556,7 +555,10 @@ lvalue: ID maybecueva              {
                                           } else {
                                             CuevaType* cueva = (CuevaType*) c->getTipo();
                                             Contenedor* tipo = driver.tabla.find_container(cueva->getTipo()->getName());
-                                            ALCANCE_LVALUE = tipo->get_alcanceCampos();
+                                            if(tipo)
+                                            {
+                                              ALCANCE_LVALUE = tipo->get_alcanceCampos();
+                                            }
                                           }
                                         }
                                      }

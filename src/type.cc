@@ -118,10 +118,9 @@ int CuevaType::getSize()
 
 std::string CuevaType::to_string()
 {
-  std::string str = "cueva ";
+  std::string str(_tipo->to_string());
   for (unsigned int i=0; i<_longitudes->size(); ++i)
     str += "[" + _longitudes->at(i) + "]";
-  str += " de " + _tipo->to_string();
   return str;
 }
 
@@ -164,10 +163,7 @@ PardoType::PardoType(std::vector<Type*>* campos, std::string nombre)
 
 std::string PardoType::to_string()
 {
-  std::string str = "pardo\n";
-  for (unsigned int i=0; i < _campos->size(); ++i)
-    str += _campos->at(i)->to_string() + "\n";
-  return str;
+  return _nombre;
 }
 
 int PardoType::getSize()
@@ -196,10 +192,7 @@ GrizzliType::GrizzliType(std::vector<Type*>* campos, std::string nombre)
 
 std::string GrizzliType::to_string()
 {
-  std::string str = "grizzli\n";
-  for (unsigned int i=0; i < _campos->size(); ++i)
-    str += _campos->at(i)->to_string() + "\n";
-  return str;
+  return _nombre;
 }
 
 int GrizzliType::getSize()

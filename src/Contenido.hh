@@ -1,8 +1,8 @@
 #include "type.hh"
 #include "definition.hh"
 
-#define BIG_WIDTH     30
-#define SMALL_WIDTH   5
+#define BIG_WIDTH     40
+#define SMALL_WIDTH   8
 #define SEPARADOR     "|"
 
 typedef enum { Var, Const, Proc, Campo, Cueva, Compuesto, Etiqueta} Categorias;
@@ -45,17 +45,19 @@ public:
 
     virtual std::string to_string();
 
-    void addType(Type* tipo);
-    void define(unsigned int linea, unsigned int columna);
-    bool getDef() { return _definido; };
-    Type* getTipo() { return _tipo; };
-    bool getMutabilidad() { return _mutable; };
-    unsigned int getAlcance() { return _alcance; };
-    unsigned int getLineaDec() { return _lineaDec; };
-    unsigned int getColumnaDec() { return _columnaDec; };
-    unsigned int getLineaDef() { return _lineaDef; };
-    unsigned int getColumnaDef() { return _columnaDef; };
-    Categorias getCategoria() { return _categoria; };
+    void addType( Type* tipo );
+    void define ( unsigned int linea
+                , unsigned int columna
+                );
+    bool getDef()                   { return _definido; };
+    Type* getTipo()                 { return _tipo; };
+    bool getMutabilidad()           { return _mutable; };
+    unsigned int getAlcance()       { return _alcance; };
+    unsigned int getLineaDec()      { return _lineaDec; };
+    unsigned int getColumnaDec()    { return _columnaDec; };
+    unsigned int getLineaDef()      { return _lineaDef; };
+    unsigned int getColumnaDef()    { return _columnaDef; };
+    Categorias getCategoria()       { return _categoria; };
 };
 
 class Contenedor : public Contenido

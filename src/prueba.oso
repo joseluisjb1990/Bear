@@ -1,5 +1,4 @@
---<3
- pardo blah {
+pardo blah {
   polar b;
   cueva [7] de kodiak cuevota;
 }
@@ -9,6 +8,7 @@
   blah f;
 }
 
+prueba(cueva [] de polar a, cueva [] de cueva [4] de panda b) => kodiak
 prueba(cueva [] de polar a, cueva [] de cueva [4] de panda b) => kodiak {
   mientras (blanco) {
     polar foo;
@@ -29,17 +29,22 @@ prueba(cueva [] de polar a, cueva [] de cueva [4] de panda b) => kodiak {
   blah e;
 
 }
-
-oso() => extinto {
+oso() => {
   polar a;
+  panda b = blanco;
+  kodiak c = 42.42;
+  malayo d = 'A';
+  hormiguero e = "HOLA BEBE";
+
+  cueva [5] de hormiguero cuevaHormiguero;
+--<3
   cueva [5] de bleh cuevita;
   cuevita[2]->f.b = cuevita[3]->f.cuevota[4];
   a = a_polar(45.6);
-  <3 funcionRandom(678,897);
 
   para i en cuevita {
     a = a_kodiak(56);
   }
   const polar u = 1;
+-<3->
 }
-<3->
