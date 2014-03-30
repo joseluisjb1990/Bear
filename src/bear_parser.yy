@@ -162,7 +162,30 @@ programa : definiciones "oso" "(" ")" "=>" EXTINTO                       { drive
            bloqueespecial                                                { driver.tabla.exit_scope();
                                                                            $$ = new Empty();
                                                                          }
+         | definiciones "oso" error "=>" EXTINTO                         { driver.error(@3, "Missing \"()\" in main function oso.");
+                                                                           yyerrok;
+                                                                           driver.tabla.enter_scope();
+                                                                         }
+           bloqueespecial                                                { driver.tabla.exit_scope();
+                                                                           $$ = new Empty();
+                                                                         }
          | definiciones "oso" "(" ")" "=>" error                         { driver.error(@6, "Return type for main function oso must be extinto.");
+                                                                           yyerrok;
+                                                                           driver.tabla.enter_scope();
+                                                                         }
+           bloqueespecial                                                { driver.tabla.exit_scope();
+                                                                           $$ = new Empty();
+                                                                         }
+         | definiciones "oso" error "=>" error                           { driver.error(@3, "Missing \"()\" in main function oso.");
+                                                                           driver.error(@5, "Return type for main function oso must be extinto.");
+                                                                           yyerrok;
+                                                                           driver.tabla.enter_scope();
+                                                                         }
+           bloqueespecial                                                { driver.tabla.exit_scope();
+                                                                           $$ = new Empty();
+                                                                         }
+         | definiciones "oso" error "=>" error error                     { driver.error(@3, "Missing \"()\" in main function oso.");
+                                                                           driver.error(@5, "Return type for main function oso must be extinto.");
                                                                            yyerrok;
                                                                            driver.tabla.enter_scope();
                                                                          }
