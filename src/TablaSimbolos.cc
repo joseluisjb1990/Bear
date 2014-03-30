@@ -147,47 +147,6 @@ std::ostream& operator<<(std::ostream& os, TablaSimbolos &ts)
 
   print_leyend(os);
 
-/*  for (vector_str_cont::iterator pos = pairs_vector.begin(); pos != pairs_vector.end(); ++pos)
-  {
-    Categorias categoria = pos->second->getCategoria();
-
-    if(categoria == Var or categoria == Campo)
-    {
-      os << std::setw(BIG_WIDTH) << pos->first << SEPARADOR << pos->second->to_string() << '\n';
-    }
-  }
-
-  os  << std::endl << std::setw(50) << std::right << "ARREGLOS (CUEVAS)" << std::left << std::endl
-      << std::setw(BIG_WIDTH)     << "V"    << SEPARADOR  << std::setw(BIG_WIDTH / 2) << "T[DIM]" << SEPARADOR
-      << std::setw(SMALL_WIDTH)   << "A"    << SEPARADOR  << std::setw(SMALL_WIDTH)   << "LDEC"   << SEPARADOR
-      << std::setw(SMALL_WIDTH)   << "CDEF" << SEPARADOR  << std::setw(SMALL_WIDTH)   << "LDEC"   << SEPARADOR
-      << std::setw(SMALL_WIDTH)   << "CDEF" << SEPARADOR  << std::setw(SMALL_WIDTH)   << "M"      << SEPARADOR
-      << std::endl;
-
-  for (vector_str_cont::iterator pos = pairs_vector.begin(); pos != pairs_vector.end(); ++pos)
-  {
-    if(pos->second->getCategoria() == Cueva)
-    {
-      os << std::setw(BIG_WIDTH) << pos->first << SEPARADOR << pos->second->to_string() << '\n';
-    }
-  }
-
-  os  << std::endl << std::setw(50) << std::right << "TIPOS DEFINIDOS POR EL USUARIO" << std::left << std::endl
-      << std::setw(BIG_WIDTH)     << "V"    << SEPARADOR  << std::setw(BIG_WIDTH / 2) << "T"    << SEPARADOR
-      << std::setw(SMALL_WIDTH)   << "A"    << SEPARADOR  << std::setw(SMALL_WIDTH)   << "LDEC" << SEPARADOR
-      << std::setw(SMALL_WIDTH)   << "CDEF" << SEPARADOR  << std::setw(SMALL_WIDTH)   << "LDEC" << SEPARADOR
-      << std::setw(SMALL_WIDTH)   << "CDEF" << SEPARADOR  << std::setw(SMALL_WIDTH)   << "M"    << SEPARADOR
-      << std::endl;
-
-  for (vector_str_cont::iterator pos = pairs_vector.begin(); pos != pairs_vector.end(); ++pos)
-  {
-    if(pos->second->getCategoria() == Compuesto)
-    {
-      os << std::setw(BIG_WIDTH) << pos->first << SEPARADOR << pos->second->to_string() << '\n';
-    }
-  }
-*/
-  os << '\n';
   return os;
 }
 unsigned int TablaSimbolos::add_symbol (std::string nombre, Type* tipo, Categorias categoria, unsigned int linea, unsigned int columna, bool mut)
