@@ -213,7 +213,7 @@ programa : definiciones "oso" "(" ")" "=>" EXTINTO                       { drive
            bloqueespecial                                                { driver.tabla.exit_scope();
                                                                            $$ = new Empty();
                                                                          }
-         | END                                                           { driver.error(@1, "Program can't be empty, it must have at least the declaration of the main function oso with no parameters and return type extinto.");
+         | definiciones                                                  { driver.error("Missing main function oso with no parameters and return type extinto.");
                                                                            yyerrok;
                                                                            $$ = new Empty();
                                                                          }
@@ -279,7 +279,8 @@ deffuncion: ID "(" defparametros ")" "=>" tipo ";" { $$ = new DecFunction($1, $3
 
 defparametros: defparametro                     { $$ = new std::vector<Parameter*> (); $$->push_back($1); }
              | defparametros "," defparametro   { $$ = $1; $$->push_back($3);                             }
-             | defparametros error defparametro { $$ = $1; $$->push_back(new EmptyParam()); yyerrok;      }
+             | defparametros error defparametro { $$ = $1; $$->push_back($3); yyerrok;                    }
+             |                                  { $$ = new std::vector<Parameter*>();                     }
              ;
 
 defparametro: tipo ID        { $$ = new Parameter($2, $1, false); }
@@ -291,8 +292,12 @@ tipocueva: parametrocueva tipo { $$ = new CuevaType($2, $1); }
          ;
 
 /* Aqui voy a devolver "vacio" para el caso base porque puedo, seguro hay que cambiarlo */
-parametrocueva: CUEVA "[" "]" DE                           { $$ = new std::vector<Expression*>(); $$->push_back(new EmptyExpr()); }
-              | parametrocueva CUEVA "[" expresion "]" DE { $$ = $1; $$->push_back($4);                             }
+parametrocueva: CUEVA "[" "]" DE                             { $$ = new std::vector<Expression*>(); $$->push_back(new EmptyExpr());          }
+              | CUEVA "[" "]" error                          { $$ = new std::vector<Expression*>(); $$->push_back(new EmptyExpr()); yyerrok; }
+              | parametrocueva CUEVA "[" expresion "]" DE    { $$ = $1; $$->push_back($4);                                                   }
+              | parametrocueva error "[" expresion "]" DE    { $$ = $1; $$->push_back($4); yyerrok;                                          }
+              | parametrocueva error "[" expresion "]" error { $$ = $1; $$->push_back($4); yyerrok;                                          }
+              | parametrocueva CUEVA "[" expresion "]" error { $$ = $1; $$->push_back($4); yyerrok;                                          }
               ;
 
 defconstante: CONST tipo identificadores "=" expresiones ";" {
