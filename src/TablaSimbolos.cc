@@ -99,7 +99,8 @@ void print_header(std::ostream& os)
       << std::setw(SMALL_WIDTH)   << "CDEC" << SEPARADOR  << std::setw(SMALL_WIDTH)   << "LDEF"   << SEPARADOR
       << std::setw(SMALL_WIDTH)   << "CDEF" << SEPARADOR  << std::setw(SMALL_WIDTH)   << "M"      << SEPARADOR
       << std::setw(SMALL_WIDTH)   << "AC"   << SEPARADOR  << std::setw(SMALL_WIDTH)   << "D"      << SEPARADOR
-      << std::setw(SMALL_WIDTH)   << "P"
+      << std::setw(SMALL_WIDTH)   << "C"    << SEPARADOR  << std::setw(BIG_WIDTH / 2) << "P"
+
       << std::endl;
 }
 
@@ -109,7 +110,7 @@ void print_leyend(std::ostream& os)
       << "V     : Variable                         T[DIM]  : Tipo y Dimensiones(arreglo)  A     : Alcance de la variable                \n"
       << "LDEC  : Linea de declaración             CDEC    : Columna de declaración       LDEF  : Linea de definición                   \n"
       << "CDEF  : Columna de definición            M       : Mutabilidad (1 Si, 0 No)     AC    : Alcance de campos (tipos compuestos)  \n"
-      << "D     : Si V esta definida (1 Si, 0 No)  P       : Parametros                  \n";
+      << "D     : Si V esta definida (1 Si, 0 No)  C       : Categoria                    P     : Parametros                            \n";
 }
 void print_actual_scope(std::ostream& os, int scope)
 {
