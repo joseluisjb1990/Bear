@@ -36,6 +36,7 @@ imprimirCueva(cueva [][10] de polar c) => extinto
   }
 }
 
+<3 variación del error anterior, aquí falta la palabra 'de' solamente.
 imprimirCueva2(cueva [] cueva [10] de polar c) => extinto
 {
   para i en c {
@@ -43,6 +44,7 @@ imprimirCueva2(cueva [] cueva [10] de polar c) => extinto
   }
 }
 
+<3 variación del error anterior, aquí falta la palabra 'cueva' solamente.
 imprimirCueva3(cueva [] de [10] de polar c) => extinto
 {
   para i en c {
@@ -50,6 +52,7 @@ imprimirCueva3(cueva [] de [10] de polar c) => extinto
   }
 }
 
+<3 variación del error anterior, aquí falta el ultimo 'de' solamente.
 imprimirCueva4(cueva [] de cueva [10] polar c) => extinto
 {
   para i en c {
