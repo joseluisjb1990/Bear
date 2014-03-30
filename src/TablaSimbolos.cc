@@ -107,10 +107,10 @@ void print_header(std::ostream& os)
 void print_leyend(std::ostream& os)
 {
   os  << std::endl << "LEYENDA" << std::endl
-      << "V     : Variable                         T[DIM]  : Tipo y Dimensiones(arreglo)  A     : Alcance de la variable                \n"
-      << "LDEC  : Linea de declaración             CDEC    : Columna de declaración       LDEF  : Linea de definición                   \n"
-      << "CDEF  : Columna de definición            M       : Mutabilidad (1 Si, 0 No)     AC    : Alcance de campos (tipos compuestos)  \n"
-      << "D     : Si V esta definida (1 Si, 0 No)  C       : Categoria                    P     : Parametros                            \n";
+      << "V     : Variable                         T[DIM]  : Tipo y Dimensiones(arreglo)  A     : Alcance de la variable        \n"
+      << "LDEC  : Linea de declaración             CDEC    : Columna de declaración       LDEF  : Linea de definición           \n"
+      << "CDEF  : Columna de definición            M       : Mutabilidad (1 Si, 0 No)     AC    : Alcance de campos (registros) \n"
+      << "D     : Si V esta definida (1 Si, 0 No)  C       : Categoria                    P     : Parametros (* por referencia) \n";
 }
 void print_actual_scope(std::ostream& os, int scope)
 {
