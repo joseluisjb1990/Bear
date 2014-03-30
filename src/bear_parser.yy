@@ -131,14 +131,14 @@ std::vector<std::string>* extraerIds(std::vector<elementoLista>* ids);
 %type  <Type*>                       defcueva
 %type  <Definition*>                 defcompleja
 %type  <Definition*>                 deffuncion
-%type  <std::vector<std::string>*>   cuevas
+%type  <std::vector<Expression*>*>   cuevas
 %type  <std::vector<elementoLista>*> identificadores
 %type  <Type*>                       tipo
 %type  <std::vector<Type*>*>         campos
 %type  <Type*>                       campo
 %type  <std::vector<Parameter*>*>    defparametros
 %type  <Parameter*>                  defparametro
-%type  <std::vector<std::string>*>   parametrocueva
+%type  <std::vector<Expression*>*>   parametrocueva
 %type  <Type*>                       tipocueva
 %type  <std::vector<Expression*>*>   accesocueva
 %type  <std::vector<Expression*>*>   maybecueva
@@ -237,6 +237,7 @@ deffuncion: ID "(" defparametros ")" "=>" tipo ";" { $$ = new DecFunction($1, $3
                                                    }
             bloqueespecial                         { driver.tabla.exit_scope(); $$ = new DefFunction($1, $3, $6, $8); }
           | ID "(" defparametros ")" "=>" tipo error { yyerrok; $$ = new EmptyDef(); }
+          | ID "(" defparametros ")" error bloqueespecial { yyerrok; $$ = new EmptyDef(); }
           ;
 
 defparametros: defparametro                     { $$ = new std::vector<Parameter*> (); $$->push_back($1); }
@@ -253,8 +254,8 @@ tipocueva: parametrocueva tipo { $$ = new CuevaType($2, $1); }
          ;
 
 /* Aqui voy a devolver "vacio" para el caso base porque puedo, seguro hay que cambiarlo */
-parametrocueva: CUEVA "[" "]" DE                           { $$ = new std::vector<std::string>(); $$->push_back(""); }
-              | parametrocueva CUEVA "[" CONSTPOLAR "]" DE { $$ = $1; $$->push_back($4);                             }
+parametrocueva: CUEVA "[" "]" DE                           { $$ = new std::vector<Expression*>(); $$->push_back(new EmptyExpr()); }
+              | parametrocueva CUEVA "[" expresion "]" DE { $$ = $1; $$->push_back($4);                             }
               ;
 
 defconstante: CONST tipo identificadores "=" expresiones ";" {
@@ -306,8 +307,8 @@ identificadores: ID                     { $$ = new std::vector<elementoLista>();
 defcueva: cuevas tipo { $$ = new CuevaType($2,$1); }
         ;
 
-cuevas: CUEVA "[" CONSTPOLAR "]" DE          { $$ = new std::vector<std::string>(); $$->push_back($3); }
-       |  cuevas CUEVA "[" CONSTPOLAR "]" DE { $$ = $1; $$->push_back($4);                             }
+cuevas: CUEVA "[" expresion "]" DE          { $$ = new std::vector<Expression*>(); $$->push_back($3); }
+       |  cuevas CUEVA "[" expresion "]" DE { $$ = $1; $$->push_back($4);                             }
        ;
 
 
@@ -412,7 +413,7 @@ bloque: "{" { driver.tabla.enter_scope(); } instrucciones "}"     {
 
 instrucciones: instruccion                { $$ = new std::vector<Statement*>(); $$->push_back($1); }
              | instrucciones instruccion  { $$ = $1; $$->push_back($2);                            }
-             | error ";"                  { $$ = new std::vector<Statement*>(); yyerrok;           }
+             | error ";"                  { $$ = new std::vector<Statement*>; yyerrok;            }
              ;
 
 %right ENTONCES SINO;
@@ -426,19 +427,7 @@ instruccion: defvariable                                                  { $$ =
                                                                          }
            | lvalues error expresiones ";"                                { $$ = new Empty(); yyerrok; }
 
-           | LEER "(" ID ")" ";"                                          {
-                                                                          Contenido* c = driver.tabla.find_symbol($3,Var);
-                                                                          if (!c) {
-                                                                            driver.error(@1, @4, "Trying to read variable " + $3 + " which is not defined.");
-                                                                            $$ =  new Empty();
-                                                                          }
-                                                                          else if (!c->getMutabilidad()) {
-                                                                            driver.error(@1, @4, "Trying to initialize variable " + $3 + ", which is not mutable.");
-                                                                            $$ =  new Empty();
-                                                                          } else {
-                                                                            $$ = new Read($3);
-                                                                          }
-                                                                          }
+           | LEER "(" lvalue ")" ";"                                      { $$ = new Read($3); }
            | ESCRIBIR "(" expresion ")" ";"                                { $$ = new Write($3); }
            | ID "(" expresiones ")" ";"                                    { Funcion* f = driver.tabla.get_function($1);
                                                                              if (!f) {
@@ -448,8 +437,8 @@ instruccion: defvariable                                                  { $$ =
                                                                                $$ = new Function($1, $3);
                                                                              }
                                                                            }
-           | SI expresion ENTONCES bloque                                  { $$ = new If($2, $4);                 }
-           | SI expresion ENTONCES bloque SINO bloque                       { $$ = new IfElse($2, $4, $6);         }
+           | SI expresion bloque                                           { $$ = new If($2, $3);                                                         }
+           | SI expresion bloque SINO bloque                               { $$ = new IfElse($2, $3, $5);                                                 }
 
            | PARA ID EN "(" expresion ";" expresion ")"                     { driver.tabla.enter_scope();
                                                                               PolarType* p = new PolarType();
@@ -505,15 +494,7 @@ instruccion: defvariable                                                  { $$ =
                                                                                $$ = new Empty();
                                                                              }
                                                                            }
-           | VOMITA     ";"                                                { $$ = new Return(); }
-           | VOMITA ID  ";"                                                { Contenido* c = driver.tabla.find_symbol($2,Etiqueta);
-                                                                             if (c) {
-                                                                               $$ = new ReturnID($2);
-                                                                             } else {
-                                                                               driver.error(@1, @2, "Attempt to return to tag " + $2 + ", which is not declared.");
-                                                                               $$ = new Empty();
-                                                                             }
-                                                                           }
+           | VOMITA expresion  ";"                                         { $$ = new ReturnExpr($2);   }
            | FONDOBLANCO    ";"                                            { $$ = new Continue(); }
            | FONDOBLANCO ID ";"                                            { Contenido* c = driver.tabla.find_symbol($2,Etiqueta);
                                                                              if (c) {
