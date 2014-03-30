@@ -57,7 +57,7 @@ IDExpr::IDExpr(std::string nombre)
 
 std::string IDExpr::to_string()
 {
-  return "Nombre del ID: " + _nombre;
+  return _nombre;
 }
 
 FunctionExpr::FunctionExpr(std::string name, std::vector<Expression*>* parameters)

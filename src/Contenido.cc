@@ -110,6 +110,20 @@ Funcion::Funcion ( Type* tipo
   , _parametros ( parametros )
   {}
 
+std::string return_category(Categorias cat)
+{
+  switch( cat )
+  {
+    case Var         : return std::string("VAR"     ); break;
+    case Const       : return std::string("CONST"   ); break;
+    case Proc        : return std::string("FUNCION" ); break;
+    case Campo       : return std::string("CAMPO"   ); break;
+    case Cueva       : return std::string("ARREGLO" ); break;
+    case Compuesto   : return std::string("REGISTRO"); break;
+    case Etiqueta    : return std::string("ETIQUETA"); break;
+    default          : return std::string("NO CAT"  ); break;
+  }
+}
 std::string Contenido::to_string()
 {
   std::string tipo        = std::string(_tipo->to_string());
@@ -121,11 +135,12 @@ std::string Contenido::to_string()
   std::string columnaDef  = std::to_string(_columnaDef);
   std::string mutab       = std::to_string(_mutable);
   std::string def         = std::to_string(_definido);
+  std::string cat         = return_category(_categoria);
 
   if(_definido)
   {
 
-    return  tipo        + std::string(BIG_WIDTH / 2 - tipo.size()       , ' ') + SEPARADOR
+    return  tipo        + std::string(BIG_WIDTH / 2 - tipo.size()         , ' ') + SEPARADOR
           + alcance     + std::string(SMALL_WIDTH   - alcance.length()    , ' ') + SEPARADOR
           + lineaDec    + std::string(SMALL_WIDTH   - lineaDec.length()   , ' ') + SEPARADOR
           + columnaDec  + std::string(SMALL_WIDTH   - columnaDec.length() , ' ') + SEPARADOR
@@ -134,6 +149,7 @@ std::string Contenido::to_string()
           + mutab       + std::string(SMALL_WIDTH   - mutab.length()      , ' ') + SEPARADOR
           +               std::string(SMALL_WIDTH                         , ' ') + SEPARADOR
           + def         + std::string(SMALL_WIDTH   - def.length()        , ' ') + SEPARADOR
+          + cat         + std::string(SMALL_WIDTH   - cat.length()        , ' ') + SEPARADOR
           ;
   }
   else
@@ -147,6 +163,7 @@ std::string Contenido::to_string()
           + mutab       + std::string(SMALL_WIDTH   - mutab.length()      , ' ') + SEPARADOR
           +               std::string(SMALL_WIDTH                         , ' ') + SEPARADOR
           + def         + std::string(SMALL_WIDTH   - def.length()        , ' ') + SEPARADOR
+          + cat         + std::string(SMALL_WIDTH   - cat.length()        , ' ') + SEPARADOR
           ;
 
   }
@@ -168,6 +185,7 @@ std::string Contenedor::to_string()
   std::string mutab         = std::to_string(getMutabilidad()       );
   std::string alcanceCampos = std::to_string(_alcanceCampos         );
   std::string def           = std::to_string(getDef()               );
+  std::string cat           = return_category(getCategoria());
 
   if(getDef())
   {
@@ -181,6 +199,7 @@ std::string Contenedor::to_string()
           + mutab         + std::string(SMALL_WIDTH   - mutab.length()          , ' ') + SEPARADOR
           + alcanceCampos + std::string(SMALL_WIDTH   - alcanceCampos.length()  , ' ') + SEPARADOR
           + def           + std::string(SMALL_WIDTH   - def.length()            , ' ') + SEPARADOR
+          + cat           + std::string(SMALL_WIDTH   - cat.length()            , ' ') + SEPARADOR
           ;
   }
   else
@@ -194,6 +213,7 @@ std::string Contenedor::to_string()
           + mutab         + std::string(SMALL_WIDTH   - mutab.length()          , ' ') + SEPARADOR
           + alcanceCampos + std::string(SMALL_WIDTH   - alcanceCampos.length()  , ' ') + SEPARADOR
           + def           + std::string(SMALL_WIDTH   - def.length()            , ' ') + SEPARADOR
+          + cat           + std::string(SMALL_WIDTH   - cat.length()            , ' ') + SEPARADOR
           ;
 
   }
@@ -210,6 +230,7 @@ std::string Funcion::to_string()
   std::string columnaDef    = std::to_string(getColumnaDef()        );
   std::string mutab         = std::to_string(getMutabilidad()       );
   std::string def           = std::to_string(getDef()               );
+  std::string cat           = return_category(getCategoria());
 
   std::string param = "";
   for(std::vector<Parameter*>::iterator it = _parametros->begin(); it != _parametros->end(); ++it)
@@ -228,6 +249,7 @@ std::string Funcion::to_string()
           + mutab         + std::string(SMALL_WIDTH   - mutab.length()          , ' ') + SEPARADOR
           +                 std::string(SMALL_WIDTH                             , ' ') + SEPARADOR
           + def           + std::string(SMALL_WIDTH   - def.length()            , ' ') + SEPARADOR
+          + cat           + std::string(SMALL_WIDTH   - cat.length()            , ' ') + SEPARADOR
           + param
           ;
   }
@@ -242,6 +264,7 @@ std::string Funcion::to_string()
           + mutab         + std::string(SMALL_WIDTH   - mutab.length()          , ' ') + SEPARADOR
           +                 std::string(SMALL_WIDTH                             , ' ') + SEPARADOR
           + def           + std::string(SMALL_WIDTH   - def.length()            , ' ') + SEPARADOR
+          + cat           + std::string(SMALL_WIDTH   - cat.length()            , ' ') + SEPARADOR
           + param
           ;
 

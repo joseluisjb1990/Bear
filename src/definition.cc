@@ -87,7 +87,7 @@ std::string Parameter::to_string()
 {
   std::string str;
   if (_ref) str = "*"; else str = " ";
-  str += _id + " " + _tipo->to_string();
+  str += _id + " " + _tipo->to_string() + " ";
   return str;
 }
 
