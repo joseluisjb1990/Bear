@@ -77,11 +77,11 @@ class Write : public Statement
 class Read : public Statement
 {
   public:
-    Read(std::string id);
+    Read(Expression*);
     std::string to_string();
 
   private:
-    std::string _id;
+    Expression* _id;
 
 };
 
@@ -141,14 +141,14 @@ class Return : public Statement
     std::string to_string();
 };
 
-class ReturnID : public Statement
+class ReturnExpr : public Statement
 {
   public:
-    ReturnID(std::string id);
+    ReturnExpr(Expression* expr);
     std::string to_string();
 
   private:
-    std::string _id;
+    Expression* _expr;
 
 };
 

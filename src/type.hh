@@ -2,6 +2,7 @@
 #define TYPE_HH
 #include <string>
 #include <vector>
+#include "expresion.hh"
 
 using namespace std;
 
@@ -70,10 +71,10 @@ class CuevaType : public Type
 {
   private:
     Type* _tipo;
-    std::vector<std::string>*   _longitudes;
+    std::vector<Expression*>*   _longitudes;
 
   public:
-    CuevaType(Type* tipo, std::vector<std::string>* longitudes);
+    CuevaType(Type* tipo, std::vector<Expression*>* longitudes);
     int getSize();
     std::string to_string();
     bool isSimple();

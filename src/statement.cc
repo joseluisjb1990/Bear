@@ -67,14 +67,14 @@ std::string Write::to_string()
   return "Escribir : " + _expr->to_string();
 }
 
-Read::Read(std::string id)
+Read::Read(Expression* id)
   : Statement()
   , _id( id )
   {}
 
 std::string Read::to_string()
 {
-  return "Read : " + _id + '\n';
+  return "Read : " + _id->to_string() + '\n';
 }
 
 Body::Body( std::vector<Statement *>* listSta )
@@ -154,14 +154,14 @@ std::string Return::to_string()
   return "Nodo Vomita sin etiqueta";
 }
 
-ReturnID::ReturnID(std::string id)
+ReturnExpr::ReturnExpr(Expression* expr)
   : Statement()
-  , _id( id )
+  , _expr( expr )
   {}
 
-std::string ReturnID::to_string()
+std::string ReturnExpr::to_string()
 {
-  return "Nodo Vomita a la etiqueta " + _id + '\n';
+  return "Nodo Vomita la expresion " + _expr->to_string() + '\n';
 }
 
 Increase::Increase(std::string id)
