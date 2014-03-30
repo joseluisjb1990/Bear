@@ -328,6 +328,7 @@ defvariable: tipo identificadores "=" expresiones ";" {
                                                     }
                                                   }
            | tipo identificadores error expresiones ";" { yyerrok; $$ = new EmptyDef(); }
+           | tipo identificadores error ";"             { yyerrok; $$ = new EmptyDef(); }
            | tipo identificadores ";"                 {
                                                       driver.agregarSinInicializacion($2, Var, $1);
                                                       std::vector<string>* l = extraerIds($2);
@@ -412,9 +413,10 @@ defcompleja: PARDO ID "{" { driver.tabla.enter_scope(); }
                             }
            ;
 
-campos: campo ";"        { $$ = new std::vector<Type*>; $$->push_back($1); }
-      | campo error      { $$ = new std::vector<Type*>; $$->push_back(new ErrorType()); yyerrok; }
-      | campos campo ";" { $$ = $1; $$->push_back($2); }
+campos: campo ";"          { $$ = new std::vector<Type*>; $$->push_back($1); }
+      | campo error        { $$ = new std::vector<Type*>; $$->push_back($1); yyerrok; }
+      | campos campo ";"   { $$ = $1; $$->push_back($2); }
+      | campos campo error { $$ = $1; $$->push_back($2); }
       ;
 
 campo: tipo ID            { $$ = new CampoType($1,$2);
