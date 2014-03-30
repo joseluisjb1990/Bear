@@ -539,6 +539,7 @@ instruccion: defvariable                                                  { $$ =
                                                                              }
                                                                            }
            | VOMITA expresion  ";"                                         { $$ = new ReturnExpr($2);   }
+           | VOMITA ";"                                                    { $$ = new Return();   }
            | FONDOBLANCO    ";"                                            { $$ = new Continue(); }
            | FONDOBLANCO ID ";"                                            { Contenido* c = driver.tabla.find_symbol($2,Etiqueta);
                                                                              if (c) {
