@@ -3,6 +3,14 @@ Se presenta a continuación un ejemplo con varios errores lexicográficos.
 Cada uno está indicado con un comentario
 <3->
 
+<3 A continuación errores de caracteres no reconocidos por el lenguaje
+ñ
+`
+!
+\
+$
+#
+
 <3 A continuación una serie de caracteres inesperados por el lexer:
 polar a;
 
