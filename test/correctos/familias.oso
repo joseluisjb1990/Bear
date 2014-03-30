@@ -1,0 +1,68 @@
+const polar CANT = 3;
+
+pardo persona
+{
+  polar cedula;
+  polar edad;
+}
+
+pardo familia
+{
+  persona hijo;
+  persona madre;
+  persona padre;
+}
+
+llenarPersona( persona per ) => extinto
+{
+  escribir("\nPor favor, introduzca la cedula de la persona\n");
+  leer(per->cedula);
+
+  escribir("\nPor favor, introduzca la edad de la persona\n");
+  leer(per->edad);
+}
+
+imprimirPersona( persona per ) => extinto
+{
+  escribir("\nCedula : "); escribir ( per->cedula );
+  escribir("\nEdad   : "); escribir ( per->cedula );
+}
+
+llenarFamilia( familia fam ) => extinto
+{
+  escribir("\nPor favor, introduzca la informacion del hijo\n");
+  llenarPersona( fam->hijo );
+
+  escribir("\nPor favor, introduzca la informacion del de la madre\n");
+  llenarPersona( fam->madre );
+
+  escribir("\nPor favor, introduzca la informacion del padre\n");
+  llenarPersona( fam->padre );
+}
+
+imprimirFamilia( familia fam ) => extinto
+{
+  escribir("\nHijo");
+  imprimirPersona( fam->hijo );
+
+  escribir("\nMadre");
+  imprimirPersona( fam->madre );
+
+  escribir("\nPadre");
+  imprimirPersona( fam->padre );
+}
+
+oso() => extinto
+{
+  cueva [CANT] de familia familias;
+  para fam en familias
+  {
+    escribir("\nPor favor introduzca la informacion sobre la familia\n");
+    llenarFamilia( fam );
+  }
+
+  para i en (0;CANT-1)
+  {
+    imprimirFamilia( familias[i] );
+  }
+}
