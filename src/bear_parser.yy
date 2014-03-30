@@ -231,7 +231,6 @@ definicionglobal: defconstante  { $$ = $1; }
                 | defvariable   { $$ = $1; }
                 | deffuncion    { $$ = $1; }
                 | defcompleja   { $$ = $1; }
-                | error         { yyerrok; $$ = new EmptyDef(); }
                 ;
 
 deffuncion: ID "(" defparametros ")" "=>" tipo ";" { $$ = new DecFunction($1, $3, $6);
