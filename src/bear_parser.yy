@@ -162,6 +162,13 @@ programa : definiciones "oso" "(" ")" "=>" EXTINTO                       { drive
            bloqueespecial                                                { driver.tabla.exit_scope();
                                                                            $$ = new Empty();
                                                                          }
+         | definiciones "oso" error "=>" EXTINTO                         { driver.error(@3, "Missing \"()\" in main function oso.");
+                                                                           yyerrok;
+                                                                           driver.tabla.enter_scope();
+                                                                         }
+           bloqueespecial                                                { driver.tabla.exit_scope();
+                                                                           $$ = new Empty();
+                                                                         }
          | definiciones "oso" "(" ")" "=>" error                         { driver.error(@6, "Return type for main function oso must be extinto.");
                                                                            yyerrok;
                                                                            driver.tabla.enter_scope();
@@ -169,7 +176,37 @@ programa : definiciones "oso" "(" ")" "=>" EXTINTO                       { drive
            bloqueespecial                                                { driver.tabla.exit_scope();
                                                                            $$ = new Empty();
                                                                          }
+         | definiciones "oso" error "=>" error                           { driver.error(@3, "Missing \"()\" in main function oso.");
+                                                                           driver.error(@5, "Return type for main function oso must be extinto.");
+                                                                           yyerrok;
+                                                                           driver.tabla.enter_scope();
+                                                                         }
+           bloqueespecial                                                { driver.tabla.exit_scope();
+                                                                           $$ = new Empty();
+                                                                         }
+         | definiciones "oso" error "=>" error error                     { driver.error(@3, "Missing \"()\" in main function oso.");
+                                                                           driver.error(@5, "Return type for main function oso must be extinto.");
+                                                                           yyerrok;
+                                                                           driver.tabla.enter_scope();
+                                                                         }
+           bloqueespecial                                                { driver.tabla.exit_scope();
+                                                                           $$ = new Empty();
+                                                                         }
+         | definiciones "oso" "(" ")" "=>" error error                   { driver.error(@6, "Return type for main function oso must be extinto.");
+                                                                           yyerrok;
+                                                                           driver.tabla.enter_scope();
+                                                                         }
+           bloqueespecial                                                { driver.tabla.exit_scope();
+                                                                           $$ = new Empty();
+                                                                         }
          | definiciones "oso" "(" error ")" "=>" error                   { driver.error(@4, "Main function oso must not recieve parameters.");
+                                                                           driver.error(@7, "The return type for main function oso must be extinto.");
+                                                                           yyerrok;
+                                                                         }
+           bloqueespecial                                                { driver.tabla.exit_scope();
+                                                                           $$ = new Empty();
+                                                                         }
+         | definiciones "oso" "(" error ")" "=>" error error             { driver.error(@4, "Main function oso must not recieve parameters.");
                                                                            driver.error(@7, "The return type for main function oso must be extinto.");
                                                                            yyerrok;
                                                                          }
@@ -402,7 +439,9 @@ tipo: PANDA       { $$ = new PandaType();                                   }
                   }
     ;
 
-bloqueespecial: "{" instrucciones "}" { $$ = new Body($2);  }
+bloqueespecial: "{" instrucciones "}" { $$ = new Body($2);                             }
+              | "{" "}"               { $$ = new Body(new std::vector<Statement*>()); }
+
               ;
 
 bloque: "{" { driver.tabla.enter_scope(); } instrucciones "}"     {
@@ -413,13 +452,13 @@ bloque: "{" { driver.tabla.enter_scope(); } instrucciones "}"     {
 
 instrucciones: instruccion                { $$ = new std::vector<Statement*>(); $$->push_back($1); }
              | instrucciones instruccion  { $$ = $1; $$->push_back($2);                            }
-             | error ";"                  { $$ = new std::vector<Statement*>; yyerrok;            }
              ;
 
 %right ENTONCES SINO;
 instruccion: defvariable                                                  { $$ = $1; }
            | defconstante                                                 { $$ = $1; }
-           | lvalues"=" expresiones ";"                                  {
+           | error ";"                                                    { $$ = new EmptyDef(); yyerrok; }
+           | lvalues "=" expresiones ";"                                  {
                                                                           if (!($1->size() == $3->size())) {
                                                                             driver.error(@1, @3, "The number of l-values and expressions is not the same.");
                                                                           }
