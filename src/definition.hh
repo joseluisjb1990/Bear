@@ -82,6 +82,7 @@ class Parameter : public Definition
               , Type* tipo
               , bool ref
               );
+    Parameter(){};
 
     std::string to_string();
     std::string get_id();
@@ -92,6 +93,14 @@ class Parameter : public Definition
     std::string _id;
     Type*       _tipo;
     bool        _ref;
+};
+
+class EmptyParam : public Parameter
+{
+  public:
+    EmptyParam(){};
+    std::string to_string() { return "Empty parameter"; };
+
 };
 
 class DecFunction : public Definition

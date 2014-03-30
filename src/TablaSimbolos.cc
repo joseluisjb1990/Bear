@@ -3,9 +3,9 @@
 
 using namespace std;
 
-Contenedor* TablaSimbolos::add_container (std::string nombre, Categorias categoria, unsigned int linea, unsigned int columna)
+Contenedor* TablaSimbolos::add_container (std::string nombre, Type* tipo, Categorias categoria, unsigned int linea, unsigned int columna)
 {
-  Contenedor *cont = new  Contenedor(nullptr, categoria, _pila.back(), linea, columna);
+  Contenedor *cont = new  Contenedor(tipo, categoria, _pila.back(), linea, columna);
   _dicc.insert(std::make_pair(nombre,cont));
   return cont;
 }

@@ -1,5 +1,6 @@
+const polar c, e, d = 42,6,1;
 pardo blah {
-  polar b;
+  polar b
   cueva [7] de kodiak cuevota;
 }
 
@@ -8,7 +9,8 @@ pardo blah {
   blah f;
 }
 
-prueba(cueva [] de polar a, cueva [] de cueva [4] de panda b) => kodiak
+prueba(cueva [] de polar a cueva [] de cueva [4] de panda b) => kodiak;
+
 prueba(cueva [] de polar a, cueva [] de cueva [4] de panda b) => kodiak {
   mientras (blanco) {
     polar foo;
@@ -26,15 +28,26 @@ prueba(cueva [] de polar a, cueva [] de cueva [4] de panda b) => kodiak {
     fondoBlanco etiqueta1;
   }
 
-  blah e;
+  blah e
+  a b = 42 56;
+
+  b 56;
 
 }
-oso() => {
+
+const polar a, b = 42, 69;
+
+hormiguero h  "hola bebe";
+
+polar t;
+
+oso() => extinto {
   polar a;
   panda b = blanco;
   kodiak c = 42.42;
   malayo d = 'A';
   hormiguero e = "HOLA BEBE";
+  a = a_polar(5.0+);
 
   cueva [5] de hormiguero cuevaHormiguero;
 --<3
@@ -46,5 +59,5 @@ oso() => {
     a = a_kodiak(56);
   }
   const polar u = 1;
--<3->
+<3->
 }

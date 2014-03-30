@@ -155,17 +155,25 @@ programa : definiciones "oso" "(" ")" "=>" EXTINTO                       { drive
            bloqueespecial                                                { driver.tabla.exit_scope();
                                                                            $$ = $8;/* driver.AST = $$;*/
                                                                          }
-         | definiciones "oso" "(" error ")" "=>" EXTINTO bloqueespecial  { driver.error(@4, "Main function oso must not recieve parameters.");
+         | definiciones "oso" "(" error ")" "=>" EXTINTO                 { driver.error(@4, "Main function oso must not recieve parameters.");
                                                                            yyerrok;
+                                                                           driver.tabla.enter_scope();
+                                                                         }
+           bloqueespecial                                                { driver.tabla.exit_scope();
                                                                            $$ = new Empty();
                                                                          }
-         | definiciones "oso" "(" ")" "=>" error         bloqueespecial  { driver.error(@6, "Return type for main function oso must be extinto.");
+         | definiciones "oso" "(" ")" "=>" error                         { driver.error(@6, "Return type for main function oso must be extinto.");
                                                                            yyerrok;
+                                                                           driver.tabla.enter_scope();
+                                                                         }
+           bloqueespecial                                                { driver.tabla.exit_scope();
                                                                            $$ = new Empty();
                                                                          }
-         | definiciones "oso" "(" error ")" "=>" error   bloqueespecial  { driver.error(@4, "Main function oso must not recieve parameters.");
+         | definiciones "oso" "(" error ")" "=>" error                   { driver.error(@4, "Main function oso must not recieve parameters.");
                                                                            driver.error(@7, "The return type for main function oso must be extinto.");
                                                                            yyerrok;
+                                                                         }
+           bloqueespecial                                                { driver.tabla.exit_scope();
                                                                            $$ = new Empty();
                                                                          }
          | END                                                           { driver.error(@1, "Program can't be empty, it must have at least the declaration of the main function oso with no parameters and return type extinto.");
@@ -186,6 +194,7 @@ definicionglobal: defconstante  { $$ = $1; }
                 | defvariable   { $$ = $1; }
                 | deffuncion    { $$ = $1; }
                 | defcompleja   { $$ = $1; }
+                | error         { yyerrok; $$ = new EmptyDef(); }
                 ;
 
 deffuncion: ID "(" defparametros ")" "=>" tipo ";" { $$ = new DecFunction($1, $3, $6);
@@ -216,12 +225,13 @@ deffuncion: ID "(" defparametros ")" "=>" tipo ";" { $$ = new DecFunction($1, $3
                                                        }
                                                      }
                                                    }
-            bloqueespecial                            { driver.tabla.exit_scope(); $$ = new DefFunction($1, $3, $6, $8); }
-          | ID "(" defparametros ")" "=>" tipo error  { driver.error(@6, "expected ;"); yyerrok; }
+            bloqueespecial                         { driver.tabla.exit_scope(); $$ = new DefFunction($1, $3, $6, $8); }
+          | ID "(" defparametros ")" "=>" tipo error { yyerrok; $$ = new EmptyDef(); }
           ;
 
-defparametros: defparametro                   { $$ = new std::vector<Parameter*> (); $$->push_back($1);               }
-             | defparametros "," defparametro { $$ = $1; $$->push_back($3);                                           }
+defparametros: defparametro                     { $$ = new std::vector<Parameter*> (); $$->push_back($1); }
+             | defparametros "," defparametro   { $$ = $1; $$->push_back($3);                             }
+             | defparametros error defparametro { $$ = $1; $$->push_back(new EmptyParam()); yyerrok;      }
              ;
 
 defparametro: tipo ID        { $$ = new Parameter($2, $1, false); }
@@ -234,7 +244,7 @@ tipocueva: parametrocueva tipo { $$ = new CuevaType($2, $1); }
 
 /* Aqui voy a devolver "vacio" para el caso base porque puedo, seguro hay que cambiarlo */
 parametrocueva: CUEVA "[" "]" DE                           { $$ = new std::vector<std::string>(); $$->push_back(""); }
-              | parametrocueva CUEVA "[" CONSTPOLAR "]" DE { $$ = $1; $$->push_back($4);                                  }
+              | parametrocueva CUEVA "[" CONSTPOLAR "]" DE { $$ = $1; $$->push_back($4);                             }
               ;
 
 defconstante: CONST tipo identificadores "=" expresiones ";" {
@@ -249,6 +259,7 @@ defconstante: CONST tipo identificadores "=" expresiones ";" {
                                                               $$ = new EmptyDef();
                                                             }
                                                          }
+            | CONST tipo identificadores error expresiones ";" { yyerrok; $$ = new EmptyDef(); }
             ;
 
 
@@ -264,6 +275,7 @@ defvariable: tipo identificadores "=" expresiones ";" {
                                                       $$ = new EmptyDef();
                                                     }
                                                   }
+           | tipo identificadores error expresiones ";" { yyerrok; $$ = new EmptyDef(); }
            | tipo identificadores ";"                 {
                                                       driver.agregarSinInicializacion($2, Var, $1);
                                                       std::vector<string>* l = extraerIds($2);
@@ -308,10 +320,12 @@ defcompleja: PARDO ID "{" { driver.tabla.enter_scope(); }
                           }
 
            | PARDO ID ";"   {
-                            // FIXME Aqui falta revisar que pasa cuando el find_symbol si devuelva algo :s error o que?
                             Contenedor* c = driver.tabla.find_container($2);
+                            PardoType* p = new PardoType($2);
                             if (!c) {
-                              driver.tabla.add_container($2, Compuesto, @1.begin.line, @1.begin.column);
+                              driver.tabla.add_container($2, p, Compuesto, @1.begin.line, @1.begin.column);
+                            } else {
+                              driver.warning(@1, @2, "Type " + $2 + " already declared in " + std::to_string(c->getLineaDec()) + "." + std::to_string(c->getColumnaDec()) + ".");
                             }
                             $$ = new EmptyDef();
                           }
@@ -335,16 +349,19 @@ defcompleja: PARDO ID "{" { driver.tabla.enter_scope(); }
                         }
 
            | GRIZZLI ID ";"    {
-                              // FIXME Aqui falta revisar que pasa cuando el find_symbol si devuelva algo :s error o que?
                               Contenedor* c = driver.tabla.find_container($2);
+                              GrizzliType* g = new GrizzliType($2);
                               if (!c) {
-                                driver.tabla.add_container($2, Compuesto, @1.begin.line, @1.begin.column);
+                                driver.tabla.add_container($2, g, Compuesto, @1.begin.line, @1.begin.column);
+                              } else {
+                                driver.warning(@1, @2, "Type " + $2 + " already declared in " + std::to_string(c->getLineaDec()) + "." + std::to_string(c->getColumnaDec()) + ".");
                               }
                               $$ = new EmptyDef();
                             }
            ;
 
 campos: campo ";"        { $$ = new std::vector<Type*>; $$->push_back($1); }
+      | campo error      { $$ = new std::vector<Type*>; $$->push_back(new ErrorType()); yyerrok; }
       | campos campo ";" { $$ = $1; $$->push_back($2); }
       ;
 
@@ -375,14 +392,12 @@ tipo: PANDA       { $$ = new PandaType();                                   }
     ;
 
 bloqueespecial: "{" instrucciones "}" { $$ = new Body($2);  }
-              | instruccion ";"       { $$ = $1;            }
               ;
 
 bloque: "{" { driver.tabla.enter_scope(); } instrucciones "}"     {
                                                                             $$ = new Body($3);
                                                                             driver.tabla.exit_scope();
                                                                           }
-      | instruccion ";"                                                      { $$ = $1; }
       ;
 
 instrucciones: instruccion                { $$ = new std::vector<Statement*>(); $$->push_back($1); }
@@ -548,7 +563,12 @@ lvalue: ID maybecueva              {
                                      } else {
                                         if (!c->getTipo()->isSimple()) {
                                           Contenedor* tipo = driver.tabla.find_container(c->getTipo()->getName());
-                                          ALCANCE_LVALUE = tipo->get_alcanceCampos();
+                                          if ( tipo->getDef() ){
+                                            ALCANCE_LVALUE = tipo->get_alcanceCampos();
+                                          } else {
+                                            driver.error(@1, "Type " + tipo->getTipo()->getName() + " is never defined.");
+                                            ALCANCE_LVALUE = -1;
+                                          }
                                         } else {
                                           if (nullptr == $2) {
                                             ALCANCE_LVALUE = c->getAlcance();
@@ -558,6 +578,8 @@ lvalue: ID maybecueva              {
                                             if(tipo)
                                             {
                                               ALCANCE_LVALUE = tipo->get_alcanceCampos();
+                                            } else {
+                                              ALCANCE_LVALUE = -1;
                                             }
                                           }
                                         }
@@ -586,9 +608,25 @@ lvalue: ID maybecueva              {
                                      } else {
                                         if (!c->getTipo()->isSimple()) {
                                           Contenedor* tipo = driver.tabla.find_container(c->getTipo()->getName());
-                                          ALCANCE_LVALUE = tipo->get_alcanceCampos();
+                                          if ( tipo->getDef() ){
+                                            ALCANCE_LVALUE = tipo->get_alcanceCampos();
+                                          } else {
+                                            driver.error(@1, "Type " + tipo->getTipo()->getName() + " is never defined.");
+                                            ALCANCE_LVALUE = -1;
+                                          }
                                         } else {
-                                          ALCANCE_LVALUE = c->getAlcance();
+                                          if (nullptr == $4) {
+                                            ALCANCE_LVALUE = c->getAlcance();
+                                          } else {
+                                            CuevaType* cueva = (CuevaType*) c->getTipo();
+                                            Contenedor* tipo = driver.tabla.find_container(cueva->getTipo()->getName());
+                                            if(tipo)
+                                            {
+                                              ALCANCE_LVALUE = tipo->get_alcanceCampos();
+                                            } else {
+                                              ALCANCE_LVALUE = -1;
+                                            }
+                                          }
                                         }
                                      }
                                     } else {
@@ -618,9 +656,25 @@ lvalue: ID maybecueva              {
                                      } else {
                                         if (!c->getTipo()->isSimple()) {
                                           Contenedor* tipo = driver.tabla.find_container(c->getTipo()->getName());
-                                          ALCANCE_LVALUE = tipo->get_alcanceCampos();
+                                          if ( tipo->getDef() ){
+                                            ALCANCE_LVALUE = tipo->get_alcanceCampos();
+                                          } else {
+                                            driver.error(@1, "Type " + tipo->getTipo()->getName() + " is never defined.");
+                                            ALCANCE_LVALUE = -1;
+                                          }
                                         } else {
-                                          ALCANCE_LVALUE = c->getAlcance();
+                                          if (nullptr == $4) {
+                                            ALCANCE_LVALUE = c->getAlcance();
+                                          } else {
+                                            CuevaType* cueva = (CuevaType*) c->getTipo();
+                                            Contenedor* tipo = driver.tabla.find_container(cueva->getTipo()->getName());
+                                            if(tipo)
+                                            {
+                                              ALCANCE_LVALUE = tipo->get_alcanceCampos();
+                                            } else {
+                                              ALCANCE_LVALUE = -1;
+                                            }
+                                          }
                                         }
                                      }
                                     } else {
@@ -638,8 +692,9 @@ accesocueva:  "[" expresion "]"            { $$ = new std::vector<Expression*>()
            ;
 
 
-expresiones: expresion                 { $$ = new std::vector<Expression*>(); $$->push_back($1); }
-           | expresiones "," expresion { $$ = $1; $$->push_back($3); }
+expresiones: expresion                   { $$ = new std::vector<Expression*>(); $$->push_back($1); }
+           | expresiones "," expresion   { $$ = $1; $$->push_back($3); }
+           | expresiones error expresion { $$ = $1; $$->push_back($3); yyerrok; }
            ;
 
 %nonassoc ":" "?";
@@ -693,10 +748,15 @@ expresion: CONSTPOLAR                            { $$ = new ConstantExpr(std::st
 
 
 funcionpredef: APANDA  "(" expresion ")" { $$ = new UnaryExpr($1, $3); }
+             | APANDA  "(" error     ")" { $$ = new EmptyExpr();       }
              | AKODIAK "(" expresion ")" { $$ = new UnaryExpr($1, $3); }
+             | AKODIAK "(" error     ")" { $$ = new EmptyExpr();       }
              | AMALAYO "(" expresion ")" { $$ = new UnaryExpr($1, $3); }
+             | AMALAYO "(" error     ")" { $$ = new EmptyExpr();       }
              | APOLAR  "(" expresion ")" { $$ = new UnaryExpr($1, $3); }
+             | APOLAR  "(" error     ")" { $$ = new EmptyExpr();       }
              | LON     "(" expresion ")" { $$ = new UnaryExpr($1, $3); }
+             | LON     "(" error     ")" { $$ = new EmptyExpr();       }
              ;
 
 %%

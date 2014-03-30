@@ -56,6 +56,31 @@ bear_driver::error (const std::string& m)
   std::cerr << m << std::endl;
 }
 
+
+void
+bear_driver::warning (const yy::location& l, const std::string& m)
+{
+  std::cout << "Warning: between " << l.begin.line << "." << l.begin.column << " and " << l.end.line << "." << l.end.column << ": " << m << std::endl;
+}
+
+void
+bear_driver::warning (const yy::location& l1, const yy::location& l2, const std::string& m)
+{
+  std::cout << "Warning: between " << l1.begin.line << "." << l1.begin.column << " and " << l2.end.line << "." << l2.end.column << ": " << m << std::endl;
+}
+
+void
+bear_driver::warning (const unsigned int LI, const unsigned int CI, const unsigned int LF, unsigned int CF, const std::string& m)
+{
+  std::cout << "Warning: between " << LI << "." << CI << " and " << LF << "." << CF << ": " << m << std::endl;
+}
+
+void
+bear_driver::warning (const std::string& m)
+{
+  std::cout << "Warning: " << m << std::endl;
+}
+
 void bear_driver::agregarConInicializacion(std::vector<elementoLista>* ids, Categorias categoria, Type* tipo, bool mut)
 {
   elementoLista e;
@@ -63,7 +88,7 @@ void bear_driver::agregarConInicializacion(std::vector<elementoLista>* ids, Cate
   {
     e = ids->at(i);
     if (tabla.check_scope(e.nombre)) {
-      error(e.lineaI, e.columnaI, e.lineaF, e.columnaF, "Se intenta redefinir la variable " + e.nombre + ".");
+      error(e.lineaI, e.columnaI, e.lineaF, e.columnaF, "Attempt to redefine variable " + e.nombre + ".");
     } else {
       tabla.add_symbol(e.nombre, tipo, categoria, e.lineaI, e.columnaI, e.lineaF, e.columnaF, mut);
     }
@@ -77,7 +102,7 @@ void bear_driver::agregarSinInicializacion(std::vector<elementoLista>* ids, Cate
   {
     e = ids->at(i);
     if (tabla.check_scope(e.nombre)) {
-      error(e.lineaI, e.columnaI, e.lineaF, e.columnaF, "Se intenta redefinir la variable " + e.nombre + ".");
+      error(e.lineaI, e.columnaI, e.lineaF, e.columnaF, "Attempt to redefine variable " + e.nombre + ".");
     } else {
       tabla.add_symbol(e.nombre, tipo, categoria, e.lineaI, e.columnaI, true);
     }

@@ -97,10 +97,11 @@ class PardoType : public Type
 {
   private:
     std::vector<Type*>* _campos;
-    std::string              _nombre;
+    std::string         _nombre;
 
   public:
     PardoType(std::vector<Type*>* campos, std::string nombre);
+    PardoType(std::string nombre);
     std::string to_string();
     int getSize();
     bool isSimple();
@@ -115,6 +116,7 @@ class GrizzliType : public Type
 
   public:
     GrizzliType(std::vector<Type*>* campos, std::string nombre);
+    GrizzliType(std::string nombre);
     std::string to_string();
     int getSize();
     bool isSimple();

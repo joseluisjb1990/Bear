@@ -25,7 +25,7 @@ public:
     TablaSimbolos();
     unsigned int add_symbol (string nombre, Type* tipo, Categorias categoria, unsigned int linea, unsigned int columna, bool mut);
     unsigned int add_symbol (string nombre, Type* tipo, Categorias categoria, unsigned int lineaDec, unsigned int columnaDec, unsigned int lineaDef, unsigned int columnaDef, bool mut);
-    Contenedor* add_container (string nombre, Categorias categoria, unsigned int linea, unsigned int columna);
+    Contenedor* add_container (std::string nombre, Type* tipo, Categorias categoria, unsigned int linea, unsigned int columna);
     Contenedor* add_container (string nombre, Type* tipo, Categorias categoria, unsigned int lineaDec, unsigned int columnaDec, unsigned int lineaDef, unsigned int columnaDef, unsigned int alcanceCampos);
     Contenedor* find_container (string nombre);
     Contenedor* update_container (string nombre, Type* tipo, unsigned int lineaDef, unsigned int columnaDef, unsigned int alcanceCampos);

@@ -139,7 +139,7 @@ vomita      { return yy::bear_parser::make_VOMITA(yytext, loc);      }
 
     /* Aqui me gustaría poner cual es el caracter que recibe (yytext) en el output del error. No supe hacerlo xD */
 
-.  { driver.error(loc, "Caracter inesperado"); }
+.  { driver.error(loc, "Caracter inesperado: " + std::string(yytext)); }
 
 %%
 

@@ -161,6 +161,11 @@ PardoType::PardoType(std::vector<Type*>* campos, std::string nombre)
   , _nombre ( nombre )
   {}
 
+PardoType::PardoType(std::string nombre)
+  : Type(0)
+  , _nombre ( nombre )
+  {}
+
 std::string PardoType::to_string()
 {
   return _nombre;
@@ -187,6 +192,11 @@ std::string PardoType::getName()
 GrizzliType::GrizzliType(std::vector<Type*>* campos, std::string nombre)
   : Type(0)
   , _campos ( campos )
+  , _nombre ( nombre )
+  {}
+
+GrizzliType::GrizzliType(std::string nombre)
+  : Type(0)
   , _nombre ( nombre )
   {}
 
