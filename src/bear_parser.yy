@@ -208,7 +208,12 @@ deffuncion: ID "(" defparametros ")" "=>" tipo ";" { $$ = new DecFunction($1, $3
                                                            f->define(@1.begin.line, @1.begin.column);
                                                            driver.tabla.enter_scope();
                                                            for(std::vector<Parameter*>::iterator it = $3->begin(); it != $3->end(); ++it) {
-                                                             driver.tabla.add_symbol((*it)->get_id(), (*it)->get_tipo(),Var,@3.begin.line, @3.begin.column, true);
+                                                              if(dynamic_cast<CuevaType*> ((*it)->get_tipo())) {
+                                                                driver.tabla.add_symbol((*it)->get_id(), (*it)->get_tipo(),Cueva,@3.begin.line, @3.begin.column, true);
+                                                              }
+                                                              else {
+                                                              driver.tabla.add_symbol((*it)->get_id(), (*it)->get_tipo(),Var,@3.begin.line, @3.begin.column, true);
+                                                              }
                                                            }
                                                          } else {
                                                            driver.error(@3, "Parameters in function definition don't match the ones in declaration" + $1 + " ");
@@ -221,7 +226,12 @@ deffuncion: ID "(" defparametros ")" "=>" tipo ";" { $$ = new DecFunction($1, $3
                                                        driver.tabla.enter_scope();
                                                        for(std::vector<Parameter*>::iterator it = $3->begin(); it != $3->end(); ++it)
                                                        {
-                                                         driver.tabla.add_symbol((*it)->get_id(), (*it)->get_tipo(),Var,@3.begin.line, @3.begin.column, true);
+                                                         if(dynamic_cast<CuevaType*> ((*it)->get_tipo())) {
+                                                          driver.tabla.add_symbol((*it)->get_id(), (*it)->get_tipo(),Cueva,@3.begin.line, @3.begin.column, true);
+                                                         }
+                                                         else {
+                                                          driver.tabla.add_symbol((*it)->get_id(), (*it)->get_tipo(),Var,@3.begin.line, @3.begin.column, true);
+                                                         }
                                                        }
                                                      }
                                                    }
@@ -542,22 +552,16 @@ lvalues: lvalue             { $$ = new std::vector<Expression*>(); $$->push_back
        ;
 
 lvalue: ID maybecueva              {
-                                     Contenido* c;
-                                     if (nullptr == $2) {
-                                       c = driver.tabla.find_symbol($1, Var);
-                                       $$ = new IDExpr($1);
-                                     } else {
+          /*CAMBIE ESTO PORQUE CUANDO SE HACE UNA LLAMDA A FUNCION SOLO SE PASA EL NOMBRE DE LA CUEVA Y NO TIENE CORCHETES*/
+                                    Contenido* c = driver.tabla.find_symbol($1, Var);
+                                    if(c) {  $$ = new IDExpr($1);
+                                    } else {
                                        c = driver.tabla.find_symbol($1, Cueva);
                                        $$ = new CuevaExpr($1, $2);
                                      }
 
                                      if (!c) {
                                        driver.error(@1, "Variable " + $1 + " is not defined.");
-                                       ALCANCE_LVALUE = -1;
-                                       $$ = new EmptyExpr();
-                                     }
-                                     else if (!c->getMutabilidad()) {
-                                       driver.error(@1, "Variable " + $1 + " is not mutable.");
                                        ALCANCE_LVALUE = -1;
                                        $$ = new EmptyExpr();
                                      } else {
@@ -598,11 +602,6 @@ lvalue: ID maybecueva              {
 
                                      if (!c) {
                                        driver.error(@3, "Variable " + $3 + " is not in scope.");
-                                       ALCANCE_LVALUE = -1;
-                                       $$ = new EmptyExpr();
-                                     }
-                                     else if (!c->getMutabilidad()) {
-                                       driver.error(@3, "Variable " + $3 + " is not mutable.");
                                        ALCANCE_LVALUE = -1;
                                        $$ = new EmptyExpr();
                                      } else {
@@ -646,11 +645,6 @@ lvalue: ID maybecueva              {
 
                                      if (!c) {
                                        driver.error(@3, "Variable " + $3 + " is not in scope.");
-                                       ALCANCE_LVALUE = -1;
-                                       $$ = new EmptyExpr();
-                                     }
-                                     else if (!c->getMutabilidad()) {
-                                       driver.error(@3, "Variable " + $3 + " is not mutable.");
                                        ALCANCE_LVALUE = -1;
                                        $$ = new EmptyExpr();
                                      } else {
