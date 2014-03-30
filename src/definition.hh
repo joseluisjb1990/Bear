@@ -99,7 +99,7 @@ class EmptyParam : public Parameter
 {
   public:
     EmptyParam(){};
-    std::string to_string() { return "Empty parameter"; };
+    std::string to_string() { return "No parameters"; };
 
 };
 
