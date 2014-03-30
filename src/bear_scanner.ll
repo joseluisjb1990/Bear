@@ -49,7 +49,7 @@ Caracter   '.'|'\\n'
   [^<\n]+  { loc.step();                                                                             }
   "<"      { loc.step();                                                                             }
   \n       { loc.lines(1); loc.step();                                                               }
-  <<EOF>>  { driver.error(loc, "Comentario sin terminar :("); return yy::bear_parser::make_END(loc); }
+  <<EOF>>  { driver.error(loc, "Unfinished comment."); return yy::bear_parser::make_END(loc); }
 }
 
 {Entero}     { return yy::bear_parser::make_CONSTPOLAR(yytext, loc);  }
@@ -61,7 +61,7 @@ Caracter   '.'|'\\n'
 {Caracter}   { return yy::bear_parser::make_CONSTMALAYO(yytext, loc); }
 
 \"([^\"\n])*\"  { return yy::bear_parser::make_CONSTHORMIGUERO(yytext, loc); }
-\"([^\"\n])*    { driver.error(loc, "Hormiguero incompleto");                }
+\"([^\"\n])*    { driver.error(loc, "Incomplete hormiguero, missing final \".");                }
 
 a_kodiak    { return yy::bear_parser::make_AKODIAK(yytext, loc);     }
 a_malayo    { return yy::bear_parser::make_AMALAYO(yytext, loc);     }
@@ -139,7 +139,7 @@ vomita      { return yy::bear_parser::make_VOMITA(yytext, loc);      }
 
     /* Aqui me gustaría poner cual es el caracter que recibe (yytext) en el output del error. No supe hacerlo xD */
 
-.  { driver.error(loc, "Caracter inesperado: " + std::string(yytext)); }
+.  { driver.error(loc, "Illegal character: " + std::string(yytext)); }
 
 %%
 
