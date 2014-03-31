@@ -1,3 +1,18 @@
+/**
+ *  Nombre del archivo = Contenido.cc
+ *
+ *  Autores:
+ *    Gabriela Limonta
+ *    José Luis Jiménez
+ *
+ *  Descripción:
+ *    Definición de la clase Contenido
+ *    definida en Contenido.hh
+ *
+ *  Última fecha de modificación:
+ *    30/03/2014
+ */
+
 # include <iostream>
 # include <string>
 # include "Contenido.hh"
