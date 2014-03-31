@@ -88,7 +88,8 @@ void bear_driver::agregarConInicializacion(std::vector<elementoLista>* ids, Cate
   {
     e = ids->at(i);
     if (tabla.check_scope(e.nombre)) {
-      error(e.lineaI, e.columnaI, e.lineaF, e.columnaF, "Attempt to redefine variable " + e.nombre + ".");
+      Contenido* c = tabla.find_symbol(e.nombre, categoria);
+      error(e.lineaI, e.columnaI, e.lineaF, e.columnaF, "Attempt to redefine variable " + e.nombre + " already declared in " + std::to_string(c->getLineaDec()) + "." + std::to_string(c->getColumnaDec()) + ".");
     } else {
       tabla.add_symbol(e.nombre, tipo, categoria, e.lineaI, e.columnaI, e.lineaF, e.columnaF, mut);
     }
@@ -102,7 +103,8 @@ void bear_driver::agregarSinInicializacion(std::vector<elementoLista>* ids, Cate
   {
     e = ids->at(i);
     if (tabla.check_scope(e.nombre)) {
-      error(e.lineaI, e.columnaI, e.lineaF, e.columnaF, "Attempt to redefine variable " + e.nombre + ".");
+      Contenido* c = tabla.find_symbol(e.nombre, categoria);
+      error(e.lineaI, e.columnaI, e.lineaF, e.columnaF, "Attempt to redefine variable " + e.nombre + " already declared in " + std::to_string(c->getLineaDec()) + "." + std::to_string(c->getColumnaDec()) + ".");
     } else {
       tabla.add_symbol(e.nombre, tipo, categoria, e.lineaI, e.columnaI, true);
     }

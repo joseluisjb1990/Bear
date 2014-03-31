@@ -233,8 +233,13 @@ definicionglobal: defconstante  { $$ = $1; }
                 | defcompleja   { $$ = $1; }
                 ;
 
-deffuncion: ID "(" defparametros ")" "=>" tipo ";" { $$ = new DecFunction($1, $3, $6);
-                                                     driver.tabla.add_function($1, $6, @1.begin.line, @1.begin.column, $3);
+deffuncion: ID "(" defparametros ")" "=>" tipo ";" { Funcion* f = driver.tabla.get_function($1);
+                                                     if (!f) {
+                                                       driver.tabla.add_function($1, $6, @1.begin.line, @1.begin.column, $3);
+                                                     } else {
+                                                       driver.warning(@1, @7, "Function " + $1 + " already declared in " + std::to_string(f->getLineaDec()) + "." + std::to_string(f->getColumnaDec()) + ".");
+                                                     }
+                                                     $$ = new DecFunction($1, $3, $6);
                                                    }
 
           | ID "(" defparametros ")" "=>" tipo     { Funcion* f = driver.tabla.get_function($1);
@@ -255,7 +260,7 @@ deffuncion: ID "(" defparametros ")" "=>" tipo ";" { $$ = new DecFunction($1, $3
                                                            driver.error(@3, "Parameters in function definition don't match the ones in declaration" + $1 + " ");
                                                          }
                                                        } else {
-                                                         driver.error(@1, "Function "+ $1 + " is redefined " + '\n');
+                                                         driver.error(@1, "Function " + $1 + " already declared in " + std::to_string(f->getLineaDec()) + "." + std::to_string(f->getColumnaDec()) + ".");
                                                        }
                                                      } else {
                                                        driver.tabla.add_function($1,$6,@1.begin.line,@1.begin.column, @1.begin.line, @1.begin.column, $3);
@@ -299,9 +304,7 @@ parametrocueva: CUEVA "[" "]" DE                             { $$ = new std::vec
               | parametrocueva CUEVA "[" expresion "]" error { $$ = $1; $$->push_back($4); yyerrok;                                          }
               ;
 
-defconstante: CONST tipo identificadores "=" expresiones ";" {
-                                                                if ($3->size() == $5->size())
-                                                                {
+defconstante: CONST tipo identificadores "=" expresiones ";" { if ($3->size() == $5->size()) {
                                                                   driver.agregarConInicializacion($3, Var, $2, false);
                                                                 std::vector<string>* l = extraerIds($3);
                                                               $$ = new ConstDef($2, l, $5);
@@ -362,7 +365,7 @@ defcompleja: PARDO ID "{" { driver.tabla.enter_scope(); }
                             Contenedor* c = driver.tabla.find_container($2);
                             if (c) {
                               if (c->getDef()) {
-                                driver.error(@1, @6, "Attempt to redefine the type " + $2 + ".");
+                                driver.error(@1, @6, "Attempt to redefine the type " + $2 + " already declared in " + std::to_string(c->getLineaDec()) + "." + std::to_string(c->getColumnaDec()) + ".");
                               } else {
                                 driver.tabla.update_container($2, p, @1.begin.line, @1.begin.column, alcanceCampos);
                               }
@@ -391,7 +394,7 @@ defcompleja: PARDO ID "{" { driver.tabla.enter_scope(); }
                           Contenedor* c = driver.tabla.find_container($2);
                             if (c) {
                               if (c->getDef()) {
-                                driver.error(@1, @6, "Attempt to redefine the type " + $2 + ".");
+                                driver.error(@1, @6, "Attempt to redefine the type " + $2 + " already declared in " + std::to_string(c->getLineaDec()) + "." + std::to_string(c->getColumnaDec()) + ".");
                               } else {
                                 driver.tabla.update_container($2, g, @1.begin.line, @1.begin.column, alcanceCampos);
                               }
