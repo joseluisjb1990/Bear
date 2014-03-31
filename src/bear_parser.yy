@@ -493,6 +493,15 @@ instruccion: defvariable                                                  { $$ =
                                                                               driver.tabla.exit_scope();
                                                                               $$ = new SimpleFor($2, $5, $7, $10);
                                                                             }
+           | PARA ID error "(" expresion ";" expresion ")"                  { driver.tabla.enter_scope();
+                                                                              yyerrok;
+                                                                              PolarType* p = new PolarType();
+                                                                              driver.tabla.add_symbol($2, p, Var, @2.begin.line, @2.begin.column, @2.end.line, @2.end.column, false);
+                                                                            }
+             bloqueespecial                                                 {
+                                                                              driver.tabla.exit_scope();
+                                                                              $$ = new SimpleFor($2, $5, $7, $10);
+                                                                            }
            | PARA ID EN "(" expresion ";" expresion ";" expresion ")"      { driver.tabla.enter_scope();
                                                                              PolarType* p = new PolarType();
                                                                              driver.tabla.add_symbol($2, p, Var, @2.begin.line, @2.begin.column, @2.end.line, @2.end.column, false);
@@ -500,7 +509,28 @@ instruccion: defvariable                                                  { $$ =
              bloqueespecial                                                { driver.tabla.exit_scope();
                                                                              $$ = new ComplexFor($2, $5, $9, $7, $12);
                                                                            }
+           | PARA ID error "(" expresion ";" expresion ";" expresion ")"   { driver.tabla.enter_scope();
+                                                                             yyerrok;
+                                                                             PolarType* p = new PolarType();
+                                                                             driver.tabla.add_symbol($2, p, Var, @2.begin.line, @2.begin.column, @2.end.line, @2.end.column, false);
+                                                                           }
+             bloqueespecial                                                { driver.tabla.exit_scope();
+                                                                             $$ = new ComplexFor($2, $5, $9, $7, $12);
+                                                                           }
            | PARA ID EN ID                                                 { Contenido* c = driver.tabla.find_symbol($4, Cueva);
+                                                                             if (!c) {
+                                                                               driver.error(@4,"Cueva " + $4 + " is not declared.");
+                                                                             }
+                                                                             CuevaType* cuevita = (CuevaType*) c->getTipo();
+                                                                             Type* tipo = cuevita->getTipo();
+                                                                             driver.tabla.enter_scope();
+                                                                             driver.tabla.add_symbol($2, tipo, Cueva, @2.begin.line, @2.begin.column, @2.end.line, @2.end.column, false);
+                                                                           }
+            bloqueespecial                                                 { driver.tabla.exit_scope();
+                                                                             $$ = new IdFor($2, $4, $6);
+                                                                           }
+           | PARA ID error ID                                              { Contenido* c = driver.tabla.find_symbol($4, Cueva);
+                                                                             yyerrok;
                                                                              if (!c) {
                                                                                driver.error(@4,"Cueva " + $4 + " is not declared.");
                                                                              }
