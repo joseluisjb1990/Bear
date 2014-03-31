@@ -359,21 +359,21 @@ defvariable: tipo identificadores "=" expresiones ";"   { if ($2->size() == $4->
 
 identificadores: ID                     { $$ = new std::vector<elementoLista>();
                                           elementoLista e;
-                                          e.nombre = $1
-                                          e.lineaI = @1.begin.line
-                                          e.columnaI = @1.begin.column
-                                          e.lineaF = @1.end.line
-                                          e.columnaF = @1.end.column
-                                          $$->push_back(e)
+                                          e.nombre = $1;
+                                          e.lineaI = @1.begin.line;
+                                          e.columnaI = @1.begin.column;
+                                          e.lineaF = @1.end.line;
+                                          e.columnaF = @1.end.column;
+                                          $$->push_back(e);
                                         }
-               | identificadores "," ID { $$ = $1
-                                          elementoLista e
-                                          e.nombre = $3
-                                          e.lineaI = @3.begin.line
-                                          e.columnaI = @3.begin.column
-                                          e.lineaF = @3.end.line
-                                          e.columnaF = @3.end.column
-                                          $$->push_back(e)
+               | identificadores "," ID { $$ = $1;
+                                          elementoLista e;
+                                          e.nombre = $3;
+                                          e.lineaI = @3.begin.line;
+                                          e.columnaI = @3.begin.column;
+                                          e.lineaF = @3.end.line;
+                                          e.columnaF = @3.end.column;
+                                          $$->push_back(e);
                                         }
                ;
 

@@ -172,7 +172,7 @@ private:
 
   unsigned int _alcanceCampos; /* Sirve para manejar el alcance en que se almacenaron los campos de un registro en la tabla. */
 };
-i
+
 /* Clase heredada de Contenido que sirve para manejar las funciones en la tabla de símbolos */
 class Funcion : public Contenido
 {
