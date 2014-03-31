@@ -1,19 +1,48 @@
+/**
+ *  Nombre del archivo = TablaSimbolos.cc
+ *
+ *  Autores:
+ *    Gabriela Limonta
+ *    José Luis Jiménez
+ *
+ *  Descripción:
+ *    Implementación de las funciones de la clase
+ *    TablaSimbolos definida en el archivo
+ *    TablaSimbolos.cc.
+ *
+ *  Última fecha de modificación:
+ *    30/03/2014
+ */
+
 #include "TablaSimbolos.hh"
 #include <algorithm>
 
 using namespace std;
 
-Contenedor* TablaSimbolos::add_container (std::string nombre, Type* tipo, Categorias categoria, unsigned int linea, unsigned int columna)
+Contenedor* TablaSimbolos::add_container( std::string nombre
+                                        , Type* tipo
+                                        , Categorias categoria
+                                        , unsigned int linea
+                                        , unsigned int columna
+                                        )
 {
-  Contenedor *cont = new  Contenedor(tipo, categoria, _pila.back(), linea, columna);
-  _dicc.insert(std::make_pair(nombre,cont));
+  Contenedor *cont = new  Contenedor( tipo, categoria, _pila.back(), linea, columna );
+  _dicc.insert(std::make_pair( nombre, cont ) );
   return cont;
 }
 
-Contenedor* TablaSimbolos::add_container (std::string nombre, Type* tipo, Categorias categoria, unsigned int lineaDec, unsigned int columnaDec, unsigned int lineaDef, unsigned int columnaDef, unsigned int alcanceCampos)
+Contenedor* TablaSimbolos::add_container( std::string nombre
+                                        , Type* tipo
+                                        , Categorias categoria
+                                        , unsigned int lineaDec
+                                        , unsigned int columnaDec
+                                        , unsigned int lineaDef
+                                        , unsigned int columnaDef
+                                        , unsigned int alcanceCampos
+                                        )
 {
-  Contenedor *cont = new Contenedor(tipo, categoria, _pila.back(), lineaDec, columnaDec, lineaDef, columnaDef, alcanceCampos);
-  _dicc.insert(std::make_pair(nombre,cont));
+  Contenedor *cont = new Contenedor( tipo, categoria, _pila.back(), lineaDec, columnaDec, lineaDef, columnaDef, alcanceCampos );
+  _dicc.insert(std::make_pair( nombre, cont ) );
   return cont;
 }
 
@@ -21,15 +50,17 @@ TablaSimbolos::TablaSimbolos ()
   :_alcance( 0 )
   { _pila.push_back( 0 ); }
 
-Contenido* TablaSimbolos::find_symbol(std::string nombre, Categorias cat)
+Contenido* TablaSimbolos::find_symbol(  std::string nombre
+                                     ,  Categorias cat
+                                     )
 {
-  Contenido* constante = nullptr;
-  Contenido* mejor = nullptr;
-  Contenido* e = nullptr;
+  Contenido* constante  = nullptr;
+  Contenido* mejor      = nullptr;
+  Contenido* e          = nullptr;
 
-  for(Diccionario::iterator it = _dicc.lower_bound(nombre); it != _dicc.upper_bound(nombre); ++it)
+  for(Diccionario::iterator it = _dicc.lower_bound( nombre ); it != _dicc.upper_bound( nombre ); ++it)
   {
-    if (it->first == nombre and it->second->getCategoria() == cat)
+    if ( it->first == nombre and it->second->getCategoria() == cat )
     {
       e = it->second;
       if ( e->getAlcance() == 0 ) { constante = e; }
@@ -44,14 +75,17 @@ Contenido* TablaSimbolos::find_symbol(std::string nombre, Categorias cat)
     }
   }
 
-  if (mejor != nullptr) { return mejor; }
-  else if (constante != nullptr) { return constante; }
-  else { return nullptr; }
+  if      (mejor != nullptr)      { return mejor;     }
+  else if (constante != nullptr)  { return constante; }
+  else                            { return nullptr;   }
 }
 
-Contenido* TablaSimbolos::find_scope(std::string nombre, Categorias cat, unsigned int alcance)
+Contenido* TablaSimbolos::find_scope( std::string nombre
+                                    , Categorias cat
+                                    , unsigned int alcance
+                                    )
 {
-  for(Diccionario::iterator it = _dicc.lower_bound(nombre); it != _dicc.upper_bound(nombre); ++it)
+  for( Diccionario::iterator it = _dicc.lower_bound(nombre); it != _dicc.upper_bound(nombre); ++it )
   {
     if (it->first == nombre and it->second->getCategoria() == cat and it->second->getAlcance() == alcance)
     {
@@ -61,7 +95,7 @@ Contenido* TablaSimbolos::find_scope(std::string nombre, Categorias cat, unsigne
   return nullptr;
 }
 
-bool TablaSimbolos::check_scope(std::string nombre)
+bool TablaSimbolos::check_scope( std::string nombre )
 {
   Contenido *cont;
   unsigned int topePila = _pila.back();
@@ -73,11 +107,13 @@ bool TablaSimbolos::check_scope(std::string nombre)
   }
   return false;
 }
+
 unsigned int TablaSimbolos::exit_scope()
 {
   _pila.pop_back();
   return _pila.back();
 }
+
 unsigned int TablaSimbolos::enter_scope()
 {
   _pila.push_back(++_alcance);
@@ -150,16 +186,31 @@ std::ostream& operator<<(std::ostream& os, TablaSimbolos &ts)
 
   return os;
 }
-unsigned int TablaSimbolos::add_symbol (std::string nombre, Type* tipo, Categorias categoria, unsigned int linea, unsigned int columna, bool mut)
+unsigned int TablaSimbolos::add_symbol( std::string nombre
+                                      , Type* tipo
+                                      , Categorias categoria
+                                      , unsigned int linea
+                                      , unsigned int columna
+                                      , bool mut
+                                      )
 {
-  Contenido *cont = new Contenido(tipo, categoria, _pila.back(), linea, columna, mut);
-  _dicc.insert(std::make_pair(nombre,cont));
+  Contenido *cont = new Contenido( tipo, categoria, _pila.back(), linea, columna, mut );
+  _dicc.insert(std::make_pair( nombre, cont ) );
   return _alcance;
 }
-unsigned int TablaSimbolos::add_symbol (std::string nombre, Type* tipo, Categorias categoria, unsigned int lineaDec, unsigned int columnaDec, unsigned int lineaDef, unsigned int columnaDef, bool mut)
+
+unsigned int TablaSimbolos::add_symbol( std::string nombre
+                                      , Type* tipo
+                                      , Categorias categoria
+                                      , unsigned int lineaDec
+                                      , unsigned int columnaDec
+                                      , unsigned int lineaDef
+                                      , unsigned int columnaDef
+                                      , bool mut
+                                      )
 {
-  Contenido *cont = new Contenido(tipo, categoria, _pila.back(), lineaDec, columnaDec, lineaDef, columnaDef, mut);
-  _dicc.insert(std::make_pair(nombre,cont));
+  Contenido *cont = new Contenido( tipo, categoria, _pila.back(), lineaDec, columnaDec, lineaDef, columnaDef, mut );
+  _dicc.insert(std::make_pair( nombre, cont ) );
   return _alcance;
 }
 
@@ -186,8 +237,8 @@ unsigned int TablaSimbolos::add_function  (
                                           , vector<Parameter*>* parametros
                                           )
 {
-  Contenido *cont = new Funcion(tipo, _pila.back(), lineaDec, columnaDec, lineaDef, columnaDef, parametros);
-  _dicc.insert(std::make_pair(nombre,cont));
+  Contenido *cont = new Funcion( tipo, _pila.back(), lineaDec, columnaDec, lineaDef, columnaDef, parametros );
+  _dicc.insert(std::make_pair( nombre, cont ) );
   return _alcance;
 }
 
@@ -195,7 +246,6 @@ unsigned int TablaSimbolos::get_actual_scope() { return _alcance; }
 
 Funcion* TablaSimbolos::get_function(std::string nombre)
 {
-
   for(Diccionario::iterator it = _dicc.lower_bound(nombre); it != _dicc.upper_bound(nombre); ++it)
   {
     if (it->first == nombre)
@@ -210,7 +260,12 @@ Funcion* TablaSimbolos::get_function(std::string nombre)
   return nullptr;
 }
 
-Contenedor* TablaSimbolos::update_container (string nombre, Type* tipo, unsigned int lineaDef, unsigned int columnaDef, unsigned int alcanceCampos)
+Contenedor* TablaSimbolos::update_container(  string nombre
+                                           , Type* tipo
+                                           , unsigned int lineaDef
+                                           , unsigned int columnaDef
+                                           , unsigned int alcanceCampos
+                                           )
 {
   for(Diccionario::iterator it = _dicc.lower_bound(nombre); it != _dicc.upper_bound(nombre); ++it)
   {
