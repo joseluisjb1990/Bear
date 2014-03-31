@@ -1,3 +1,19 @@
+/**
+ *  Nombre del archivo = type.cc
+ *
+ *  Autores:
+ *    Gabriela Limonta
+ *    José Luis Jiménez
+ *
+ *  Descripción:
+ *    Implementación de las funciones de la clase
+ *    Type definida en el archivo
+ *    type.hh
+ *
+ *  Última fecha de modificación:
+ *    30/03/2014
+ */
+
 #ifndef TYPE_CC
 #define TYPE_CC
 #include "type.hh"

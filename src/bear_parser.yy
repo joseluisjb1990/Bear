@@ -1,3 +1,17 @@
+/**
+ *  Nombre del archivo = bear_parser.yy
+ *
+ *  Autores:
+ *    Gabriela Limonta
+ *    José Luis Jiménez
+ *
+ *  Descripción:
+ *  Implementación del parser para el lenguaje Bear utilizando Bison.
+ *
+ *  Última fecha de modificación:
+ *    30/03/2014
+ */
+
 %skeleton "lalr1.cc" /* -*- C++ -*- */
 %require "3.0.2"
 %defines

@@ -8,7 +8,7 @@
  *  Descripción:
  *    Implementación de las funciones de la clase
  *    TablaSimbolos definida en el archivo
- *    TablaSimbolos.cc.
+ *    TablaSimbolos.hh
  *
  *  Última fecha de modificación:
  *    30/03/2014

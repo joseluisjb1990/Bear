@@ -1,3 +1,17 @@
+/**
+ *  Nombre del archivo = bear_scanner.ll
+ *
+ *  Autores:
+ *    Gabriela Limonta
+ *    José Luis Jiménez
+ *
+ *  Descripción:
+ *  Implementación del lexer para el lenguaje Bear utilizando Flex.
+ *
+ *  Última fecha de modificación:
+ *    30/03/2014
+ */
+
 %{ /* -*- C++ -*- */
 #include <cerrno>
 #include <climits>
@@ -42,13 +56,13 @@ Caracter   '.'|'\\n'
 
 "<3".*   { loc.step(); };
 
-"--<3"   {  loc.step(); BEGIN(comentario); }
+"--<3"   { loc.step(); BEGIN(comentario); }
 
 <comentario>{
-  "<3->"   { loc.step(); BEGIN(INITIAL);                                                             }
-  [^<\n]+  { loc.step();                                                                             }
-  "<"      { loc.step();                                                                             }
-  \n       { loc.lines(1); loc.step();                                                               }
+  "<3->"   { loc.step(); BEGIN(INITIAL);                                                      }
+  [^<\n]+  { loc.step();                                                                      }
+  "<"      { loc.step();                                                                      }
+  \n       { loc.lines(1); loc.step();                                                        }
   <<EOF>>  { driver.error(loc, "Unfinished comment."); return yy::bear_parser::make_END(loc); }
 }
 
@@ -60,8 +74,8 @@ Caracter   '.'|'\\n'
 
 {Caracter}   { return yy::bear_parser::make_CONSTMALAYO(yytext, loc); }
 
-\"([^\"\n])*\"  { return yy::bear_parser::make_CONSTHORMIGUERO(yytext, loc); }
-\"([^\"\n])*    { driver.error(loc, "Incomplete hormiguero, missing final \"");                }
+\"([^\"\n])*\"  { return yy::bear_parser::make_CONSTHORMIGUERO(yytext, loc);    }
+\"([^\"\n])*    { driver.error(loc, "Incomplete hormiguero, missing final \""); }
 
 a_kodiak    { return yy::bear_parser::make_AKODIAK(yytext, loc);     }
 a_malayo    { return yy::bear_parser::make_AMALAYO(yytext, loc);     }
@@ -141,8 +155,7 @@ vomita      { return yy::bear_parser::make_VOMITA(yytext, loc);      }
 
 %%
 
-void
-bear_driver::scan_begin ()
+void bear_driver::scan_begin ()
 {
   yy_flex_debug = trace_scanning;
   if (file.empty () || file == "-")
@@ -156,8 +169,7 @@ bear_driver::scan_begin ()
 
 
 
-void
-bear_driver::scan_end ()
+void bear_driver::scan_end ()
 {
   fclose (yyin);
 }
