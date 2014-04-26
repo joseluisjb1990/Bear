@@ -509,7 +509,16 @@ instruccion: defvariable                                                 { $$ = 
                                                                              $$ = new Function($1, $3);
                                                                            }
                                                                          }
-           | SI expresion bloque                                         { $$ = new If($2, $3);                                                         }
+           | SI expresion bloque                                         { if($2->get_type() == PandaType::getInstance())
+                                                                           {
+                                                                             $$ = new If($2, $3);
+                                                                           } else
+                                                                           {
+                                                                             if($2->get_type() != ErrorType::getInstance())
+                                                                                driver.error(@2,"Type of expression inside SI is not PANDA");
+                                                                             $$ = new Empty( ErrorType::getInstance() );
+                                                                           }
+                                                                         }
            | SI expresion bloque SINO bloque                             { $$ = new IfElse($2, $3, $5);                                                 }
 
            | PARA ID EN "(" expresion ";" expresion ")"                  { driver.tabla.enter_scope();
@@ -572,15 +581,23 @@ instruccion: defvariable                                                 { $$ = 
            | iteracionindeterminada                                      { $$ = $1; }
            | ID "++" ";"                                                 { Contenido* c = driver.tabla.find_symbol($1,Var);
                                                                            if (c) {
-                                                                             if (c->getMutabilidad()) {
-                                                                               $$ = new Increase($1);
+                                                                             Type* tipo = c->getTipo();
+                                                                             if(tipo == PolarType::getInstance())
+                                                                             {
+                                                                               if (c->getMutabilidad())
+                                                                                 $$ = new Increase($1);
+                                                                               else {
+                                                                                 driver.error(@1, @2, "Attempt to increase variable " + $1 + ", which is not mutable.");
+                                                                                 $$ = new Empty( ErrorType::getInstance() );
+                                                                               }
                                                                              } else {
-                                                                               driver.error(@1, @2, "Attempt to increase variable " + $1 + ", which is not mutable.");
-                                                                               $$ = new Empty();
-                                                                             }
+                                                                               if(tipo != ErrorType::getInstance())
+                                                                                 driver.error(@1, "Attempt to increase variable " + $1 + " which is not of type Polar");
+                                                                               }
+                                                                               $$ = new Empty( ErrorType::getInstance() );
                                                                            } else {
                                                                              driver.error(@1, @2, "Attempt to increase variable " + $1 + ", which is not declared.");
-                                                                             $$ = new Empty();
+                                                                             $$ = new Empty( ErrorType::getInstance());
                                                                            }
                                                                          }
            | ID "--" ";"                                                 { Contenido* c = driver.tabla.find_symbol($1,Var);
