@@ -35,7 +35,7 @@ ConstantExpr::ConstantExpr(std::string tipo, std::string valor)
 
 std::string ConstantExpr::to_string()
 {
-  return "Tipo: " + _tipo + "Valor: " + _valor + '\n';
+  return _valor;
 }
 
 SelectorExpr::SelectorExpr(Expression* condicion, Expression* brazoTrue, Expression* brazoFalse)

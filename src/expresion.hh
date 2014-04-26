@@ -11,7 +11,7 @@ class Expression : public Node
 public :
 
     Expression(){};
-    virtual std::string to_string(){ return "EXPRESIÓN BASE"; };
+    virtual std::string to_string(){ return ""; };
 };
 
 class BinaryExpr : public Expression

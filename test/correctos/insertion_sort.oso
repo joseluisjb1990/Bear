@@ -9,7 +9,7 @@ buscar_menor(cueva [] de polar cueva_elem , polar min, polar max) => polar
   min = cueva_elem[min];
 
   para i en (min + 1; max) {
-    si (cueva_elem[i] < min) entonces { min = cueva_elem[i]; }
+    si (cueva_elem[i] < min) { min = cueva_elem[i]; }
   }
 }
 
