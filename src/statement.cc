@@ -2,6 +2,7 @@
 #define STATEMENT_CC
 #include "statement.hh"
 #include <iostream>
+#include "type.hh"
 
 using namespace std;
 
@@ -255,6 +256,10 @@ std::string TagWhile::to_string()
 
 Empty::Empty()
   : Statement()
+  {}
+
+Empty::Empty(Type* type)
+  : Statement( ErrorType::getInstance() )
   {}
 
 std::string Empty::to_string()

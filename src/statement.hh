@@ -12,6 +12,7 @@ class Statement : public Node
 public :
 
     Statement(){};
+    Statement(Type* type) : Node( type ) {}
     virtual std::string to_string(){ return "INSTRUCCIÓN:"; };
 };
 
@@ -19,7 +20,7 @@ class Assign : public Statement
 {
   private:
     std::vector<Expression*>* _ids;
-    std::vector<Expression*>*  _expr;
+    std::vector<Expression*>* _expr;
 
   public:
     Assign(std::vector<Expression*>* ids, std::vector<Expression*>* expr);
@@ -233,6 +234,7 @@ class Empty : public Statement
 {
   public:
     Empty();
+    Empty( Type* type );
     std::string to_string();
 };
 
