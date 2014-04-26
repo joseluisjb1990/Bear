@@ -164,7 +164,7 @@ std::vector<std::string>* extraerIds(std::vector<elementoLista>* ids);
 
 programa : definiciones "oso" "(" ")" "=>" EXTINTO           { driver.tabla.enter_scope();
                                                                std::vector<Parameter*>* paramVacio = new std::vector<Parameter*>();
-                                                               driver.tabla.add_function("oso",new ExtintoType(),@2.begin.line,@2.begin.column, @2.begin.line, @2.begin.column, paramVacio);
+                                                               driver.tabla.add_function("oso",ExtintoType::getInstance(),@2.begin.line,@2.begin.column, @2.begin.line, @2.begin.column, paramVacio);
                                                              }
            bloqueespecial                                    { driver.tabla.exit_scope();
                                                                $$ = $8;/* driver.AST = $$;*/
@@ -459,11 +459,11 @@ campo: tipo ID            { $$ = new CampoType($1,$2);
 
 
 tipo: PANDA       { $$ = PandaType::getInstance();                          }
-    | POLAR       { $$ = new PolarType();                                   }
-    | KODIAK      { $$ = new KodiakType();                                  }
-    | MALAYO      { $$ = new MalayoType();                                  }
-    | HORMIGUERO  { $$ = new HormigueroType();                              }
-    | EXTINTO     { $$ = new ExtintoType();                                 }
+    | POLAR       { $$ = PolarType::getInstance();                          }
+    | KODIAK      { $$ = KodiakType::getInstance();                         }
+    | MALAYO      { $$ = MalayoType::getInstance();                         }
+    | HORMIGUERO  { $$ = HormigueroType::getInstance();                     }
+    | EXTINTO     { $$ = ExtintoType::getInstance();                        }
     | ID          { Contenedor* c = driver.tabla.find_container($1);
                     if (!c) {
                       driver.error(@1, "Type " + $1 + " is not defined.");
@@ -513,7 +513,7 @@ instruccion: defvariable                                                 { $$ = 
            | SI expresion bloque SINO bloque                             { $$ = new IfElse($2, $3, $5);                                                 }
 
            | PARA ID EN "(" expresion ";" expresion ")"                  { driver.tabla.enter_scope();
-                                                                           PolarType* p = new PolarType();
+                                                                           PolarType* p = PolarType::getInstance();
                                                                            driver.tabla.add_symbol($2, p, Var, @2.begin.line, @2.begin.column, @2.end.line, @2.end.column, false);
                                                                          }
              bloqueespecial                                              {
@@ -522,7 +522,7 @@ instruccion: defvariable                                                 { $$ = 
                                                                          }
            | PARA ID error "(" expresion ";" expresion ")"               { driver.tabla.enter_scope();
                                                                            yyerrok;
-                                                                           PolarType* p = new PolarType();
+                                                                           PolarType* p = PolarType::getInstance();
                                                                            driver.tabla.add_symbol($2, p, Var, @2.begin.line, @2.begin.column, @2.end.line, @2.end.column, false);
                                                                          }
              bloqueespecial                                              {
@@ -530,7 +530,7 @@ instruccion: defvariable                                                 { $$ = 
                                                                            $$ = new SimpleFor($2, $5, $7, $10);
                                                                          }
            | PARA ID EN "(" expresion ";" expresion ";" expresion ")"    { driver.tabla.enter_scope();
-                                                                           PolarType* p = new PolarType();
+                                                                           PolarType* p = PolarType::getInstance();
                                                                            driver.tabla.add_symbol($2, p, Var, @2.begin.line, @2.begin.column, @2.end.line, @2.end.column, false);
                                                                          }
              bloqueespecial                                              { driver.tabla.exit_scope();
@@ -538,7 +538,7 @@ instruccion: defvariable                                                 { $$ = 
                                                                          }
            | PARA ID error "(" expresion ";" expresion ";" expresion ")" { driver.tabla.enter_scope();
                                                                            yyerrok;
-                                                                           PolarType* p = new PolarType();
+                                                                           PolarType* p = PolarType::getInstance();
                                                                            driver.tabla.add_symbol($2, p, Var, @2.begin.line, @2.begin.column, @2.end.line, @2.end.column, false);
                                                                          }
              bloqueespecial                                              { driver.tabla.exit_scope();

@@ -64,6 +64,8 @@ bool PolarType::isSimple()
   return true;
 }
 
+PolarType* PolarType::_instance = 0;
+
 KodiakType::KodiakType()
   : Type(4)
   {}
@@ -77,6 +79,8 @@ bool KodiakType::isSimple()
 {
   return true;
 }
+
+KodiakType* KodiakType::_instance = 0;
 
 MalayoType::MalayoType()
   : Type(4)
@@ -92,6 +96,8 @@ bool MalayoType::isSimple()
   return true;
 }
 
+MalayoType* MalayoType::_instance = 0;
+
 ExtintoType::ExtintoType()
   : Type(4)
   {}
@@ -100,6 +106,8 @@ std::string ExtintoType::to_string()
 {
   return "extinto";
 }
+
+ExtintoType* ExtintoType::_instance = 0;
 
 bool ExtintoType::isSimple()
 {
@@ -119,6 +127,8 @@ bool HormigueroType::isSimple()
 {
   return true;
 }
+
+HormigueroType* HormigueroType::_instance = 0;
 
 CuevaType::CuevaType(Type* tipo, std::vector<Expression*>* longitudes)
   : Type(0)

@@ -85,48 +85,99 @@ class PandaType : public Type
     }
 
   private:
-    static PandaType* _instance;
     PandaType();
+    static PandaType* _instance;
 };
 
 class PolarType : public Type
 {
   public:
-    PolarType();
     std::string to_string();
     bool isSimple();
+    static PolarType* getInstance()
+    {
+      if(!_instance)
+        _instance = new PolarType();
+
+      return _instance;
+    }
+
+  private:
+    PolarType();
+    static PolarType* _instance;
+
 };
 
 class KodiakType : public Type
 {
   public:
-    KodiakType();
     std::string to_string();
     bool isSimple();
+    static KodiakType*getInstance()
+    {
+      if(!_instance)
+        _instance = new KodiakType();
+
+      return _instance;
+    }
+
+  private:
+    KodiakType();
+    static KodiakType* _instance;
 };
 
 class MalayoType : public Type
 {
   public:
-    MalayoType();
     std::string to_string();
     bool isSimple();
+    static MalayoType* getInstance()
+    {
+      if(!_instance)
+        _instance = new MalayoType();
+
+      return _instance;
+    }
+
+  private:
+    MalayoType();
+    static MalayoType* _instance;
 };
 
 class ExtintoType : public Type
 {
   public:
-    ExtintoType();
     std::string to_string();
     bool isSimple();
+    static ExtintoType* getInstance()
+    {
+      if(!_instance)
+        _instance = new ExtintoType();
+
+      return _instance;
+    }
+
+  private:
+    ExtintoType();
+    static ExtintoType* _instance;
 };
 
 class HormigueroType : public Type
 {
   public:
-    HormigueroType();
     std::string to_string();
     bool isSimple();
+    static HormigueroType* getInstance()
+    {
+      if(!_instance)
+        _instance = new HormigueroType();
+
+      return _instance;
+    }
+
+  private:
+    HormigueroType();
+    static HormigueroType* _instance;
 };
 
 class CuevaType : public Type
