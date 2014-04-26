@@ -4,10 +4,16 @@
 
 using namespace std;
 
+class Type;
+
 class Node
 {
 public:
+  Node() {}
+  Node(Type* type) : _type( type ) {}
   virtual std::string to_string() = 0;
 
+private:
+  Type* _type;
 };
 #endif
