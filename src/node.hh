@@ -11,6 +11,7 @@ class Node
 public:
   Node() {}
   Node(Type* type) : _type( type ) {}
+  Type* get_type() { return _type; }
   virtual std::string to_string() = 0;
 
 private:
