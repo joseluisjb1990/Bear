@@ -282,4 +282,10 @@ bool TagType::isSimple()
 {
   return true;
 }
+
+Tuple::Tuple(Type* izq, Type* der)
+  : Type(0)
+  , _izq( izq )
+  , _der( der )
+  {}
 #endif

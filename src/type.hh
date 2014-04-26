@@ -336,4 +336,14 @@ class TagType : public Type
     std::string to_string();
     bool isSimple();
 };
+
+class Tuple : public Type
+{
+  public:
+    Tuple(Type* izq, Type* der);
+  private:
+    Type* _izq;
+    Type* _der;
+};
+
 #endif
