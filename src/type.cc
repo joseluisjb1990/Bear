@@ -267,6 +267,8 @@ bool ErrorType::isSimple()
   return true;
 }
 
+ErrorType* ErrorType::_instance = 0;
+
 TagType::TagType()
   : Type(4)
   {}

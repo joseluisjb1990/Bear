@@ -467,7 +467,7 @@ tipo: PANDA       { $$ = PandaType::getInstance();                          }
     | ID          { Contenedor* c = driver.tabla.find_container($1);
                     if (!c) {
                       driver.error(@1, "Type " + $1 + " is not defined.");
-                      $$ = new ErrorType();
+                      $$ = ErrorType::getInstance();
                     } else {
                       $$ = c->getTipo();
                     }

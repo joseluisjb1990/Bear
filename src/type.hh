@@ -311,9 +311,18 @@ class GrizzliType : public Type
 class ErrorType : public Type
 {
   public:
-    ErrorType();
     std::string to_string();
     bool isSimple();
+    static ErrorType* getInstance()
+    {
+      if(!_instance)
+        _instance = new ErrorType();
+
+      return _instance;
+    }
+  private:
+    ErrorType();
+    static ErrorType* _instance;
 };
 
 /**
