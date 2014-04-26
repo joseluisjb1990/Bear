@@ -458,7 +458,7 @@ campo: tipo ID            { $$ = new CampoType($1,$2);
       ;
 
 
-tipo: PANDA       { $$ = new PandaType();                                   }
+tipo: PANDA       { $$ = PandaType::getInstance();                          }
     | POLAR       { $$ = new PolarType();                                   }
     | KODIAK      { $$ = new KodiakType();                                  }
     | MALAYO      { $$ = new MalayoType();                                  }

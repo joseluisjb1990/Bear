@@ -38,6 +38,8 @@ PandaType::PandaType()
   : Type(4)
   {}
 
+PandaType* PandaType::_instance = 0;
+
 std::string PandaType::to_string()
 {
   return "panda";

@@ -68,15 +68,25 @@ class Type
      *  Parámetros:
      *   Ninguno.
      */
-    virtual std::string getName() { return ""; }
+    virtual std::string getName() { return ""; };
 };
 
 class PandaType : public Type
 {
   public:
-    PandaType();
     std::string to_string();
     bool isSimple();
+    static PandaType* getInstance()
+    {
+      if(!_instance)
+        _instance = new PandaType();
+
+      return _instance;
+    }
+
+  private:
+    static PandaType* _instance;
+    PandaType();
 };
 
 class PolarType : public Type
