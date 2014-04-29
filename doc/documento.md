@@ -173,7 +173,25 @@ Por último tenemos el cuerpo de nuestra función principal `oso` que es una lis
 
 ## Reglas de alcance de variables
 
+
 En Bear existe alcance estático.
+
+El alcance mas externo corresponde a las declaraciones globales.
+Cada definición de función y de bloque correspondiente a instrucciones si, mientras y para introducen nuevos alcances.
+
+Los alcances internos ocultan a los externos.
+Pueden existir variables con el mismo nombre en diferentes alcances, en este caso la del alcance mas interno *tapa* a las de los alcances mas externos.
+
+Las funciones y tipos pardo y grizzli solo pueden ser declaradas en el alcance global.
+
+Las variables pueden ser declaradas en cualquier alcance y son visibles solamente para las lineas que siguen a su declaración.
+
+No pueden declararse dos variables con el mismo nombre en el mismo alcance.
+
+No pueden declararse dos funciones con el mismo nombre.
+
+En un mismo alcance pueden existir una función, una variable y una declaración de tipo (pardo/grizzli) con el mismo nombre.
+Una declaración de variable nunca oculta a la de una función o una declaración de tipo (pardo/grizzli).
 
 
 ## Tipos de datos
