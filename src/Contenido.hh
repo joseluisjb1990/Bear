@@ -15,9 +15,11 @@
  *    30/03/2014
  */
 
-#include "type.hh"
-#include "definition.hh"
-
+#ifndef CONTENIDO_HH
+#define CONTENIDO_HH
+#include <vector>
+class Type;
+class Parameter;
 /**
  * Macros para establecer la distancia entre las columnas y el separador cuando se imprimen
  * instancias de la clase.
@@ -199,10 +201,9 @@ class Funcion : public Contenido
     /* Retorna un string con una representación de la instancia de la clase */
     std::string to_string();
 
-    /* Getter para el vector de parámetros */
     std::vector<Parameter*> * get_parameters() { return _parametros; };
 
   private:
-
-    std::vector<Parameter*>* _parametros; /* Vector que representa los parámetros con que se define una función */
+    std::vector<Parameter*>* _parametros;
 };
+#endif

@@ -13,6 +13,8 @@
  *    30/03/2014
  */
 
+#ifndef STATEMENT_CC
+#define STATEMENT_CC
 # include <iostream>
 # include <string>
 # include "Contenido.hh"
@@ -110,7 +112,7 @@ Funcion::Funcion ( Type* tipo
                  , std::vector<Parameter*>* parametros
                  )
   : Contenido(tipo, Proc, alcance, linea, columna, false)
-  , _parametros ( parametros )
+  , _parametros( parametros )
   {}
 
 Funcion::Funcion ( Type* tipo
@@ -122,7 +124,7 @@ Funcion::Funcion ( Type* tipo
                  , std::vector<Parameter*>* parametros
                  )
   : Contenido(tipo, Proc, alcance, lineaDec, columnaDec, lineaDef, columnaDef, false)
-  , _parametros ( parametros )
+  , _parametros( parametros )
   {}
 
 std::string return_category(Categorias cat)
@@ -141,7 +143,7 @@ std::string return_category(Categorias cat)
 }
 std::string Contenido::to_string()
 {
-  std::string tipo        = std::string(_tipo->to_string());
+  std::string tipo        = "";
   std::string categoria   = std::to_string(_categoria);
   std::string alcance     = std::to_string(_alcance);
   std::string lineaDec    = std::to_string(_lineaDec);
@@ -187,10 +189,7 @@ std::string Contenido::to_string()
 std::string Contenedor::to_string()
 {
 
-  std::string tipo;
-  if      (dynamic_cast<GrizzliType*>(getTipo())) { tipo = "grizzli"; }
-  else if (dynamic_cast<PardoType*>  (getTipo())) { tipo = "pardo"; }
-
+  std::string tipo = "";
   std::string categoria     = std::to_string(getCategoria()         );
   std::string alcance       = std::to_string(getAlcance()           );
   std::string lineaDec      = std::to_string(getLineaDec()          );
@@ -236,7 +235,7 @@ std::string Contenedor::to_string()
 
 std::string Funcion::to_string()
 {
-  std::string tipo          = std::string   (getTipo()->to_string()  );
+  std::string tipo          = "";
   std::string categoria     = std::to_string(getCategoria()         );
   std::string alcance       = std::to_string(getAlcance()           );
   std::string lineaDec      = std::to_string(getLineaDec()          );
@@ -246,12 +245,6 @@ std::string Funcion::to_string()
   std::string mutab         = std::to_string(getMutabilidad()       );
   std::string def           = std::to_string(getDef()               );
   std::string cat           = return_category(getCategoria());
-
-  std::string param = "";
-  for(std::vector<Parameter*>::iterator it = _parametros->begin(); it != _parametros->end(); ++it)
-  {
-    param += (*it)->to_string() + SEPARADOR;
-  }
 
    if(getDef())
   {
@@ -265,7 +258,6 @@ std::string Funcion::to_string()
           +                 std::string(SMALL_WIDTH                             , ' ') + SEPARADOR
           + def           + std::string(SMALL_WIDTH   - def.length()            , ' ') + SEPARADOR
           + cat           + std::string(SMALL_WIDTH   - cat.length()            , ' ') + SEPARADOR
-          + param
           ;
   }
   else
@@ -280,8 +272,9 @@ std::string Funcion::to_string()
           +                 std::string(SMALL_WIDTH                             , ' ') + SEPARADOR
           + def           + std::string(SMALL_WIDTH   - def.length()            , ' ') + SEPARADOR
           + cat           + std::string(SMALL_WIDTH   - cat.length()            , ' ') + SEPARADOR
-          + param
           ;
 
   }
 }
+
+#endif
