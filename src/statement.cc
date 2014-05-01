@@ -175,6 +175,19 @@ std::string Increase::to_string()
   return "Nodo incremento a la variable " + _id + '\n';
 }
 
+bool Increase::check_type()
+{
+  TablaSimbolos* table = get_table();
+  Contenido* c = table->find_symbol(_id,Var);
+  Type* t = c->getTipo();
+  if(t != PolarType::getInstance())
+  {
+    cout << "Error during type checking : attempt to increase variable " + _id + "  which is not of type POLAR";
+    return false;
+  }
+  return true;
+}
+
 Decrement::Decrement(std::string id)
   : Statement()
   , _id( id )

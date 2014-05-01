@@ -158,6 +158,7 @@ class Increase : public Statement
   public:
     Increase(std::string id);
     std::string to_string();
+    bool check_type();
 
   private:
     std::string _id;
