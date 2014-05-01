@@ -15,6 +15,7 @@ public:
   virtual std::string to_string() = 0;
   void set_table(TablaSimbolos* table) { _table = table; }
   TablaSimbolos* get_table() { return _table; }
+  virtual bool check_type() { return true; }
 
 private:
   Type* _type;
