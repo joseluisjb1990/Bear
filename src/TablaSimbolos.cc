@@ -14,6 +14,8 @@
  *    30/03/2014
  */
 
+#ifndef TABLASIMBOLOS_CC
+#define TABLASIMBOLOS_CC
 #include "TablaSimbolos.hh"
 #include <algorithm>
 
@@ -297,3 +299,4 @@ Contenedor* TablaSimbolos::find_container (string nombre)
   }
   return nullptr;
 }
+#endif

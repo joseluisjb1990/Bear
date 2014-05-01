@@ -17,6 +17,8 @@
  *    30/03/2014
  */
 
+#ifndef TABLASIMBOLOS_HH
+#define TABLASIMBOLOS_HH
 #include <iostream>
 #include <iomanip>
 #include <map>
@@ -24,7 +26,9 @@
 #include <stack>
 #include <vector>
 #include "Contenido.hh"
-#include "type.hh"
+
+class Type;
+class Parameter;
 
 using namespace std;
 
@@ -267,3 +271,4 @@ public:
                          , unsigned int alcance
                          );
 };
+#endif

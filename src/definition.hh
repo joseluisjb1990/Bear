@@ -4,8 +4,9 @@
 #include <vector>
 #include "expresion.hh"
 #include "statement.hh"
-#include "node.hh"
 #include "type.hh"
+
+class Expression;
 
 using namespace std;
 
