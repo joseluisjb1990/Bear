@@ -130,7 +130,7 @@ bool HormigueroType::isSimple()
 
 HormigueroType* HormigueroType::_instance = 0;
 
-CuevaType::CuevaType(Type* tipo, std::vector<Expression*>* longitudes)
+CuevaType::CuevaType(Type* tipo, std::vector<std::string>* longitudes)
   : Type(0)
   , _tipo       ( tipo       )
   , _longitudes ( longitudes )
@@ -140,7 +140,9 @@ int CuevaType::getSize()
 {
   int size = _tipo->getSize();
   for (unsigned int i=0; i<_longitudes->size(); ++i)
-    size = size * std::stoi(_longitudes->at(i)->to_string());
+    if ("" != _longitudes->at(i)) {
+      size = size * std::stoi(_longitudes->at(i));
+    }
   return size;
 }
 
@@ -148,7 +150,7 @@ std::string CuevaType::to_string()
 {
   std::string str(_tipo->to_string());
   for (unsigned int i=0; i<_longitudes->size(); ++i)
-    str += "[" + _longitudes->at(i)->to_string() + "]";
+    str += "[" + _longitudes->at(i) + "]";
   return str;
 }
 

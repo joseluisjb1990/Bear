@@ -29,13 +29,15 @@ public:
   unsigned int get_first_column() { return _columnaI; }
   unsigned int get_last_line()    { return _filaF;    }
   unsigned int get_last_column()  { return _columnaF; }
+  void error(std::string msg) { cout << "Error between " << get_first_line() << "." << get_first_column() << " and " << get_last_line() << "." << get_last_column() << msg; }
 
 private:
   Type* _type;
   TablaSimbolos* _table;
-  unsigned int _filaI;
-  unsigned int _columnaI;
-  unsigned int _filaF;
-  unsigned int _columnaF;
+  unsigned int   _filaI;
+  unsigned int   _columnaI;
+  unsigned int   _filaF;
+  unsigned int   _columnaF;
+
 };
 #endif

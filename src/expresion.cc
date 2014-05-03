@@ -4,6 +4,13 @@
 
 using namespace std;
 
+Expression::Expression() {}
+
+std::string Expression::to_string()
+{
+  return "";
+}
+
 PolarExpr::PolarExpr(std::string valor)
   : valor ( valor )
   {}
@@ -96,8 +103,7 @@ void Sum::check()
   } else if ( t1 == ErrorType::getInstance() or t2 == ErrorType::getInstance() ) {
     this->set_type(ErrorType::getInstance());
   } else {
-    std::string msg = "Cannot apply operator + between " + t1->to_string() + " and " + t2->to_string() + "types.\n";
-    cout << "Error between " << this->get_first_line() << "." << this->get_first_column() << " and " << this->get_last_line() << "." << this->get_last_column() << msg;
+    error("Cannot apply operator + between " + t1->to_string() + " and " + t2->to_string() + "types.\n");
     this->set_type(ErrorType::getInstance());
   }
 }
@@ -124,8 +130,7 @@ void Substraction::check()
   } else if ( t1 == ErrorType::getInstance() or t2 == ErrorType::getInstance() ) {
     this->set_type(ErrorType::getInstance());
   } else {
-    std::string msg = "Cannot apply operator - between " + t1->to_string() + " and " + t2->to_string() + "types.\n";
-    cout << "Error between " << this->get_first_line() << "." << this->get_first_column() << " and " << this->get_last_line() << "." << this->get_last_column() << msg;
+    error("Cannot apply operator - between " + t1->to_string() + " and " + t2->to_string() + "types.\n");
     this->set_type(ErrorType::getInstance());
   }
 }
@@ -152,8 +157,7 @@ void Multiplication::check()
   } else if ( t1 == ErrorType::getInstance() or t2 == ErrorType::getInstance() ) {
     this->set_type(ErrorType::getInstance());
   } else {
-    std::string msg = "Cannot apply operator * between " + t1->to_string() + " and " + t2->to_string() + "types.\n";
-    cout << "Error between " << this->get_first_line() << "." << this->get_first_column() << " and " << this->get_last_line() << "." << this->get_last_column() << msg;
+    error("Cannot apply operator * between " + t1->to_string() + " and " + t2->to_string() + "types.\n");
     this->set_type(ErrorType::getInstance());
   }
 }
@@ -180,8 +184,7 @@ void Division::check()
   } else if ( t1 == ErrorType::getInstance() or t2 == ErrorType::getInstance() ) {
     this->set_type(ErrorType::getInstance());
   } else {
-    std::string msg = "Cannot apply operator / between " + t1->to_string() + " and " + t2->to_string() + "types.\n";
-    cout << "Error between " << this->get_first_line() << "." << this->get_first_column() << " and " << this->get_last_line() << "." << this->get_last_column() << msg;
+    error("Cannot apply operator / between " + t1->to_string() + " and " + t2->to_string() + "types.\n");
     this->set_type(ErrorType::getInstance());
   }
 }
@@ -208,8 +211,7 @@ void Remainder::check()
   } else if ( t1 == ErrorType::getInstance() or t2 == ErrorType::getInstance() ) {
     this->set_type(ErrorType::getInstance());
   } else {
-    std::string msg = "Cannot apply operator % between " + t1->to_string() + " and " + t2->to_string() + "types.\n";
-    cout << "Error between " << this->get_first_line() << "." << this->get_first_column() << " and " << this->get_last_line() << "." << this->get_last_column() << msg;
+    error("Cannot apply operator % between " + t1->to_string() + " and " + t2->to_string() + "types.\n");
     this->set_type(ErrorType::getInstance());
   }
 }
@@ -236,8 +238,7 @@ void Power::check()
   } else if ( t1 == ErrorType::getInstance() or t2 == ErrorType::getInstance() ) {
     this->set_type(ErrorType::getInstance());
   } else {
-    std::string msg = "Cannot apply operator ** between " + t1->to_string() + " and " + t2->to_string() + "types.\n";
-    cout << "Error between " << this->get_first_line() << "." << this->get_first_column() << " and " << this->get_last_line() << "." << this->get_last_column() << msg;
+    error("Cannot apply operator ** between " + t1->to_string() + " and " + t2->to_string() + "types.\n");
     this->set_type(ErrorType::getInstance());
   }
 }
@@ -259,8 +260,7 @@ void Minus::check()
   if ( t == PolarType::getInstance() or t == KodiakType::getInstance() or t == ErrorType::getInstance() ) {
     this->set_type(t);
   } else {
-    std::string msg = "Cannot apply operator - to " + t->to_string() + " types.\n";
-    cout << "Error between " << this->get_first_line() << "." << this->get_first_column() << " and " << this->get_last_line() << "." << this->get_last_column() << msg;
+    error("Cannot apply operator - to " + t->to_string() + " types.\n");
     this->set_type(ErrorType::getInstance());
   }
 }
@@ -287,8 +287,7 @@ void Less::check()
   } else if ( t1 == ErrorType::getInstance() or t2 == ErrorType::getInstance() ) {
     this->set_type(ErrorType::getInstance());
   } else {
-    std::string msg = "Cannot apply operator < between " + t1->to_string() + " and " + t2->to_string() + "types.\n";
-    cout << "Error between " << this->get_first_line() << "." << this->get_first_column() << " and " << this->get_last_line() << "." << this->get_last_column() << msg;
+    error("Cannot apply operator < between " + t1->to_string() + " and " + t2->to_string() + "types.\n");
     this->set_type(ErrorType::getInstance());
   }
 }
@@ -315,8 +314,7 @@ void LessEqual::check()
   } else if ( t1 == ErrorType::getInstance() or t2 == ErrorType::getInstance() ) {
     this->set_type(ErrorType::getInstance());
   } else {
-    std::string msg = "Cannot apply operator =< between " + t1->to_string() + " and " + t2->to_string() + "types.\n";
-    cout << "Error between " << this->get_first_line() << "." << this->get_first_column() << " and " << this->get_last_line() << "." << this->get_last_column() << msg;
+    error("Cannot apply operator =< between " + t1->to_string() + " and " + t2->to_string() + "types.\n");
     this->set_type(ErrorType::getInstance());
   }
 }
@@ -344,8 +342,7 @@ void Greater::check()
   } else if ( t1 == ErrorType::getInstance() or t2 == ErrorType::getInstance() ) {
     this->set_type(ErrorType::getInstance());
   } else {
-    std::string msg = "Cannot apply operator > between " + t1->to_string() + " and " + t2->to_string() + "types.\n";
-    cout << "Error between " << this->get_first_line() << "." << this->get_first_column() << " and " << this->get_last_line() << "." << this->get_last_column() << msg;
+    error("Cannot apply operator > between " + t1->to_string() + " and " + t2->to_string() + "types.\n");
     this->set_type(ErrorType::getInstance());
   }
 }
@@ -373,8 +370,7 @@ void GreaterEqual::check()
   } else if ( t1 == ErrorType::getInstance() or t2 == ErrorType::getInstance() ) {
     this->set_type(ErrorType::getInstance());
   } else {
-    std::string msg = "Cannot apply operator >= between " + t1->to_string() + " and " + t2->to_string() + "types.\n";
-    cout << "Error between " << this->get_first_line() << "." << this->get_first_column() << " and " << this->get_last_line() << "." << this->get_last_column() << msg;
+    error("Cannot apply operator >= between " + t1->to_string() + " and " + t2->to_string() + "types.\n");
     this->set_type(ErrorType::getInstance());
   }
 }
@@ -402,8 +398,7 @@ void Equal::check()
   } else if ( t1 == ErrorType::getInstance() or t2 == ErrorType::getInstance() ) {
     this->set_type(ErrorType::getInstance());
   } else {
-    std::string msg = "Cannot apply operator == between " + t1->to_string() + " and " + t2->to_string() + "types.\n";
-    cout << "Error between " << this->get_first_line() << "." << this->get_first_column() << " and " << this->get_last_line() << "." << this->get_last_column() << msg;
+    error("Cannot apply operator == between " + t1->to_string() + " and " + t2->to_string() + "types.\n");
     this->set_type(ErrorType::getInstance());
   }
 }
@@ -431,8 +426,7 @@ void NotEqual::check()
   } else if ( t1 == ErrorType::getInstance() or t2 == ErrorType::getInstance() ) {
     this->set_type(ErrorType::getInstance());
   } else {
-    std::string msg = "Cannot apply operator =/= between " + t1->to_string() + " and " + t2->to_string() + "types.\n";
-    cout << "Error between " << this->get_first_line() << "." << this->get_first_column() << " and " << this->get_last_line() << "." << this->get_last_column() << msg;
+    error("Cannot apply operator =/= between " + t1->to_string() + " and " + t2->to_string() + "types.\n");
     this->set_type(ErrorType::getInstance());
   }
 }
@@ -460,8 +454,7 @@ void And::check()
   } else if ( t1 == ErrorType::getInstance() or t2 == ErrorType::getInstance() ) {
     this->set_type(ErrorType::getInstance());
   } else {
-    std::string msg = "Cannot apply operator & between " + t1->to_string() + " and " + t2->to_string() + "types.\n";
-    cout << "Error between " << this->get_first_line() << "." << this->get_first_column() << " and " << this->get_last_line() << "." << this->get_last_column() << msg;
+    error("Cannot apply operator & between " + t1->to_string() + " and " + t2->to_string() + "types.\n");
     this->set_type(ErrorType::getInstance());
   }
 }
@@ -489,8 +482,7 @@ void Or::check()
   } else if ( t1 == ErrorType::getInstance() or t2 == ErrorType::getInstance() ) {
     this->set_type(ErrorType::getInstance());
   } else {
-    std::string msg = "Cannot apply operator | between " + t1->to_string() + " and " + t2->to_string() + "types.\n";
-    cout << "Error between " << this->get_first_line() << "." << this->get_first_column() << " and " << this->get_last_line() << "." << this->get_last_column() << msg;
+    error("Cannot apply operator | between " + t1->to_string() + " and " + t2->to_string() + "types.\n");
     this->set_type(ErrorType::getInstance());
   }
 }
@@ -513,8 +505,7 @@ void Not::check()
   if ( t == PandaType::getInstance() ) {
     this->set_type(t);
   } else {
-    std::string msg = "Cannot apply operator not to " + t->to_string() + " types.\n";
-    cout << "Error between " << this->get_first_line() << "." << this->get_first_column() << " and " << this->get_last_line() << "." << this->get_last_column() << msg;
+    error("Cannot apply operator not to " + t->to_string() + " types.\n");
     this->set_type(ErrorType::getInstance());
   }
 }
