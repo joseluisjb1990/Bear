@@ -20,6 +20,8 @@
 #include <vector>
 #include "expresion.hh"
 
+class Expression;
+
 using namespace std;
 
 class Type

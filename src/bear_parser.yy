@@ -801,11 +801,11 @@ expresiones: expresion                   { $$ = new std::vector<Expression*>(); 
 %nonassoc UNARIO;
 %right "**";
 
-expresion: CONSTPOLAR                            { $$ = new ConstantExpr(std::string("polar")     , $1);        }
-         | CONSTKODIAK                           { $$ = new ConstantExpr(std::string("kodiak")    , $1);        }
-         | CONSTHORMIGUERO                       { $$ = new ConstantExpr(std::string("hormiguero"), $1);        }
-         | CONSTMALAYO                           { $$ = new ConstantExpr(std::string("malayo")    , $1);        }
-         | lvalue                                { $$ = $1;                                                     }
+expresion: CONSTPOLAR                            { $$ = new PolarExpr($1);      }
+         | CONSTKODIAK                           { $$ = new KodiakExpr($1);     }
+         | CONSTHORMIGUERO                       { $$ = new HormigueroExpr($1); }
+         | CONSTMALAYO                           { $$ = new MalayoExpr($1);     }
+         | lvalue                                { $$ = $1;                     }
          | ID "(" expresiones ")"                { Funcion* f = driver.tabla.get_function($1);
                                                    if (!f) {
                                                      driver.error(@1,@4,"Function " + $1 + " is not defined.");
@@ -814,42 +814,42 @@ expresion: CONSTPOLAR                            { $$ = new ConstantExpr(std::st
                                                      $$ = new FunctionExpr($1, $3);
                                                    }
                                                  }
-         | funcionpredef                         { $$ = $1;                                                     }
-         | BLANCO                                { $$ = new ConstantExpr(std::string("panda"), $1    );         }
-         | NEGRO                                 { $$ = new ConstantExpr(std::string("panda"), $1    );         }
-         | expresion "<"   expresion             { $$ = new BinaryExpr  (std::string("<"  )  , $1, $3);         }
-         | expresion "=<"  expresion             { $$ = new BinaryExpr  (std::string("=<" )  , $1, $3);         }
-         | expresion ">"   expresion             { $$ = new BinaryExpr  (std::string(">"  )  , $1, $3);         }
-         | expresion ">="  expresion             { $$ = new BinaryExpr  (std::string(">=" )  , $1, $3);         }
-         | expresion "=="  expresion             { $$ = new BinaryExpr  (std::string("==" )  , $1, $3);         }
-         | expresion "=/=" expresion             { $$ = new BinaryExpr  (std::string("=/=")  , $1, $3);         }
-         | expresion "|"   expresion             { $$ = new BinaryExpr  (std::string("|"  )  , $1, $3);         }
-         | expresion "&"   expresion             { $$ = new BinaryExpr  (std::string("&"  )  , $1, $3);         }
-         | "no" expresion                        { $$ = new UnaryExpr   (std::string("no" )  , $2    );         }
-         | expresion "+"  expresion              { $$ = new BinaryExpr  (std::string("+"  )  , $1, $3);         }
-         | expresion "-"  expresion              { $$ = new BinaryExpr  (std::string("-"  )  , $1, $3);         }
-         | expresion "**" expresion              { $$ = new BinaryExpr  (std::string("**" )  , $1, $3);         }
-         | expresion "*"  expresion              { $$ = new BinaryExpr  (std::string("*"  )  , $1, $3);         }
-         | expresion "/"  expresion              { $$ = new BinaryExpr  (std::string("/"  )  , $1, $3);         }
-         | expresion "%"  expresion              { $$ = new BinaryExpr  (std::string("%"  )  , $1, $3);         }
-         | "-" expresion %prec UNARIO            { $$ = new UnaryExpr   (std::string("-"  )  , $2    );         }
-         | "(" expresion ")"                     { $$ = $2;                                                     }
-         | expresion "?" expresion ":" expresion { $$ = new SelectorExpr ($1                  , $3, $5);        }
+         | funcionpredef                         { $$ = $1;                              }
+         | BLANCO                                { $$ = new PandaExpr      ($1    );     }
+         | NEGRO                                 { $$ = new PandaExpr      ($1    );     }
+         | expresion "<"   expresion             { $$ = new Less           ($1, $3);     }
+         | expresion "=<"  expresion             { $$ = new LessEqual      ($1, $3);     }
+         | expresion ">"   expresion             { $$ = new Greater        ($1, $3);     }
+         | expresion ">="  expresion             { $$ = new GreaterEqual   ($1, $3);     }
+         | expresion "=="  expresion             { $$ = new Equal          ($1, $3);     }
+         | expresion "=/=" expresion             { $$ = new NotEqual       ($1, $3);     }
+         | expresion "|"   expresion             { $$ = new Or             ($1, $3);     }
+         | expresion "&"   expresion             { $$ = new And            ($1, $3);     }
+         | "no" expresion                        { $$ = new Not            ($2    );     }
+         | expresion "+"  expresion              { $$ = new Sum            ($1, $3);     }
+         | expresion "-"  expresion              { $$ = new Substraction   ($1, $3);     }
+         | expresion "**" expresion              { $$ = new Power          ($1, $3);     }
+         | expresion "*"  expresion              { $$ = new Multiplication ($1, $3);     }
+         | expresion "/"  expresion              { $$ = new Division       ($1, $3);     }
+         | expresion "%"  expresion              { $$ = new Remainder      ($1, $3);     }
+         | "-" expresion %prec UNARIO            { $$ = new Minus          ($2    );     }
+         | "(" expresion ")"                     { $$ = $2;                              }
+         | expresion "?" expresion ":" expresion { $$ = new SelectorExpr   ($1, $3, $5); }
          ;
 
 
 
 
-funcionpredef: APANDA  "(" expresion ")" { $$ = new UnaryExpr($1, $3); }
-             | APANDA  "(" error     ")" { $$ = new EmptyExpr();       }
-             | AKODIAK "(" expresion ")" { $$ = new UnaryExpr($1, $3); }
-             | AKODIAK "(" error     ")" { $$ = new EmptyExpr();       }
-             | AMALAYO "(" expresion ")" { $$ = new UnaryExpr($1, $3); }
-             | AMALAYO "(" error     ")" { $$ = new EmptyExpr();       }
-             | APOLAR  "(" expresion ")" { $$ = new UnaryExpr($1, $3); }
-             | APOLAR  "(" error     ")" { $$ = new EmptyExpr();       }
-             | LON     "(" expresion ")" { $$ = new UnaryExpr($1, $3); }
-             | LON     "(" error     ")" { $$ = new EmptyExpr();       }
+funcionpredef: APANDA  "(" expresion ")" { $$ = nullptr; /* $$ = new UnaryExpr($1, $3);*/ }
+             | APANDA  "(" error     ")" { $$ = nullptr; /* $$ = new EmptyExpr();      */ }
+             | AKODIAK "(" expresion ")" { $$ = nullptr; /* $$ = new UnaryExpr($1, $3);*/ }
+             | AKODIAK "(" error     ")" { $$ = nullptr; /* $$ = new EmptyExpr();      */ }
+             | AMALAYO "(" expresion ")" { $$ = nullptr; /* $$ = new UnaryExpr($1, $3);*/ }
+             | AMALAYO "(" error     ")" { $$ = nullptr; /* $$ = new EmptyExpr();      */ }
+             | APOLAR  "(" expresion ")" { $$ = nullptr; /* $$ = new UnaryExpr($1, $3);*/ }
+             | APOLAR  "(" error     ")" { $$ = nullptr; /* $$ = new EmptyExpr();      */ }
+             | LON     "(" expresion ")" { $$ = nullptr; /* $$ = new UnaryExpr($1, $3);*/ }
+             | LON     "(" error     ")" { $$ = nullptr; /* $$ = new EmptyExpr();      */ }
              ;
 
 %%

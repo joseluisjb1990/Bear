@@ -4,38 +4,519 @@
 
 using namespace std;
 
-BinaryExpr::BinaryExpr(std::string operador, Expression *izq, Expression *der)
-  : Expression()
-  , _operador( operador )
-  , _izq( izq )
-  , _der( der )
+PolarExpr::PolarExpr(std::string valor)
+  : valor ( valor )
   {}
 
-std::string BinaryExpr::to_string()
+std::string PolarExpr::to_string()
 {
-  return _operador + " expr izquierda " + _izq->to_string() + " expr derecha " + _der->to_string() + '\n';
+  return "Constante polar, valor: " + getValue();
 }
 
-UnaryExpr::UnaryExpr(std::string operador, Expression *operando)
-  : Expression()
-  , _operador( operador )
-  , _operando( operando )
-  {}
-
-std::string UnaryExpr::to_string()
+std::string PolarExpr::getValue()
 {
-  return _operador + " operando " + _operando->to_string() + '\n';
+  return valor;
 }
 
-ConstantExpr::ConstantExpr(std::string tipo, std::string valor)
-  : Expression()
-  , _tipo( tipo )
-  , _valor( valor )
+KodiakExpr::KodiakExpr(std::string valor)
+  : valor ( valor )
   {}
 
-std::string ConstantExpr::to_string()
+std::string KodiakExpr::to_string()
 {
-  return _valor;
+  return "Constante kodiak, valor: " + getValue();
+}
+
+std::string KodiakExpr::getValue()
+{
+  return valor;
+}
+
+HormigueroExpr::HormigueroExpr(std::string valor)
+  : valor ( valor )
+  {}
+
+std::string HormigueroExpr::to_string()
+{
+  return "Constante hormiguero, valor: " + getValue();
+}
+
+std::string HormigueroExpr::getValue()
+{
+  return valor;
+}
+
+MalayoExpr::MalayoExpr(std::string valor)
+  : valor ( valor )
+  {}
+
+std::string MalayoExpr::to_string()
+{
+  return "Constante malayo, valor: " + getValue();
+}
+
+std::string MalayoExpr::getValue()
+{
+  return valor;
+}
+
+PandaExpr::PandaExpr(std::string valor)
+  : valor ( valor )
+  {}
+
+std::string PandaExpr::to_string()
+{
+  return "Constante panda, valor: " + getValue();
+}
+
+std::string PandaExpr::getValue()
+{
+  return valor;
+}
+
+Sum::Sum(Expression* izq, Expression* der)
+  : izq ( izq )
+  , der ( der )
+  {}
+
+std::string Sum::to_string()
+{
+  return "Operación: Suma.\nOperando izquierdo: " + izq->to_string() + "\nOperando derecho: " + der->to_string() + "\n";
+}
+
+void Sum::check()
+{
+  izq->check();
+  der->check();
+  Type* t1 = izq->get_type();
+  Type* t2 = der->get_type();
+
+  if ( t1 == t2 and (t1 == PolarType::getInstance() or t1 == KodiakType::getInstance()) ) {
+    this->set_type(t1);
+  } else if ( t1 == ErrorType::getInstance() or t2 == ErrorType::getInstance() ) {
+    this->set_type(ErrorType::getInstance());
+  } else {
+    std::string msg = "Cannot apply operator + between " + t1->to_string() + " and " + t2->to_string() + "types.\n";
+    cout << "Error between " << this->get_first_line() << "." << this->get_first_column() << " and " << this->get_last_line() << "." << this->get_last_column() << msg;
+    this->set_type(ErrorType::getInstance());
+  }
+}
+
+Substraction::Substraction(Expression* izq, Expression* der)
+  : izq ( izq )
+  , der ( der )
+  {}
+
+std::string Substraction::to_string()
+{
+  return "Operación: Resta.\nOperando izquierdo: " + izq->to_string() + "\nOperando derecho: " + der->to_string() + "\n";
+}
+
+void Substraction::check()
+{
+  izq->check();
+  der->check();
+  Type* t1 = izq->get_type();
+  Type* t2 = der->get_type();
+
+  if ( t1 == t2 and (t1 == PolarType::getInstance() or t1 == KodiakType::getInstance()) ) {
+    this->set_type(t1);
+  } else if ( t1 == ErrorType::getInstance() or t2 == ErrorType::getInstance() ) {
+    this->set_type(ErrorType::getInstance());
+  } else {
+    std::string msg = "Cannot apply operator - between " + t1->to_string() + " and " + t2->to_string() + "types.\n";
+    cout << "Error between " << this->get_first_line() << "." << this->get_first_column() << " and " << this->get_last_line() << "." << this->get_last_column() << msg;
+    this->set_type(ErrorType::getInstance());
+  }
+}
+
+Multiplication::Multiplication(Expression* izq, Expression* der)
+  : izq ( izq )
+  , der ( der )
+  {}
+
+std::string Multiplication::to_string()
+{
+  return "Operación: Multiplicación.\nOperando izquierdo: " + izq->to_string() + "\nOperando derecho: " + der->to_string() + "\n";
+}
+
+void Multiplication::check()
+{
+  izq->check();
+  der->check();
+  Type* t1 = izq->get_type();
+  Type* t2 = der->get_type();
+
+  if ( t1 == t2 and (t1 == PolarType::getInstance() or t1 == KodiakType::getInstance()) ) {
+    this->set_type(t1);
+  } else if ( t1 == ErrorType::getInstance() or t2 == ErrorType::getInstance() ) {
+    this->set_type(ErrorType::getInstance());
+  } else {
+    std::string msg = "Cannot apply operator * between " + t1->to_string() + " and " + t2->to_string() + "types.\n";
+    cout << "Error between " << this->get_first_line() << "." << this->get_first_column() << " and " << this->get_last_line() << "." << this->get_last_column() << msg;
+    this->set_type(ErrorType::getInstance());
+  }
+}
+
+Division::Division(Expression* izq, Expression* der)
+  : izq ( izq )
+  , der ( der )
+  {}
+
+std::string Division::to_string()
+{
+  return "Operación: División.\nOperando izquierdo: " + izq->to_string() + "\nOperando derecho: " + der->to_string() + "\n";
+}
+
+void Division::check()
+{
+  izq->check();
+  der->check();
+  Type* t1 = izq->get_type();
+  Type* t2 = der->get_type();
+
+  if ( t1 == t2 and (t1 == PolarType::getInstance() or t1 == KodiakType::getInstance()) ) {
+    this->set_type(t1);
+  } else if ( t1 == ErrorType::getInstance() or t2 == ErrorType::getInstance() ) {
+    this->set_type(ErrorType::getInstance());
+  } else {
+    std::string msg = "Cannot apply operator / between " + t1->to_string() + " and " + t2->to_string() + "types.\n";
+    cout << "Error between " << this->get_first_line() << "." << this->get_first_column() << " and " << this->get_last_line() << "." << this->get_last_column() << msg;
+    this->set_type(ErrorType::getInstance());
+  }
+}
+
+Remainder::Remainder(Expression* izq, Expression* der)
+  : izq ( izq )
+  , der ( der )
+  {}
+
+std::string Remainder::to_string()
+{
+  return "Operación: Módulo.\nOperando izquierdo: " + izq->to_string() + "\nOperando derecho: " + der->to_string() + "\n";
+}
+
+void Remainder::check()
+{
+  izq->check();
+  der->check();
+  Type* t1 = izq->get_type();
+  Type* t2 = der->get_type();
+
+  if ( t1 == t2 and (t1 == PolarType::getInstance() or t1 == KodiakType::getInstance()) ) {
+    this->set_type(t1);
+  } else if ( t1 == ErrorType::getInstance() or t2 == ErrorType::getInstance() ) {
+    this->set_type(ErrorType::getInstance());
+  } else {
+    std::string msg = "Cannot apply operator % between " + t1->to_string() + " and " + t2->to_string() + "types.\n";
+    cout << "Error between " << this->get_first_line() << "." << this->get_first_column() << " and " << this->get_last_line() << "." << this->get_last_column() << msg;
+    this->set_type(ErrorType::getInstance());
+  }
+}
+
+Power::Power(Expression* izq, Expression* der)
+  : izq ( izq )
+  , der ( der )
+  {}
+
+std::string Power::to_string()
+{
+  return "Operación: Potenciación.\nOperando izquierdo: " + izq->to_string() + "\nOperando derecho: " + der->to_string() + "\n";
+}
+
+void Power::check()
+{
+  izq->check();
+  der->check();
+  Type* t1 = izq->get_type();
+  Type* t2 = der->get_type();
+
+  if ( t1 == t2 and (t1 == PolarType::getInstance() or t1 == KodiakType::getInstance()) ) {
+    this->set_type(t1);
+  } else if ( t1 == ErrorType::getInstance() or t2 == ErrorType::getInstance() ) {
+    this->set_type(ErrorType::getInstance());
+  } else {
+    std::string msg = "Cannot apply operator ** between " + t1->to_string() + " and " + t2->to_string() + "types.\n";
+    cout << "Error between " << this->get_first_line() << "." << this->get_first_column() << " and " << this->get_last_line() << "." << this->get_last_column() << msg;
+    this->set_type(ErrorType::getInstance());
+  }
+}
+
+Minus::Minus(Expression* operando)
+  : operando ( operando )
+  {}
+
+std::string Minus::to_string()
+{
+  return "Operación: Menos.\nOperando: " + operando->to_string();
+}
+
+void Minus::check()
+{
+  operando->check();
+  Type* t = operando->get_type();
+
+  if ( t == PolarType::getInstance() or t == KodiakType::getInstance() or t == ErrorType::getInstance() ) {
+    this->set_type(t);
+  } else {
+    std::string msg = "Cannot apply operator - to " + t->to_string() + " types.\n";
+    cout << "Error between " << this->get_first_line() << "." << this->get_first_column() << " and " << this->get_last_line() << "." << this->get_last_column() << msg;
+    this->set_type(ErrorType::getInstance());
+  }
+}
+
+Less::Less(Expression* izq, Expression* der)
+  : izq ( izq )
+  , der ( der )
+  {}
+
+std::string Less::to_string()
+{
+  return "Operación: Menor que.\nOperando izquierdo: " + izq->to_string() + "\nOperando derecho: " + der->to_string() + "\n";
+}
+
+void Less::check()
+{
+  izq->check();
+  der->check();
+  Type* t1 = izq->get_type();
+  Type* t2 = der->get_type();
+
+  if ( t1 == t2 and (t1 == PolarType::getInstance() or t1 == KodiakType::getInstance() or t1 == MalayoType::getInstance()) ) {
+    this->set_type(PandaType::getInstance());
+  } else if ( t1 == ErrorType::getInstance() or t2 == ErrorType::getInstance() ) {
+    this->set_type(ErrorType::getInstance());
+  } else {
+    std::string msg = "Cannot apply operator < between " + t1->to_string() + " and " + t2->to_string() + "types.\n";
+    cout << "Error between " << this->get_first_line() << "." << this->get_first_column() << " and " << this->get_last_line() << "." << this->get_last_column() << msg;
+    this->set_type(ErrorType::getInstance());
+  }
+}
+
+LessEqual::LessEqual(Expression* izq, Expression* der)
+  : izq ( izq )
+  , der ( der )
+  {}
+
+std::string LessEqual::to_string()
+{
+  return "Operación: Menor igual que.\nOperando izquierdo: " + izq->to_string() + "\nOperando derecho: " + der->to_string() + "\n";
+}
+
+void LessEqual::check()
+{
+  izq->check();
+  der->check();
+  Type* t1 = izq->get_type();
+  Type* t2 = der->get_type();
+
+  if ( t1 == t2 and (t1 == PolarType::getInstance() or t1 == KodiakType::getInstance() or t1 == MalayoType::getInstance()) ) {
+    this->set_type(PandaType::getInstance());
+  } else if ( t1 == ErrorType::getInstance() or t2 == ErrorType::getInstance() ) {
+    this->set_type(ErrorType::getInstance());
+  } else {
+    std::string msg = "Cannot apply operator =< between " + t1->to_string() + " and " + t2->to_string() + "types.\n";
+    cout << "Error between " << this->get_first_line() << "." << this->get_first_column() << " and " << this->get_last_line() << "." << this->get_last_column() << msg;
+    this->set_type(ErrorType::getInstance());
+  }
+}
+
+
+Greater::Greater(Expression* izq, Expression* der)
+  : izq ( izq )
+  , der ( der )
+  {}
+
+std::string Greater::to_string()
+{
+  return "Operación: Mayor que.\nOperando izquierdo: " + izq->to_string() + "\nOperando derecho: " + der->to_string() + "\n";
+}
+
+void Greater::check()
+{
+  izq->check();
+  der->check();
+  Type* t1 = izq->get_type();
+  Type* t2 = der->get_type();
+
+  if ( t1 == t2 and (t1 == PolarType::getInstance() or t1 == KodiakType::getInstance() or t1 == MalayoType::getInstance()) ) {
+    this->set_type(PandaType::getInstance());
+  } else if ( t1 == ErrorType::getInstance() or t2 == ErrorType::getInstance() ) {
+    this->set_type(ErrorType::getInstance());
+  } else {
+    std::string msg = "Cannot apply operator > between " + t1->to_string() + " and " + t2->to_string() + "types.\n";
+    cout << "Error between " << this->get_first_line() << "." << this->get_first_column() << " and " << this->get_last_line() << "." << this->get_last_column() << msg;
+    this->set_type(ErrorType::getInstance());
+  }
+}
+
+
+GreaterEqual::GreaterEqual(Expression* izq, Expression* der)
+  : izq ( izq )
+  , der ( der )
+  {}
+
+std::string GreaterEqual::to_string()
+{
+  return "Operación: Mayor igual que.\nOperando izquierdo: " + izq->to_string() + "\nOperando derecho: " + der->to_string() + "\n";
+}
+
+void GreaterEqual::check()
+{
+  izq->check();
+  der->check();
+  Type* t1 = izq->get_type();
+  Type* t2 = der->get_type();
+
+  if ( t1 == t2 and (t1 == PolarType::getInstance() or t1 == KodiakType::getInstance() or t1 == MalayoType::getInstance()) ) {
+    this->set_type(PandaType::getInstance());
+  } else if ( t1 == ErrorType::getInstance() or t2 == ErrorType::getInstance() ) {
+    this->set_type(ErrorType::getInstance());
+  } else {
+    std::string msg = "Cannot apply operator >= between " + t1->to_string() + " and " + t2->to_string() + "types.\n";
+    cout << "Error between " << this->get_first_line() << "." << this->get_first_column() << " and " << this->get_last_line() << "." << this->get_last_column() << msg;
+    this->set_type(ErrorType::getInstance());
+  }
+}
+
+
+Equal::Equal(Expression* izq, Expression* der)
+  : izq ( izq )
+  , der ( der )
+  {}
+
+std::string Equal::to_string()
+{
+  return "Operación: Igualdad.\nOperando izquierdo: " + izq->to_string() + "\nOperando derecho: " + der->to_string() + "\n";
+}
+
+void Equal::check()
+{
+  izq->check();
+  der->check();
+  Type* t1 = izq->get_type();
+  Type* t2 = der->get_type();
+
+  if ( t1 == t2 and (t1 == PolarType::getInstance() or t1 == KodiakType::getInstance() or t1 == MalayoType::getInstance()) ) {
+    this->set_type(PandaType::getInstance());
+  } else if ( t1 == ErrorType::getInstance() or t2 == ErrorType::getInstance() ) {
+    this->set_type(ErrorType::getInstance());
+  } else {
+    std::string msg = "Cannot apply operator == between " + t1->to_string() + " and " + t2->to_string() + "types.\n";
+    cout << "Error between " << this->get_first_line() << "." << this->get_first_column() << " and " << this->get_last_line() << "." << this->get_last_column() << msg;
+    this->set_type(ErrorType::getInstance());
+  }
+}
+
+
+NotEqual::NotEqual(Expression* izq, Expression* der)
+  : izq ( izq )
+  , der ( der )
+  {}
+
+std::string NotEqual::to_string()
+{
+  return "Operación: Desigualdad.\nOperando izquierdo: " + izq->to_string() + "\nOperando derecho: " + der->to_string() + "\n";
+}
+
+void NotEqual::check()
+{
+  izq->check();
+  der->check();
+  Type* t1 = izq->get_type();
+  Type* t2 = der->get_type();
+
+  if ( t1 == t2 and (t1 == PolarType::getInstance() or t1 == KodiakType::getInstance() or t1 == MalayoType::getInstance()) ) {
+    this->set_type(PandaType::getInstance());
+  } else if ( t1 == ErrorType::getInstance() or t2 == ErrorType::getInstance() ) {
+    this->set_type(ErrorType::getInstance());
+  } else {
+    std::string msg = "Cannot apply operator =/= between " + t1->to_string() + " and " + t2->to_string() + "types.\n";
+    cout << "Error between " << this->get_first_line() << "." << this->get_first_column() << " and " << this->get_last_line() << "." << this->get_last_column() << msg;
+    this->set_type(ErrorType::getInstance());
+  }
+}
+
+
+And::And(Expression* izq, Expression* der)
+  : izq ( izq )
+  , der ( der )
+  {}
+
+std::string And::to_string()
+{
+  return "Operación: And.\nOperando izquierdo: " + izq->to_string() + "\nOperando derecho: " + der->to_string() + "\n";
+}
+
+void And::check()
+{
+  izq->check();
+  der->check();
+  Type* t1 = izq->get_type();
+  Type* t2 = der->get_type();
+
+  if ( t1 == t2 and t1 == PandaType::getInstance() ) {
+    this->set_type(t1);
+  } else if ( t1 == ErrorType::getInstance() or t2 == ErrorType::getInstance() ) {
+    this->set_type(ErrorType::getInstance());
+  } else {
+    std::string msg = "Cannot apply operator & between " + t1->to_string() + " and " + t2->to_string() + "types.\n";
+    cout << "Error between " << this->get_first_line() << "." << this->get_first_column() << " and " << this->get_last_line() << "." << this->get_last_column() << msg;
+    this->set_type(ErrorType::getInstance());
+  }
+}
+
+
+Or::Or(Expression* izq, Expression* der)
+  : izq ( izq )
+  , der ( der )
+  {}
+
+std::string Or::to_string()
+{
+  return "Operación: Or.\nOperando izquierdo: " + izq->to_string() + "\nOperando derecho: " + der->to_string() + "\n";
+}
+
+void Or::check()
+{
+  izq->check();
+  der->check();
+  Type* t1 = izq->get_type();
+  Type* t2 = der->get_type();
+
+  if ( t1 == t2 and t1 == PandaType::getInstance() ) {
+    this->set_type(t1);
+  } else if ( t1 == ErrorType::getInstance() or t2 == ErrorType::getInstance() ) {
+    this->set_type(ErrorType::getInstance());
+  } else {
+    std::string msg = "Cannot apply operator | between " + t1->to_string() + " and " + t2->to_string() + "types.\n";
+    cout << "Error between " << this->get_first_line() << "." << this->get_first_column() << " and " << this->get_last_line() << "." << this->get_last_column() << msg;
+    this->set_type(ErrorType::getInstance());
+  }
+}
+
+
+Not::Not(Expression* operando)
+  : operando ( operando )
+  {}
+
+std::string Not::to_string()
+{
+  return "Operación: Not.\nOperando: " + operando->to_string();
+}
+
+void Not::check()
+{
+  operando->check();
+  Type* t = operando->get_type();
+
+  if ( t == PandaType::getInstance() ) {
+    this->set_type(t);
+  } else {
+    std::string msg = "Cannot apply operator not to " + t->to_string() + " types.\n";
+    cout << "Error between " << this->get_first_line() << "." << this->get_first_column() << " and " << this->get_last_line() << "." << this->get_last_column() << msg;
+    this->set_type(ErrorType::getInstance());
+  }
 }
 
 SelectorExpr::SelectorExpr(Expression* condicion, Expression* brazoTrue, Expression* brazoFalse)
