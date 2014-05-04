@@ -92,6 +92,13 @@ std::string Body::to_string()
   return str;
 }
 
+void Body::check()
+{
+  if (_listSta)
+    for(std::vector<Statement*>::iterator it = _listSta->begin(); it != _listSta->end(); it++)
+      (*it)->check();
+}
+
 ComplexFor::ComplexFor(std::string id, Expression* begin, Expression* end, Expression* step, Statement* body)
   : Statement()
   , _id( id )
@@ -175,17 +182,14 @@ std::string Increase::to_string()
   return "Nodo incremento a la variable " + _id + '\n';
 }
 
-bool Increase::check_type()
+void Increase::check()
 {
-  TablaSimbolos* table = get_table();
-  Contenido* c = table->find_symbol(_id,Var);
-  Type* t = c->getTipo();
-  if(t != PolarType::getInstance())
+  Type* type = get_type();
+  if(type != PolarType::getInstance())
   {
-    cout << "Error during type checking : attempt to increase variable " + _id + "  which is not of type POLAR";
-    return false;
+    error("attempt to increase a variable which is not of type POLAR");
+    set_type(ErrorType::getInstance());
   }
-  return true;
 }
 
 Decrement::Decrement(std::string id)

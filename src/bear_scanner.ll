@@ -157,7 +157,7 @@ vomita      { return yy::bear_parser::make_VOMITA(yytext, loc);      }
 
 void bear_driver::scan_begin ()
 {
-  yy_flex_debug = trace_scanning;
+  yy_flex_debug = false; 
   if (file.empty () || file == "-")
     yyin = stdin;
   else if (!(yyin = fopen (file.c_str (), "r")))

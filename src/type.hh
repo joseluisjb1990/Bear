@@ -19,6 +19,8 @@
 #include <string>
 #include <vector>
 
+class Expression;
+
 using namespace std;
 
 class Type
@@ -183,7 +185,7 @@ class CuevaType : public Type
 {
   private:
     Type*                      _tipo;       // Tipo de los elementos de la cueva
-    std::vector<std::string>*  _longitudes; // Lista que contiene las longitudes de cada dimension de la cueva
+    std::vector<Expression*>*  _longitudes; // Lista que contiene las longitudes de cada dimension de la cueva
 
   public:
 
@@ -194,10 +196,10 @@ class CuevaType : public Type
      *   tipo:       tipo de los elementos de la cueva.
      *   longitudes: lista que contiene las longitudes de cada dimensión de la cueva.
      */
-    CuevaType(Type* tipo, std::vector<std::string>* longitudes);
+    CuevaType(Type* tipo, std::vector<Expression*>* longitudes);
+    bool isSimple();
     int getSize();
     std::string to_string();
-    bool isSimple();
 
     /**
      * Retorna tipo de los elementos de la cueva.

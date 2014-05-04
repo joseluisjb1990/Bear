@@ -15,20 +15,18 @@ YY_DECL;
 class bear_driver
 {
 public:
-  bear_driver ();
-  virtual ~bear_driver ();
+  bear_driver();
 
   TablaSimbolos tabla;
   int errores = 0;
-  Node* AST;
+  Program* AST;
 
   int result;
 
   // Handling the scanner.
   void scan_begin ();
   void scan_end ();
-  bool trace_scanning;
-
+  bool trace_scanning = false;
   // Run the parser on file F.
   // Return 0 on success.
   int parse (const std::string& f);
@@ -36,7 +34,7 @@ public:
   // Used later to pass the file name to the location tracker.
   std::string file;
   // Whether parser traces should be generated.
-  bool trace_parsing;
+  bool trace_parsing = false;
 
   // Error handling.
   void error (const yy::location& l, const std::string& m);

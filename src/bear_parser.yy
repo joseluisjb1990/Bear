@@ -27,6 +27,7 @@
 # include "statement.hh"
 # include "definition.hh"
 # include "type.hh"
+# include "program.hh"
 class bear_driver;
 
 typedef struct {
@@ -141,7 +142,7 @@ std::vector<std::string>* extraerIds(std::vector<elementoLista>* ids);
 %type  <Statement*>                  bloqueespecial
 %type  <Statement*>                  instruccion
 %type  <Statement*>                  iteracionindeterminada
-%type  <Statement*>                  programa
+%type  <Program*>                    programa
 %type  <Type*>                       campo
 %type  <Type*>                       defcueva
 %type  <Type*>                       tipo
@@ -149,11 +150,11 @@ std::vector<std::string>* extraerIds(std::vector<elementoLista>* ids);
 %type  <std::vector<Definition*>*>   definiciones
 %type  <std::vector<Definition*>*>   listadefglobales
 %type  <std::vector<Expression*>*>   accesocueva
-%type  <std::vector<std::string>*>   cuevas
+%type  <std::vector<Expression*>*>   cuevas
 %type  <std::vector<Expression*>*>   expresiones
 %type  <std::vector<Expression*>*>   lvalues
 %type  <std::vector<Expression*>*>   maybecueva
-%type  <std::vector<std::string>*>   parametrocueva
+%type  <std::vector<Expression*>*>   parametrocueva
 %type  <std::vector<Parameter*>*>    defparametros
 %type  <std::vector<Statement*>*>    instrucciones
 %type  <std::vector<Type*>*>         campos
@@ -167,28 +168,32 @@ programa : definiciones "oso" "(" ")" "=>" EXTINTO           { driver.tabla.ente
                                                                driver.tabla.add_function("oso",ExtintoType::getInstance(),@2.begin.line,@2.begin.column, @2.begin.line, @2.begin.column, paramVacio);
                                                              }
            bloqueespecial                                    { driver.tabla.exit_scope();
-                                                               $$ = $8;/* driver.AST = $$;*/
+                                                               $$ = new Program($1,$8);
+                                                               driver.AST = $$;
                                                              }
          | definiciones "oso" "(" error ")" "=>" EXTINTO     { driver.error(@4, "Main function oso must not recieve parameters.");
                                                                yyerrok;
                                                                driver.tabla.enter_scope();
                                                              }
            bloqueespecial                                    { driver.tabla.exit_scope();
-                                                               $$ = new Empty();
+                                                               $$ = new Program($1,$9);
+                                                               driver.AST = $$;
                                                              }
          | definiciones "oso" error "=>" EXTINTO             { driver.error(@3, "Missing \"()\" in main function oso.");
                                                                yyerrok;
                                                                driver.tabla.enter_scope();
                                                              }
            bloqueespecial                                    { driver.tabla.exit_scope();
-                                                               $$ = new Empty();
+                                                               $$ = new Program($1,$7);
+                                                               driver.AST = $$;
                                                              }
          | definiciones "oso" "(" ")" "=>" error             { driver.error(@6, "Return type for main function oso must be extinto.");
                                                                yyerrok;
                                                                driver.tabla.enter_scope();
                                                              }
            bloqueespecial                                    { driver.tabla.exit_scope();
-                                                               $$ = new Empty();
+                                                               $$ = new Program($1,$8);
+                                                               driver.AST = $$;
                                                              }
          | definiciones "oso" error "=>" error               { driver.error(@3, "Missing \"()\" in main function oso.");
                                                                driver.error(@5, "Return type for main function oso must be extinto.");
@@ -196,7 +201,8 @@ programa : definiciones "oso" "(" ")" "=>" EXTINTO           { driver.tabla.ente
                                                                driver.tabla.enter_scope();
                                                              }
            bloqueespecial                                    { driver.tabla.exit_scope();
-                                                               $$ = new Empty();
+                                                               $$ = new Program($1,$7);
+                                                               driver.AST = $$;
                                                              }
          | definiciones "oso" error "=>" error error         { driver.error(@3, "Missing \"()\" in main function oso.");
                                                                driver.error(@5, "Return type for main function oso must be extinto.");
@@ -204,37 +210,42 @@ programa : definiciones "oso" "(" ")" "=>" EXTINTO           { driver.tabla.ente
                                                                driver.tabla.enter_scope();
                                                              }
            bloqueespecial                                    { driver.tabla.exit_scope();
-                                                               $$ = new Empty();
+                                                               $$ = new Program($1,$8);
+                                                               driver.AST = $$;
                                                              }
          | definiciones "oso" "(" ")" "=>" error error       { driver.error(@6, "Return type for main function oso must be extinto.");
                                                                yyerrok;
                                                                driver.tabla.enter_scope();
                                                              }
            bloqueespecial                                    { driver.tabla.exit_scope();
-                                                               $$ = new Empty();
+                                                               $$ = new Program($1,$9);
+                                                               driver.AST = $$;
                                                              }
          | definiciones "oso" "(" error ")" "=>" error       { driver.error(@4, "Main function oso must not recieve parameters.");
                                                                driver.error(@7, "The return type for main function oso must be extinto.");
                                                                yyerrok;
                                                              }
            bloqueespecial                                    { driver.tabla.exit_scope();
-                                                               $$ = new Empty();
+                                                               $$ = new Program($1,$9);
+                                                               driver.AST = $$;
                                                              }
          | definiciones "oso" "(" error ")" "=>" error error { driver.error(@4, "Main function oso must not recieve parameters.");
                                                                driver.error(@7, "The return type for main function oso must be extinto.");
                                                                yyerrok;
                                                              }
            bloqueespecial                                    { driver.tabla.exit_scope();
-                                                               $$ = new Empty();
+                                                               $$ = new Program($1,$10);
+                                                               driver.AST = $$;
                                                              }
          | definiciones                                      { driver.error("Missing main function oso with no parameters and return type extinto.");
                                                                yyerrok;
-                                                               $$ = new Empty();
+                                                               $$ = new Program($1,new Empty());
+                                                               driver.AST = $$;
                                                              }
          ;
 
-definiciones:                    { $$ = $$; }
-            | listadefglobales   { $$ = $1; }
+definiciones:                    { $$ = nullptr; }
+            | listadefglobales   { $$ = $1;      }
             ;
 
 listadefglobales: definicionglobal                   { $$ = new std::vector<Definition*>(); $$->push_back($1); }
@@ -308,13 +319,12 @@ defparametro: tipo ID        { $$ = new Parameter($2, $1, false); }
 tipocueva: parametrocueva tipo { $$ = new CuevaType($2, $1); }
          ;
 
-/* Aqui voy a devolver "vacio" para el caso base porque puedo, seguro hay que cambiarlo */
-parametrocueva: CUEVA "[" "]" DE                              { $$ = new std::vector<std::string>(); $$->push_back("");          }
-              | CUEVA "[" "]" error                           { $$ = new std::vector<std::string>(); $$->push_back(""); yyerrok; }
-              | parametrocueva CUEVA "[" CONSTPOLAR "]" DE    { $$ = $1; $$->push_back($4);                                      }
-              | parametrocueva error "[" CONSTPOLAR "]" DE    { $$ = $1; $$->push_back($4); yyerrok;                             }
-              | parametrocueva error "[" CONSTPOLAR "]" error { $$ = $1; $$->push_back($4); yyerrok;                             }
-              | parametrocueva CUEVA "[" CONSTPOLAR "]" error { $$ = $1; $$->push_back($4); yyerrok;                             }
+parametrocueva: CUEVA "[" "]" DE                             { $$ = new std::vector<Expression*>(); $$->push_back(new EmptyExpr());          }
+              | CUEVA "[" "]" error                          { $$ = new std::vector<Expression*>(); $$->push_back(new EmptyExpr()); yyerrok; }
+              | parametrocueva CUEVA "[" expresion "]" DE    { $$ = $1; $$->push_back($4);                                               }
+              | parametrocueva error "[" expresion "]" DE    { $$ = $1; $$->push_back($4); yyerrok;                                      }
+              | parametrocueva error "[" expresion "]" error { $$ = $1; $$->push_back($4); yyerrok;                                      }
+              | parametrocueva CUEVA "[" expresion "]" error { $$ = $1; $$->push_back($4); yyerrok;                                      }
               ;
 
 defconstante: CONST tipo identificadores "=" expresiones ";"   { if ($3->size() == $5->size()) {
@@ -382,8 +392,8 @@ identificadores: ID                     { $$ = new std::vector<elementoLista>();
 defcueva: cuevas tipo { $$ = new CuevaType($2,$1); }
         ;
 
-cuevas: CUEVA "[" CONSTPOLAR "]" DE        { $$ = new std::vector<std::string>(); $$->push_back($3); }
-      | cuevas CUEVA "[" CONSTPOLAR "]" DE { $$ = $1; $$->push_back($4);                             }
+cuevas: CUEVA        "[" expresion "]" DE { $$ = new std::vector<Expression*>; $$->push_back($3); }
+      | cuevas CUEVA "[" expresion "]" DE { $$ = $1; $$->push_back($4);                           }
       ;
 
 
@@ -509,15 +519,8 @@ instruccion: defvariable                                                 { $$ = 
                                                                              $$ = new Function($1, $3);
                                                                            }
                                                                          }
-           | SI expresion bloque                                         { if($2->get_type() == PandaType::getInstance())
-                                                                           {
-                                                                             $$ = new If($2, $3);
-                                                                           } else
-                                                                           {
-                                                                             if($2->get_type() != ErrorType::getInstance())
-                                                                                driver.error(@2,"Type of expression inside SI is not PANDA");
-                                                                             $$ = new Empty( ErrorType::getInstance() );
-                                                                           }
+           | SI expresion bloque                                         {
+                                                                           $$ = new If($2, $3);
                                                                          }
            | SI expresion bloque SINO bloque                             { $$ = new IfElse($2, $3, $5);                                                 }
 
@@ -581,29 +584,23 @@ instruccion: defvariable                                                 { $$ = 
            | iteracionindeterminada                                      { $$ = $1; }
            | ID "++" ";"                                                 { Contenido* c = driver.tabla.find_symbol($1,Var);
                                                                            if (c) {
-                                                                             Type* tipo = c->getTipo();
-                                                                             if(tipo == PolarType::getInstance())
-                                                                             {
-                                                                               if (c->getMutabilidad())
-                                                                                 $$ = new Increase($1);
-                                                                               else {
-                                                                                 driver.error(@1, @2, "Attempt to increase variable " + $1 + ", which is not mutable.");
-                                                                                 $$ = new Empty( ErrorType::getInstance() );
-                                                                               }
+                                                                             if(c->getMutabilidad()) {
+                                                                               $$ = new Increase($1);
+                                                                               $$->set_type(c->getTipo());
                                                                              } else {
-                                                                               if(tipo != ErrorType::getInstance())
-                                                                                 driver.error(@1, "Attempt to increase variable " + $1 + " which is not of type Polar");
-                                                                               }
-                                                                               $$ = new Empty( ErrorType::getInstance() );
+                                                                               driver.error(@1, @2, "Attempt to increase variable " + $1 + ", which is not mutable.");
+                                                                               $$ = new Empty();
+                                                                             }
                                                                            } else {
                                                                              driver.error(@1, @2, "Attempt to increase variable " + $1 + ", which is not declared.");
-                                                                             $$ = new Empty( ErrorType::getInstance());
+                                                                             $$ = new Empty();
                                                                            }
                                                                          }
            | ID "--" ";"                                                 { Contenido* c = driver.tabla.find_symbol($1,Var);
                                                                            if (c) {
                                                                              if (c->getMutabilidad()) {
                                                                                $$ = new Decrement($1);
+                                                                               $$->set_type(c->getTipo());
                                                                              } else {
                                                                                driver.error(@1, @2, "Attempt to decrease variable " + $1 + ", which is not mutable.");
                                                                                $$ = new Empty();

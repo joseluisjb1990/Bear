@@ -91,6 +91,7 @@ class Body : public Statement
   public:
     Body( std::vector<Statement *>* listSta );
     std::string to_string();
+    void check();
 
   private:
     std::vector<Statement *>  * _listSta;
@@ -158,7 +159,7 @@ class Increase : public Statement
   public:
     Increase(std::string id);
     std::string to_string();
-    bool check_type();
+    void check();
 
   private:
     std::string _id;
