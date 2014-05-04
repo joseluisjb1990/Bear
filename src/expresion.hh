@@ -333,34 +333,10 @@ class FunctionExpr : public Expression
     std::vector<Expression*>* _parameters;
 };
 
-class PardoExpr : public LValueExpr
-{
-  public:
-    PardoExpr(LValueExpr* izquierda, LValueExpr* derecha);
-    std::string to_string();
-
-  private:
-   LValueExpr* _izquierda;
-   LValueExpr* _derecha;
-
-};
-
-class GrizzliExpr : public LValueExpr
-{
-  public:
-    GrizzliExpr(LValueExpr* izquierda, LValueExpr* derecha);
-    std::string to_string();
-
-  private:
-   LValueExpr* _izquierda;
-   LValueExpr* _derecha;
-
-};
-
 class CuevaExpr : public LValueExpr
 {
   public:
-    CuevaExpr(std::string nombre, std::vector<Expression*>* dimensions);
+    CuevaExpr(std::string cueva, std::vector<Expression*>* dimensions);
     std::string to_string();
     void addDimension(Expression* dimension);
 
@@ -369,4 +345,31 @@ class CuevaExpr : public LValueExpr
     std::vector<Expression*>* _dimensions;
 
 };
+
+class PardoExpr : public LValueExpr
+{
+  public:
+    PardoExpr(LValueExpr* pardo, IDExpr* campo);
+    PardoExpr(LValueExpr* pardo, CuevaExpr* campo);
+    std::string to_string();
+
+  private:
+   LValueExpr* _pardo;
+   LValueExpr* _campo;
+
+};
+
+class GrizzliExpr : public LValueExpr
+{
+  public:
+    GrizzliExpr(LValueExpr* grizzli, IDExpr* campo);
+    GrizzliExpr(LValueExpr* grizzli, CuevaExpr* campo);
+    std::string to_string();
+
+  private:
+   LValueExpr* _grizzli;
+   LValueExpr* _campo;
+
+};
+
 #endif

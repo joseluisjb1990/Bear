@@ -56,6 +56,7 @@ class IfElse : public Statement
   public:
     IfElse(Expression* condicion, Statement* brazoTrue, Statement* brazoFalse);
     std::string to_string();
+    void check();
 
   private:
     Expression* _condicion;
@@ -80,6 +81,7 @@ class Read : public Statement
   public:
     Read(Expression*);
     std::string to_string();
+    void check();
 
   private:
     Expression* _id;
@@ -102,6 +104,7 @@ class ComplexFor : public Statement
   public:
     ComplexFor(std::string id, Expression* begin, Expression* end, Expression* step, Statement* body);
     std::string to_string();
+    void check();
 
   private:
     std::string _id;
@@ -129,11 +132,12 @@ class IdFor : public Statement
   public:
     IdFor(std::string id, std::string iterVar, Statement* body);
     std::string to_string();
+    void check();
 
   private:
     std::string _id;
     std::string _iterVar;
-    Statement*       _body;
+    Statement*  _body;
 };
 
 class Return : public Statement
@@ -148,6 +152,7 @@ class ReturnExpr : public Statement
   public:
     ReturnExpr(Expression* expr);
     std::string to_string();
+    void check();
 
   private:
     Expression* _expr;
@@ -214,6 +219,7 @@ class While : public Statement
   public:
     While(Expression* expr, Statement* body);
     std::string to_string();
+    void check();
 
   private:
     Expression* _expr;

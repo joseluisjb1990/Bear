@@ -546,26 +546,38 @@ std::string FunctionExpr::to_string()
   return str;
 }
 
-PardoExpr::PardoExpr(LValueExpr* izquierda, LValueExpr* derecha)
+PardoExpr::PardoExpr(LValueExpr* pardo, IDExpr* campo)
   : LValueExpr()
-  , _izquierda( izquierda )
-  , _derecha  ( derecha   )
+  , _pardo ( pardo )
+  , _campo ( campo )
+  {}
+
+PardoExpr::PardoExpr(LValueExpr* pardo, CuevaExpr* campo)
+  : LValueExpr()
+  , _pardo ( pardo )
+  , _campo ( campo )
   {}
 
 std::string PardoExpr::to_string()
 {
-  return "Acceso a pardo: Izquierda: " + _izquierda->to_string() + " Derecha: " + _derecha->to_string() + "\n";
+  return "Acceso a pardo " + _pardo->to_string() + " Campo: " + _campo->to_string() + "\n";
 }
 
-GrizzliExpr::GrizzliExpr(LValueExpr* izquierda, LValueExpr* derecha)
+GrizzliExpr::GrizzliExpr(LValueExpr* grizzli, IDExpr* campo)
   : LValueExpr()
-  , _izquierda( izquierda )
-  , _derecha  ( derecha   )
+  , _grizzli ( grizzli )
+  , _campo   ( campo   )
+  {}
+
+GrizzliExpr::GrizzliExpr(LValueExpr* grizzli, CuevaExpr* campo)
+  : LValueExpr()
+  , _grizzli ( grizzli )
+  , _campo   ( campo   )
   {}
 
 std::string GrizzliExpr::to_string()
 {
-  return "Acceso a grizzli: Izquierda: " + _izquierda->to_string() + " Derecha: " + _derecha->to_string() + "\n";
+  return "Acceso a grizzli: " + _grizzli->to_string() + " Campo: " + _campo->to_string() + "\n";
 }
 
 CuevaExpr::CuevaExpr(std::string nombre, std::vector<Expression*>* dimensions)
@@ -587,4 +599,5 @@ void CuevaExpr::addDimension(Expression* dimension)
 {
   _dimensions->push_back(dimension);
 }
+
 #endif

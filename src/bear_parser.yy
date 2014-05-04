@@ -653,9 +653,11 @@ lvalues: lvalue             { $$ = new std::vector<Expression*>(); $$->push_back
 lvalue: ID maybecueva             { Contenido* c = driver.tabla.find_symbol($1, Var);
                                     if(c) {
                                       $$ = new IDExpr($1);
+                                      $$->set_location(@1.begin.line, @1.begin.column, @1.end.line, @1.end.column);
                                     } else {
                                       c = driver.tabla.find_symbol($1, Cueva);
                                       $$ = new CuevaExpr($1, $2);
+                                      $$->set_location(@1.begin.line, @1.begin.column, @2.end.line, @2.end.column);
                                     }
 
                                     if (!c) {
@@ -798,10 +800,18 @@ expresiones: expresion                   { $$ = new std::vector<Expression*>(); 
 %nonassoc UNARIO;
 %right "**";
 
-expresion: CONSTPOLAR                            { $$ = new PolarExpr($1);      }
-         | CONSTKODIAK                           { $$ = new KodiakExpr($1);     }
-         | CONSTHORMIGUERO                       { $$ = new HormigueroExpr($1); }
-         | CONSTMALAYO                           { $$ = new MalayoExpr($1);     }
+expresion: CONSTPOLAR                            { $$ = new PolarExpr($1);
+                                                   $$->set_location(@1.begin.line, @1.begin.column, @1.end.line, @1.end.column);
+                                                 }
+         | CONSTKODIAK                           { $$ = new KodiakExpr($1);
+                                                   $$->set_location(@1.begin.line, @1.begin.column, @1.end.line, @1.end.column);
+                                                 }
+         | CONSTHORMIGUERO                       { $$ = new HormigueroExpr($1);
+                                                   $$->set_location(@1.begin.line, @1.begin.column, @1.end.line, @1.end.column);
+                                                 }
+         | CONSTMALAYO                           { $$ = new MalayoExpr($1);
+                                                   $$->set_location(@1.begin.line, @1.begin.column, @1.end.line, @1.end.column);
+                                                 }
          | lvalue                                { $$ = $1;                     }
          | ID "(" expresiones ")"                { Funcion* f = driver.tabla.get_function($1);
                                                    if (!f) {
@@ -811,27 +821,65 @@ expresion: CONSTPOLAR                            { $$ = new PolarExpr($1);      
                                                      $$ = new FunctionExpr($1, $3);
                                                    }
                                                  }
-         | funcionpredef                         { $$ = $1;                              }
-         | BLANCO                                { $$ = new PandaExpr      ($1    );     }
-         | NEGRO                                 { $$ = new PandaExpr      ($1    );     }
-         | expresion "<"   expresion             { $$ = new Less           ($1, $3);     }
-         | expresion "=<"  expresion             { $$ = new LessEqual      ($1, $3);     }
-         | expresion ">"   expresion             { $$ = new Greater        ($1, $3);     }
-         | expresion ">="  expresion             { $$ = new GreaterEqual   ($1, $3);     }
-         | expresion "=="  expresion             { $$ = new Equal          ($1, $3);     }
-         | expresion "=/=" expresion             { $$ = new NotEqual       ($1, $3);     }
-         | expresion "|"   expresion             { $$ = new Or             ($1, $3);     }
-         | expresion "&"   expresion             { $$ = new And            ($1, $3);     }
-         | "no" expresion                        { $$ = new Not            ($2    );     }
-         | expresion "+"  expresion              { $$ = new Sum            ($1, $3);     }
-         | expresion "-"  expresion              { $$ = new Substraction   ($1, $3);     }
-         | expresion "**" expresion              { $$ = new Power          ($1, $3);     }
-         | expresion "*"  expresion              { $$ = new Multiplication ($1, $3);     }
-         | expresion "/"  expresion              { $$ = new Division       ($1, $3);     }
-         | expresion "%"  expresion              { $$ = new Remainder      ($1, $3);     }
-         | "-" expresion %prec UNARIO            { $$ = new Minus          ($2    );     }
-         | "(" expresion ")"                     { $$ = $2;                              }
-         | expresion "?" expresion ":" expresion { $$ = new SelectorExpr   ($1, $3, $5); }
+         | funcionpredef                         { $$ = $1; }
+         | BLANCO                                { $$ = new PandaExpr($1);
+                                                   $$->set_location(@1.begin.line, @1.begin.column, @1.end.line, @1.end.column);
+                                                 }
+         | NEGRO                                 { $$ = new PandaExpr($1);
+                                                   $$->set_location(@1.begin.line, @1.begin.column, @1.end.line, @1.end.column);
+                                                 }
+         | expresion "<"   expresion             { $$ = new Less($1, $3);
+                                                   $$->set_location(@1.begin.line, @1.begin.column, @3.end.line, @3.end.column);
+                                                 }
+         | expresion "=<"  expresion             { $$ = new LessEqual($1, $3);
+                                                   $$->set_location(@1.begin.line, @1.begin.column, @3.end.line, @3.end.column);
+                                                 }
+         | expresion ">"   expresion             { $$ = new Greater($1, $3);
+                                                   $$->set_location(@1.begin.line, @1.begin.column, @3.end.line, @3.end.column);
+                                                 }
+         | expresion ">="  expresion             { $$ = new GreaterEqual($1, $3);
+                                                   $$->set_location(@1.begin.line, @1.begin.column, @3.end.line, @3.end.column);
+                                                 }
+         | expresion "=="  expresion             { $$ = new Equal($1, $3);
+                                                   $$->set_location(@1.begin.line, @1.begin.column, @3.end.line, @3.end.column);
+                                                 }
+         | expresion "=/=" expresion             { $$ = new NotEqual($1, $3);
+                                                   $$->set_location(@1.begin.line, @1.begin.column, @3.end.line, @3.end.column);
+                                                 }
+         | expresion "|"   expresion             { $$ = new Or($1, $3);
+                                                   $$->set_location(@1.begin.line, @1.begin.column, @3.end.line, @3.end.column);
+                                                 }
+         | expresion "&"   expresion             { $$ = new And($1, $3);
+                                                   $$->set_location(@1.begin.line, @1.begin.column, @3.end.line, @3.end.column);
+                                                 }
+         | "no" expresion                        { $$ = new Not($2);
+                                                   $$->set_location(@1.begin.line, @1.begin.column, @2.end.line, @2.end.column);
+                                                 }
+         | expresion "+"  expresion              { $$ = new Sum($1, $3);
+                                                   $$->set_location(@1.begin.line, @1.begin.column, @3.end.line, @3.end.column);
+                                                 }
+         | expresion "-"  expresion              { $$ = new Substraction($1, $3);
+                                                   $$->set_location(@1.begin.line, @1.begin.column, @3.end.line, @3.end.column);
+                                                 }
+         | expresion "**" expresion              { $$ = new Power($1, $3);
+                                                   $$->set_location(@1.begin.line, @1.begin.column, @3.end.line, @3.end.column);
+                                                 }
+         | expresion "*"  expresion              { $$ = new Multiplication($1, $3);
+                                                   $$->set_location(@1.begin.line, @1.begin.column, @3.end.line, @3.end.column);
+                                                 }
+         | expresion "/"  expresion              { $$ = new Division($1, $3);
+                                                   $$->set_location(@1.begin.line, @1.begin.column, @3.end.line, @3.end.column);
+                                                 }
+         | expresion "%"  expresion              { $$ = new Remainder($1, $3);
+                                                   $$->set_location(@1.begin.line, @1.begin.column, @3.end.line, @3.end.column);
+                                                 }
+         | "-" expresion %prec UNARIO            { $$ = new Minus($2    );
+                                                   $$->set_location(@1.begin.line, @1.begin.column, @2.end.line, @2.end.column);
+                                                 }
+         | "(" expresion ")"                     { $$ = $2; }
+         | expresion "?" expresion ":" expresion { $$ = new SelectorExpr($1, $3, $5);
+                                                   $$->set_location(@1.begin.line, @1.begin.column, @5.end.line, @5.end.column);
+                                                 }
          ;
 
 
