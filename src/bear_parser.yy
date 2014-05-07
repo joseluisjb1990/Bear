@@ -510,8 +510,12 @@ instruccion: defvariable                                                 { $$ = 
                                                                            $$->set_location(@1.begin.line, @1.begin.column, @4.end.line, @4.end.column);
                                                                          }
            | lvalues error expresiones ";"                               { $$ = new Empty(); yyerrok; }
-           | LEER "(" lvalue ")" ";"                                     { $$ = new Read($3);         }
-           | ESCRIBIR "(" expresion ")" ";"                              { $$ = new Write($3);        }
+           | LEER "(" lvalue ")" ";"                                     { $$ = new Read($3);
+                                                                           $$->set_location(@1,begin.line, @1.begin.column, @5.end.line, @5.end.column);
+                                                                         }
+           | ESCRIBIR "(" expresion ")" ";"                              { $$ = new Write($3);
+                                                                           $$->set_location(@1,begin.line, @1.begin.column, @5.end.line, @5.end.column);
+                                                                         }
            | ID "(" expresiones ")" ";"                                  { Funcion* f = driver.tabla.get_function($1);
                                                                            if (!f) {
                                                                              driver.error(@1,@4,"Function " + $1 + " is not defined.");
@@ -617,21 +621,31 @@ instruccion: defvariable                                                 { $$ = 
                                                                              $$ = new Empty();
                                                                            }
                                                                          }
-           | VOMITA expresion  ";"                                       { $$ = new ReturnExpr($2);   }
-           | VOMITA ";"                                                  { $$ = new Return();   }
-           | FONDOBLANCO    ";"                                          { $$ = new Continue(); }
+           | VOMITA expresion  ";"                                       { $$ = new ReturnExpr($2);
+                                                                           $$->set_location(@1,begin.line, @1.begin.column, @3.end.line, @3.end.column);
+                                                                         }
+           | VOMITA ";"                                                  { $$ = new Return();
+                                                                           $$->set_location(@1,begin.line, @1.begin.column, @2.end.line, @2.end.column);
+                                                                         }
+           | FONDOBLANCO    ";"                                          { $$ = new Continue();
+                                                                           $$->set_location(@1,begin.line, @1.begin.column, @2.end.line, @2.end.column);
+                                                                         }
            | FONDOBLANCO ID ";"                                          { Contenido* c = driver.tabla.find_symbol($2,Etiqueta);
                                                                            if (c) {
                                                                              $$ = new ContinueID($2);
+                                                                             $$->set_location(@1,begin.line, @1.begin.column, @3.end.line, @3.end.column);
                                                                            } else {
                                                                              driver.error(@1, @2, "Attempt to continue to tag " + $2 + ", which is not declared.");
                                                                              $$ = new Empty();
                                                                            }
                                                                          }
-           | ROLOEPEA    ";"                                             { $$ = new Break(); }
+           | ROLOEPEA    ";"                                             { $$ = new Break();
+                                                                           $$->set_location(@1,begin.line, @1.begin.column, @2.end.line, @2.end.column);
+                                                                         }
            | ROLOEPEA ID ";"                                             { Contenido* c = driver.tabla.find_symbol($2,Etiqueta);
                                                                            if (c) {
                                                                              $$ = new BreakID($2);
+                                                                             $$->set_location(@1,begin.line, @1.begin.column, @3.end.line, @3.end.column);
                                                                            } else {
                                                                              driver.error(@1, @2, "Attempt to break to tag " + $2 + ", which is not declared.");
                                                                              $$ = new Empty();
@@ -647,9 +661,13 @@ iteracionindeterminada: ID ":" MIENTRAS "(" expresion ")" { Contenido* c = drive
                                                               driver.error(@1, "Tag " + $1 + " is already defined.");
                                                             }
                                                           }
-                        bloque                            { $$ = new TagWhile($1, $5, $8); }
+                        bloque                            { $$ = new TagWhile($1, $5, $8);
+                                                            $$->set_location(@1,begin.line, @1.begin.column, @8.end.line, @8.end.column);
+                                                          }
 
-                      | MIENTRAS "(" expresion ")" bloque { $$ = new While($3, $5);        }
+                      | MIENTRAS "(" expresion ")" bloque { $$ = new While($3, $5);
+                                                            $$->set_location(@1,begin.line, @1.begin.column, @5.end.line, @5.end.column);
+                                                          }
                       ;
 
 lvalues: lvalue             { $$ = new std::vector<Expression*>(); $$->push_back($1); }
