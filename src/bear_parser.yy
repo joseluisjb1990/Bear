@@ -507,6 +507,7 @@ instruccion: defvariable                                                 { $$ = 
                                                                              driver.error(@1, @3, "The number of l-values and expressions is not the same.");
                                                                            }
                                                                            $$ = new Assign($1, $3);
+                                                                           $$->set_location(@1.begin.line, @1.begin.column, @4.end.line, @4.end.column);
                                                                          }
            | lvalues error expresiones ";"                               { $$ = new Empty(); yyerrok; }
            | LEER "(" lvalue ")" ";"                                     { $$ = new Read($3);         }
@@ -521,8 +522,11 @@ instruccion: defvariable                                                 { $$ = 
                                                                          }
            | SI expresion bloque                                         {
                                                                            $$ = new If($2, $3);
+                                                                           $$->set_location(@1.begin.line, @1.begin.column, @3.end.line, @3.end.column);
                                                                          }
-           | SI expresion bloque SINO bloque                             { $$ = new IfElse($2, $3, $5);                                                 }
+           | SI expresion bloque SINO bloque                             { $$ = new IfElse($2, $3, $5);
+                                                                           $$->set_location(@1.begin.line, @1.begin.column, @5.end.line, @5.end.column);
+                                                                         }
 
            | PARA ID EN "(" expresion ";" expresion ")"                  { driver.tabla.enter_scope();
                                                                            PolarType* p = PolarType::getInstance();
@@ -531,6 +535,7 @@ instruccion: defvariable                                                 { $$ = 
              bloqueespecial                                              {
                                                                            driver.tabla.exit_scope();
                                                                            $$ = new SimpleFor($2, $5, $7, $10);
+                                                                           $$->set_location(@1.begin.line, @1.begin.column, @10.end.line, @10.end.column);
                                                                          }
            | PARA ID error "(" expresion ";" expresion ")"               { driver.tabla.enter_scope();
                                                                            yyerrok;
@@ -547,6 +552,7 @@ instruccion: defvariable                                                 { $$ = 
                                                                          }
              bloqueespecial                                              { driver.tabla.exit_scope();
                                                                            $$ = new ComplexFor($2, $5, $9, $7, $12);
+                                                                           $$->set_location(@1.begin.line, @1.begin.column, @12.end.line, @12.end.column);
                                                                          }
            | PARA ID error "(" expresion ";" expresion ";" expresion ")" { driver.tabla.enter_scope();
                                                                            yyerrok;
@@ -567,6 +573,7 @@ instruccion: defvariable                                                 { $$ = 
                                                                          }
             bloqueespecial                                               { driver.tabla.exit_scope();
                                                                            $$ = new IdFor($2, $4, $6);
+                                                                           $$->set_location(@1.begin.line, @1.begin.column, @6.end.line, @6.end.column);
                                                                          }
            | PARA ID error ID                                            { Contenido* c = driver.tabla.find_symbol($4, Cueva);
                                                                            yyerrok;

@@ -29,6 +29,7 @@ class PolarExpr : public Constant
     PolarExpr(std::string valor);
     std::string to_string();
     std::string getValue();
+    void check();
 
 };
 
@@ -41,6 +42,7 @@ class KodiakExpr : public Constant
     KodiakExpr(std::string valor);
     std::string to_string();
     std::string getValue();
+    void check();
 
 };
 
@@ -65,6 +67,7 @@ class MalayoExpr : public Constant
     MalayoExpr(std::string valor);
     std::string to_string();
     std::string getValue();
+    void check();
 
 };
 
@@ -77,6 +80,7 @@ class PandaExpr : public Constant
     PandaExpr(std::string valor);
     std::string to_string();
     std::string getValue();
+    void check();
 
 };
 

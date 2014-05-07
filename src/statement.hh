@@ -175,6 +175,7 @@ class Decrement : public Statement
   public:
     Decrement(std::string id);
     std::string to_string();
+    void check();
 
   private:
     std::string _id;
@@ -192,6 +193,7 @@ class ContinueID : public Statement
   public:
     ContinueID(std::string id);
     std::string to_string();
+    void check();
 
   private:
     std::string _id;
@@ -209,6 +211,7 @@ class BreakID : public Statement
   public:
     BreakID(std::string id);
     std::string to_string();
+    void check();
 
   private:
     std::string _id;
@@ -244,6 +247,7 @@ class Empty : public Statement
     Empty();
     Empty( Type* type );
     std::string to_string();
+    void check();
 };
 
 #endif

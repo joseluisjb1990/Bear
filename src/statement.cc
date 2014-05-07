@@ -105,7 +105,7 @@ void Read::check()
 
   Type* t = _id->get_type();
 
-  if (t == HormigueroType::getInstance() or
+  if (dynamic_cast<HormigueroType*>(t) or
       dynamic_cast<CuevaType*>(t) or
       dynamic_cast<PardoType*>(t) or
       dynamic_cast<GrizzliType*>(t)) {
@@ -300,6 +300,20 @@ std::string Decrement::to_string()
   return "Nodo decremento a la variable " + _id + '\n';
 }
 
+void Decrement::check()
+{/*
+  _id->check();
+  Type* t = _id->get_type();
+
+  if ( t != PolarType::getInstance()) {
+    error("Attempt to increase a variable of type '" + t->to_string() + "' instead of type polar.");
+    this->set_type(ErrorType::getInstance());
+  }
+
+  this->set_type(ExtintoType::getInstance());
+  */
+}
+
 Continue::Continue()
   : Statement()
   {}
@@ -319,6 +333,11 @@ std::string ContinueID::to_string()
   return "Nodo fondoBlanco a la etiqueta " + _id + '\n';
 }
 
+void ContinueID::check()
+{
+  this->set_type(ExtintoType::getInstance());
+}
+
 Break::Break()
   : Statement()
   {}
@@ -336,6 +355,11 @@ BreakID::BreakID(std::string id)
 std::string BreakID::to_string()
 {
   return "Nodo roloePea a la etiqueta " + _id + '\n';
+}
+
+void BreakID::check()
+{
+  this->set_type(ExtintoType::getInstance());
 }
 
 While::While(Expression* expr, Statement* body)
@@ -398,6 +422,11 @@ Empty::Empty(Type* type)
 std::string Empty::to_string()
 {
   return "vacia";
+}
+
+void Empty::check()
+{
+  this->set_type(ExtintoType::getInstance());
 }
 
 #endif

@@ -25,6 +25,11 @@ std::string PolarExpr::getValue()
   return valor;
 }
 
+void PolarExpr::check()
+{
+  this->set_type(PolarType::getInstance());
+}
+
 KodiakExpr::KodiakExpr(std::string valor)
   : valor ( valor )
   {}
@@ -37,6 +42,11 @@ std::string KodiakExpr::to_string()
 std::string KodiakExpr::getValue()
 {
   return valor;
+}
+
+void KodiakExpr::check()
+{
+  this->set_type(KodiakType::getInstance());
 }
 
 HormigueroExpr::HormigueroExpr(std::string valor)
@@ -67,6 +77,11 @@ std::string MalayoExpr::getValue()
   return valor;
 }
 
+void MalayoExpr::check()
+{
+  this->set_type(MalayoType::getInstance());
+}
+
 PandaExpr::PandaExpr(std::string valor)
   : valor ( valor )
   {}
@@ -79,6 +94,11 @@ std::string PandaExpr::to_string()
 std::string PandaExpr::getValue()
 {
   return valor;
+}
+
+void PandaExpr::check()
+{
+  this->set_type(PandaType::getInstance());
 }
 
 Sum::Sum(Expression* izq, Expression* der)
