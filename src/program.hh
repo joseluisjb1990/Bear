@@ -10,15 +10,7 @@ class Program : public Node
     Program() {};
     std::string to_string();
     void check();
-    static TablaSimbolos* get_table()
-    {
-      if(!_table)
-        _table = new TablaSimbolos();
-
-      return _table;
-    }
   private:
-    static TablaSimbolos* _table;
     std::vector<Definition*>* _definitions;
     Statement* _statement;
 };

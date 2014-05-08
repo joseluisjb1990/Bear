@@ -28,6 +28,7 @@
 # include "definition.hh"
 # include "type.hh"
 # include "program.hh"
+
 class bear_driver;
 
 typedef struct {
@@ -51,8 +52,11 @@ typedef struct {
 %define parse.error verbose
 %code
 {
-# include "bear_driver.hh"
+
+#include "bear_driver.hh"
+
 int ALCANCE_LVALUE;
+
 
 std::vector<std::string>* extraerIds(std::vector<elementoLista>* ids);
 
@@ -472,7 +476,7 @@ tipo: PANDA       { $$ = PandaType::getInstance();                          }
     | POLAR       { $$ = PolarType::getInstance();                          }
     | KODIAK      { $$ = KodiakType::getInstance();                         }
     | MALAYO      { $$ = MalayoType::getInstance();                         }
-    | HORMIGUERO  { $$ = HormigueroType::getInstance();                     }
+    | HORMIGUERO  { $$ = new HormigueroType();                              }
     | EXTINTO     { $$ = ExtintoType::getInstance();                        }
     | ID          { Contenedor* c = driver.tabla.find_container($1);
                     if (!c) {
@@ -511,10 +515,10 @@ instruccion: defvariable                                                 { $$ = 
                                                                          }
            | lvalues error expresiones ";"                               { $$ = new Empty(); yyerrok; }
            | LEER "(" lvalue ")" ";"                                     { $$ = new Read($3);
-                                                                           $$->set_location(@1,begin.line, @1.begin.column, @5.end.line, @5.end.column);
+                                                                           $$->set_location(@1.begin.line, @1.begin.column, @5.end.line, @5.end.column);
                                                                          }
            | ESCRIBIR "(" expresion ")" ";"                              { $$ = new Write($3);
-                                                                           $$->set_location(@1,begin.line, @1.begin.column, @5.end.line, @5.end.column);
+                                                                           $$->set_location(@1.begin.line, @1.begin.column, @5.end.line, @5.end.column);
                                                                          }
            | ID "(" expresiones ")" ";"                                  { Funcion* f = driver.tabla.get_function($1);
                                                                            if (!f) {
@@ -622,30 +626,30 @@ instruccion: defvariable                                                 { $$ = 
                                                                            }
                                                                          }
            | VOMITA expresion  ";"                                       { $$ = new ReturnExpr($2);
-                                                                           $$->set_location(@1,begin.line, @1.begin.column, @3.end.line, @3.end.column);
+                                                                           $$->set_location(@1.begin.line, @1.begin.column, @3.end.line, @3.end.column);
                                                                          }
            | VOMITA ";"                                                  { $$ = new Return();
-                                                                           $$->set_location(@1,begin.line, @1.begin.column, @2.end.line, @2.end.column);
+                                                                           $$->set_location(@1.begin.line, @1.begin.column, @2.end.line, @2.end.column);
                                                                          }
            | FONDOBLANCO    ";"                                          { $$ = new Continue();
-                                                                           $$->set_location(@1,begin.line, @1.begin.column, @2.end.line, @2.end.column);
+                                                                           $$->set_location(@1.begin.line, @1.begin.column, @2.end.line, @2.end.column);
                                                                          }
            | FONDOBLANCO ID ";"                                          { Contenido* c = driver.tabla.find_symbol($2,Etiqueta);
                                                                            if (c) {
                                                                              $$ = new ContinueID($2);
-                                                                             $$->set_location(@1,begin.line, @1.begin.column, @3.end.line, @3.end.column);
+                                                                             $$->set_location(@1.begin.line, @1.begin.column, @3.end.line, @3.end.column);
                                                                            } else {
                                                                              driver.error(@1, @2, "Attempt to continue to tag " + $2 + ", which is not declared.");
                                                                              $$ = new Empty();
                                                                            }
                                                                          }
            | ROLOEPEA    ";"                                             { $$ = new Break();
-                                                                           $$->set_location(@1,begin.line, @1.begin.column, @2.end.line, @2.end.column);
+                                                                           $$->set_location(@1.begin.line, @1.begin.column, @2.end.line, @2.end.column);
                                                                          }
            | ROLOEPEA ID ";"                                             { Contenido* c = driver.tabla.find_symbol($2,Etiqueta);
                                                                            if (c) {
                                                                              $$ = new BreakID($2);
-                                                                             $$->set_location(@1,begin.line, @1.begin.column, @3.end.line, @3.end.column);
+                                                                             $$->set_location(@1.begin.line, @1.begin.column, @3.end.line, @3.end.column);
                                                                            } else {
                                                                              driver.error(@1, @2, "Attempt to break to tag " + $2 + ", which is not declared.");
                                                                              $$ = new Empty();
@@ -662,11 +666,11 @@ iteracionindeterminada: ID ":" MIENTRAS "(" expresion ")" { Contenido* c = drive
                                                             }
                                                           }
                         bloque                            { $$ = new TagWhile($1, $5, $8);
-                                                            $$->set_location(@1,begin.line, @1.begin.column, @8.end.line, @8.end.column);
+                                                            $$->set_location(@1.begin.line, @1.begin.column, @8.end.line, @8.end.column);
                                                           }
 
                       | MIENTRAS "(" expresion ")" bloque { $$ = new While($3, $5);
-                                                            $$->set_location(@1,begin.line, @1.begin.column, @5.end.line, @5.end.column);
+                                                            $$->set_location(@1.begin.line, @1.begin.column, @5.end.line, @5.end.column);
                                                           }
                       ;
 

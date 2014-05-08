@@ -2,6 +2,8 @@
 #define EXPRESSION_CC
 #include "expresion.hh"
 
+extern TablaSimbolos* tablaSimbolos;
+
 using namespace std;
 
 Expression::Expression() {}
@@ -61,6 +63,11 @@ std::string HormigueroExpr::to_string()
 std::string HormigueroExpr::getValue()
 {
   return valor;
+}
+
+void HormigueroExpr::check()
+{
+  set_type(new HormigueroType());
 }
 
 MalayoExpr::MalayoExpr(std::string valor)

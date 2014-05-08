@@ -168,17 +168,7 @@ class HormigueroType : public Type
   public:
     std::string to_string();
     bool isSimple();
-    static HormigueroType* getInstance()
-    {
-      if(!_instance)
-        _instance = new HormigueroType();
-
-      return _instance;
-    }
-
-  private:
     HormigueroType();
-    static HormigueroType* _instance;
 };
 
 class CuevaType : public Type

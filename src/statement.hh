@@ -44,6 +44,7 @@ class If : public Statement
   public:
     If(Expression* condicion, Statement* instrucciones);
     std::string to_string();
+    void check();
 
   private:
     Expression* _condicion;
@@ -70,6 +71,7 @@ class Write : public Statement
   public:
     Write(Expression* expr);
     std::string to_string();
+    void check();
 
   private:
     Expression* _expr;

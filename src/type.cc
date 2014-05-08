@@ -129,8 +129,6 @@ bool HormigueroType::isSimple()
   return true;
 }
 
-HormigueroType* HormigueroType::_instance = 0;
-
 CuevaType::CuevaType(Type* tipo, std::vector<Expression*>* longitudes)
   : Type(0)
   , _tipo       ( tipo       )

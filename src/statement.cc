@@ -4,6 +4,8 @@
 #include <iostream>
 #include "type.hh"
 
+extern TablaSimbolos* tablaSimbolos;
+
 using namespace std;
 
 Assign::Assign(std::vector<Expression *>* ids, std::vector<Expression*>* expr)
@@ -44,6 +46,25 @@ If::If(Expression* condicion, Statement* instrucciones)
 std::string If::to_string()
 {
   return "if " + _condicion->to_string() + "then: " + _instrucciones->to_string() + '\n';
+}
+
+void If::check()
+{
+  _condicion->check();
+  Type* t = _condicion->get_type();
+
+  if(t != PandaType::getInstance() and t != ErrorType::getInstance())
+  {
+    error("condition for 'si' is of type " + t->to_string() + " intead of type 'panda'");
+  }
+
+  _instrucciones->check();
+
+  if(_instrucciones->get_type() != ErrorType::getInstance() and t == PandaType::getInstance())
+    set_type(ExtintoType::getInstance());
+  else
+    set_type(ErrorType::getInstance());
+
 }
 
 IfElse::IfElse(Expression* condicion, Statement* brazoTrue, Statement* brazoFalse)
@@ -89,6 +110,27 @@ std::string Write::to_string()
   return "Escribir : " + _expr->to_string();
 }
 
+void Write::check()
+{
+  _expr->check();
+  Type* t = _expr->get_type();
+  if( !dynamic_cast<HormigueroType*>(t)  and
+      t != PandaType::getInstance()      and
+      t != PolarType::getInstance()      and
+      t != KodiakType::getInstance()     and
+      t != MalayoType::getInstance()     and
+      t != ErrorType::getInstance()
+    )
+  {
+    error("error in function 'escribir' expression is of type " + t->to_string() + " instead of an escalar type");
+    set_type(ErrorType::getInstance());
+  } else
+  {
+    if(t == ErrorType::getInstance()) set_type(ErrorType::getInstance());
+    else                              set_type(ExtintoType::getInstance());
+  }
+}
+
 Read::Read(Expression* id)
   : Statement()
   , _id( id )
@@ -108,7 +150,8 @@ void Read::check()
   if (dynamic_cast<HormigueroType*>(t) or
       dynamic_cast<CuevaType*>(t) or
       dynamic_cast<PardoType*>(t) or
-      dynamic_cast<GrizzliType*>(t)) {
+      dynamic_cast<GrizzliType*>(t))
+  {
     error("Cannot read a variable of type '" + t->to_string() + "'");
   }
 
@@ -285,7 +328,7 @@ void Increase::check()
   Type* type = get_type();
   if(type != PolarType::getInstance())
   {
-    error("attempt to increase a variable which is not of type POLAR");
+    error("attempt to increase a variable of type " + type->to_string() + " instead of type POLAR");
     set_type(ErrorType::getInstance());
   }
 }
@@ -381,7 +424,7 @@ void While::check()
   _expr->check();
   Type* texp = _expr->get_type();
 
-  if (texp != PandaType::getInstance() or texp != ErrorType::getInstance()) {
+  if (texp != PandaType::getInstance() and texp != ErrorType::getInstance()) {
     error("Condition for 'mientras' must be a 'panda' type instead of '" + texp->to_string() + "'");
   }
 

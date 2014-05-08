@@ -55,6 +55,7 @@ class HormigueroExpr : public Constant
     HormigueroExpr(std::string valor);
     std::string to_string();
     std::string getValue();
+    void check();
 
 };
 
