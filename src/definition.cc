@@ -20,6 +20,24 @@ std::string DefWithInit::to_string()
   return str;
 }
 
+void DefWithInit::check()
+{
+  bool errortype = false;
+  for(std::vector<Expression*>::iterator it = _expr->begin(); it != _expr->end(); ++it)
+  {
+    Expression* exp = *it;
+    exp->check();
+    if(!_tipo->compareTypes(exp->get_type()))
+    {
+      error("expression " + exp->to_string() + " is not of type " + _tipo->to_string());
+      errortype = true;
+    }
+  }
+
+  if(errortype) set_type(ErrorType::getInstance());
+  else          set_type(_tipo);
+}
+
 ConstDef::ConstDef(Type* tipo, std::vector<std::string>* ids, std::vector<Expression*>* expr)
   : DefWithInit(tipo, ids, expr)
   {}

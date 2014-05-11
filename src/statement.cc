@@ -23,6 +23,8 @@ std::string Assign::to_string()
   return str;
 }
 
+void Assign::check() {}
+
 Function::Function(std::string name, std::vector<Expression*>* parameters)
   : Statement()
   , _name       ( name       )
@@ -251,6 +253,35 @@ std::string SimpleFor::to_string()
         + "Expresion Final :"                 + _end->to_string()   + '\n'
         + "Cuerpo :"                          + _body->to_string()  + '\n'
         ;
+}
+
+void SimpleFor::check()
+{
+  _begin->check();
+  _end->check();
+
+  Type* errortype = ErrorType::getInstance();
+  Type* tb = _begin->get_type();
+  Type* te = _end->get_type();
+
+  if( tb != PolarType::getInstance() && tb != errortype)
+  {
+    error("initial expression inside 'para' is of type '" + tb->to_string() + "' instead of type 'polar'");
+  }
+
+  if( te != PolarType::getInstance() && te != errortype)
+  {
+    error("ending expression inside 'para' is of type '" + tb->to_string() + "' instead of type 'polar'");
+  }
+
+  _body->check();
+
+  Type* tbody = _body->get_type();
+
+  if(tb == errortype || te == errortype || tbody == errortype)
+    set_type(errortype);
+  else
+    set_type(ExtintoType::getInstance());
 }
 
 IdFor::IdFor(std::string id, std::string iterVar, Statement* body)

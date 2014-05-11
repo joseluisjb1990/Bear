@@ -25,6 +25,7 @@ class Assign : public Statement
   public:
     Assign(std::vector<Expression*>* ids, std::vector<Expression*>* expr);
     std::string to_string();
+    void check();
 
 };
 
@@ -121,12 +122,13 @@ class SimpleFor : public Statement
   public:
     SimpleFor(std::string id, Expression* begin, Expression* end, Statement* body);
     std::string to_string();
+    void check();
 
   private:
     std::string _id;
     Expression* _begin;
     Expression* _end;
-    Statement*       _body;
+    Statement*  _body;
 };
 
 class IdFor : public Statement

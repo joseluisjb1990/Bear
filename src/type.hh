@@ -70,6 +70,8 @@ class Type
      *   Ninguno.
      */
     virtual std::string getName() { return ""; };
+
+    virtual bool compareTypes(Type* t2) { return true; };
 };
 
 class PandaType : public Type
@@ -84,6 +86,7 @@ class PandaType : public Type
 
       return _instance;
     }
+    bool compareTypes(Type* t2);
 
   private:
     PandaType();
@@ -102,6 +105,7 @@ class PolarType : public Type
 
       return _instance;
     }
+    bool compareTypes(Type* t2);
 
   private:
     PolarType();
@@ -121,6 +125,7 @@ class KodiakType : public Type
 
       return _instance;
     }
+    bool compareTypes(Type* t2);
 
   private:
     KodiakType();
@@ -139,6 +144,7 @@ class MalayoType : public Type
 
       return _instance;
     }
+    bool compareTypes(Type* t2);
 
   private:
     MalayoType();
@@ -157,6 +163,7 @@ class ExtintoType : public Type
 
       return _instance;
     }
+    bool compareTypes(Type* t2);
 
   private:
     ExtintoType();
@@ -169,6 +176,7 @@ class HormigueroType : public Type
     std::string to_string();
     bool isSimple();
     HormigueroType();
+    bool compareTypes(Type* t2);
 };
 
 class CuevaType : public Type
@@ -198,6 +206,7 @@ class CuevaType : public Type
      *   Ninguno.
      */
     Type* getTipo();
+    bool compareTypes(Type* t2);
 };
 
 class CampoType : public Type
@@ -219,6 +228,7 @@ class CampoType : public Type
     std::string to_string();
     int getSize();
     bool isSimple();
+    bool compareTypes(Type* t2);
 };
 
 class PardoType : public Type
@@ -248,6 +258,7 @@ class PardoType : public Type
     std::string to_string();
     int getSize();
     bool isSimple();
+    bool compareTypes(Type* t2);
 
     /**
      * Retorna una representación en string del nombre del tipo.
@@ -285,6 +296,7 @@ class GrizzliType : public Type
     std::string to_string();
     int getSize();
     bool isSimple();
+    bool compareTypes(Type* t2);
 
     /**
      * Retorna una representación en string del nombre del tipo.
@@ -311,6 +323,7 @@ class ErrorType : public Type
 
       return _instance;
     }
+    bool compareTypes(Type* t2);
   private:
     ErrorType();
     static ErrorType* _instance;
@@ -326,6 +339,7 @@ class TagType : public Type
     TagType();
     std::string to_string();
     bool isSimple();
+    bool compareTypes(Type* t2);
 };
 
 class Tuple : public Type

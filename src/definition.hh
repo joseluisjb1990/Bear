@@ -31,12 +31,12 @@ class DefWithInit : public Definition
   public:
     DefWithInit(Type* tipo, std::vector<std::string>* ids, std::vector<Expression*>* expr);
     std::string to_string();
+    void check();
 
   private:
     Type* _tipo;
     std::vector<std::string>*_ids;
     std::vector<Expression*>*_expr;
-
 };
 
 class ConstDef : public DefWithInit
@@ -50,7 +50,6 @@ class DefVar : public DefWithInit
 {
   public:
     DefVar(Type* tipo, std::vector<std::string>* ids, std::vector<Expression*>* expr);
-
 };
 
 class DefVarNoInit : public Definition

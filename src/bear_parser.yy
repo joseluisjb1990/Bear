@@ -683,6 +683,7 @@ lvalue: ID maybecueva             { Contenido* c = driver.tabla.find_symbol($1, 
                                     if(c) {
                                       $$ = new IDExpr($1);
                                       $$->set_location(@1.begin.line, @1.begin.column, @1.end.line, @1.end.column);
+                                      $$->set_type(c->getTipo());
                                     } else {
                                       c = driver.tabla.find_symbol($1, Cueva);
                                       $$ = new CuevaExpr($1, $2);

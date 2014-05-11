@@ -41,6 +41,11 @@ PandaType::PandaType()
 
 PandaType* PandaType::_instance = 0;
 
+bool PandaType::compareTypes (Type* t2)
+{
+  return t2 == getInstance();
+}
+
 std::string PandaType::to_string()
 {
   return "panda";
@@ -67,6 +72,11 @@ bool PolarType::isSimple()
 
 PolarType* PolarType::_instance = 0;
 
+bool PolarType::compareTypes (Type* t2)
+{
+  return t2 == getInstance();
+}
+
 KodiakType::KodiakType()
   : Type(4)
   {}
@@ -82,6 +92,11 @@ bool KodiakType::isSimple()
 }
 
 KodiakType* KodiakType::_instance = 0;
+
+bool KodiakType::compareTypes (Type* t2)
+{
+  return t2 == getInstance();
+}
 
 MalayoType::MalayoType()
   : Type(4)
@@ -99,6 +114,11 @@ bool MalayoType::isSimple()
 
 MalayoType* MalayoType::_instance = 0;
 
+bool MalayoType::compareTypes (Type* t2)
+{
+  return t2 == getInstance();
+}
+
 ExtintoType::ExtintoType()
   : Type(4)
   {}
@@ -115,6 +135,11 @@ bool ExtintoType::isSimple()
   return true;
 }
 
+bool ExtintoType::compareTypes (Type* t2)
+{
+  return t2 == getInstance();
+}
+
 HormigueroType::HormigueroType()
   : Type(4)
   {}
@@ -129,6 +154,11 @@ bool HormigueroType::isSimple()
   return true;
 }
 
+bool HormigueroType::compareTypes (Type* t2)
+{
+  return dynamic_cast<HormigueroType*> (t2);
+}
+
 CuevaType::CuevaType(Type* tipo, std::vector<Expression*>* longitudes)
   : Type(0)
   , _tipo       ( tipo       )
@@ -139,6 +169,11 @@ int CuevaType::getSize()
 {
   int size = _tipo->getSize();
   return size;
+}
+
+bool CuevaType::compareTypes (Type* t2)
+{
+  return dynamic_cast<CuevaType*> (t2);
 }
 
 std::string CuevaType::to_string()
@@ -180,6 +215,11 @@ bool CampoType::isSimple()
   return true;
 }
 
+bool CampoType::compareTypes (Type* t2)
+{
+  return dynamic_cast<CampoType*> (t2);
+}
+
 PardoType::PardoType(std::vector<Type*>* campos, std::string nombre)
   : Type(0)
   , _campos ( campos )
@@ -202,6 +242,11 @@ int PardoType::getSize()
   for (unsigned int i=0; i < _campos->size(); ++i)
     size += _campos->at(i)->getSize();
   return size;
+}
+
+bool PardoType::compareTypes (Type* t2)
+{
+  return dynamic_cast<PardoType*> (t2);
 }
 
 bool PardoType::isSimple()
@@ -250,6 +295,11 @@ std::string GrizzliType::getName()
   return _nombre;
 }
 
+bool GrizzliType::compareTypes (Type* t2)
+{
+  return dynamic_cast<GrizzliType*> (t2);
+}
+
 ErrorType::ErrorType()
   : Type(4)
   {}
@@ -266,6 +316,12 @@ bool ErrorType::isSimple()
 
 ErrorType* ErrorType::_instance = 0;
 
+bool ErrorType::compareTypes (Type* t2)
+{
+  return t2 == getInstance();
+}
+
+
 TagType::TagType()
   : Type(4)
   {}
@@ -279,6 +335,12 @@ bool TagType::isSimple()
 {
   return true;
 }
+
+bool TagType::compareTypes (Type* t2)
+{
+  return dynamic_cast<TagType*> (t2);
+}
+
 
 Tuple::Tuple(Type* izq, Type* der)
   : Type(0)
