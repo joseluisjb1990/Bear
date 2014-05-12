@@ -29,8 +29,10 @@ void DefWithInit::check()
     exp->check();
     if(!_tipo->compareTypes(exp->get_type()))
     {
-      error("expression " + exp->to_string() + " is not of type " + _tipo->to_string());
       errortype = true;
+      if (exp->get_type() != ErrorType::getInstance()) {
+        error("expression " + exp->to_string() + " is not of type " + _tipo->to_string());
+      }
     }
   }
 

@@ -321,6 +321,7 @@ class IDExpr : public LValueExpr
   private:
     std::string _nombre;
 
+
   public:
     IDExpr(std::string nombre);
     std::string to_string();
@@ -330,12 +331,15 @@ class IDExpr : public LValueExpr
 class FunctionExpr : public Expression
 {
   public:
-    FunctionExpr(std::string name, std::vector<Expression*>* parameters);
+    FunctionExpr(std::string name, std::vector<Type*>* parameterTypes, std::vector<Expression*>* parameters, Type* returnType);
     std::string to_string();
+    void check();
 
   private:
     std::string               _name;
+    std::vector<Type*>*       _parameterTypes;
     std::vector<Expression*>* _parameters;
+    Type*                     _return;
 };
 
 class CuevaExpr : public LValueExpr

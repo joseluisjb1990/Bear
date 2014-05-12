@@ -559,10 +559,12 @@ std::string IDExpr::to_string()
   return _nombre;
 }
 
-FunctionExpr::FunctionExpr(std::string name, std::vector<Expression*>* parameters)
+FunctionExpr::FunctionExpr(std::string name, std::vector<Type*>* parameterTypes, std::vector<Expression*>* parameters, Type* returnType)
   : Expression()
-  , _name       ( name       )
-  , _parameters ( parameters )
+  , _name           ( name           )
+  , _parameterTypes ( parameterTypes )
+  , _parameters     ( parameters     )
+  , _return         ( returnType     )
   {}
 
 std::string FunctionExpr::to_string()
@@ -572,6 +574,27 @@ std::string FunctionExpr::to_string()
     str += _parameters->at(i)->to_string();
   return str;
 }
+
+void FunctionExpr::check()
+{
+  bool ok = true;
+  for(unsigned int i=0; i < _parameters->size(); ++i) {
+    _parameters->at(i)->check();
+    Type* tipo = _parameterTypes->at(i);
+    Type* tipoParam = _parameters->at(i)->get_type();
+    if ( tipo != tipoParam ) {
+      ok = false;
+      if (tipoParam != ErrorType::getInstance())
+        error("Trying to pass a parameter of type '" + tipoParam->to_string() + "' to function '" + _name + "' instead of '" + tipo->to_string() + "'.");
+    }
+  }
+  if (ok) {
+    this->set_type(_return);
+  } else {
+    this->set_type(ErrorType::getInstance());
+  }
+}
+
 
 PardoExpr::PardoExpr(LValueExpr* pardo, IDExpr* campo)
   : LValueExpr()

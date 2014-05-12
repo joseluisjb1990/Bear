@@ -350,6 +350,7 @@ defvariable: tipo identificadores "=" expresiones ";"   { if ($2->size() == $4->
                                                             driver.agregarConInicializacion($2, Var, $1, true);
                                                             std::vector<string>* l = extraerIds($2);
                                                             $$ = new DefVar($1, l, $4);
+                                                            $$->set_location(@1.begin.line, @1.begin.column, @5.end.line, @5.end.column);
                                                           } else {
                                                             driver.error(@1, @4, "The number of l-values and expressions is not the same.");
                                                             $$ = new EmptyDef();
@@ -364,6 +365,7 @@ defvariable: tipo identificadores "=" expresiones ";"   { if ($2->size() == $4->
            | tipo identificadores ";"                   { driver.agregarSinInicializacion($2, Var, $1);
                                                           std::vector<string>* l = extraerIds($2);
                                                           $$ = new DefVarNoInit($1, l);
+                                                          $$->set_location(@1.begin.line, @1.begin.column, @3.end.line, @3.end.column);
                                                         }
            | defcueva ID ";"                            { $$ = new DefArray($1, $2);
                                                           driver.tabla.add_symbol($2, $1, Cueva, @2.begin.line, @2.begin.column, true);
@@ -525,7 +527,14 @@ instruccion: defvariable                                                 { $$ = 
                                                                              driver.error(@1,@4,"Function " + $1 + " is not defined.");
                                                                              $$ = new Empty();
                                                                            } else {
-                                                                             $$ = new Function($1, $3);
+                                                                             Type* tipoRetorno = f->getTipo();
+                                                                             std::vector<Parameter*>* parametros = f->get_parameters();
+                                                                             std::vector<Type*>* tipos = new std::vector<Type*>();
+                                                                             for (unsigned int i=0; i < parametros->size(); ++i) {
+                                                                               tipos->push_back(parametros->at(i)->get_tipo());
+                                                                             }
+                                                                             $$ = new Function($1, tipos, $3, tipoRetorno);
+                                                                             $$->set_location(@1.begin.line, @1.begin.column, @4.end.line, @4.end.column);
                                                                            }
                                                                          }
            | SI expresion bloque                                         {
@@ -848,7 +857,14 @@ expresion: CONSTPOLAR                            { $$ = new PolarExpr($1);
                                                      driver.error(@1,@4,"Function " + $1 + " is not defined.");
                                                      $$ = new EmptyExpr();
                                                    } else {
-                                                     $$ = new FunctionExpr($1, $3);
+                                                     Type* tipoRetorno = f->getTipo();
+                                                     std::vector<Parameter*>* parametros = f->get_parameters();
+                                                     std::vector<Type*>* tipos = new std::vector<Type*>();
+                                                     for (unsigned int i=0; i < parametros->size(); ++i) {
+                                                       tipos->push_back(parametros->at(i)->get_tipo());
+                                                     }
+                                                     $$ = new FunctionExpr($1, tipos, $3, tipoRetorno);
+                                                     $$->set_location(@1.begin.line, @1.begin.column, @4.end.line, @4.end.column);
                                                    }
                                                  }
          | funcionpredef                         { $$ = $1; }

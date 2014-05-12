@@ -25,10 +25,12 @@ std::string Assign::to_string()
 
 void Assign::check() {}
 
-Function::Function(std::string name, std::vector<Expression*>* parameters)
+Function::Function(std::string name, std::vector<Type*>* parameterTypes, std::vector<Expression*>* parameters, Type* returnType)
   : Statement()
-  , _name       ( name       )
-  , _parameters ( parameters )
+  , _name           ( name           )
+  , _parameterTypes ( parameterTypes )
+  , _parameters     ( parameters     )
+  , _return         ( returnType     )
   {}
 
 std::string Function::to_string()
@@ -37,6 +39,26 @@ std::string Function::to_string()
   for (unsigned int i=0; i < _parameters->size(); ++i)
     str += _parameters->at(i)->to_string();
   return str;
+}
+
+void Function::check()
+{
+  bool ok = true;
+  for(unsigned int i=0; i < _parameters->size(); ++i) {
+    _parameters->at(i)->check();
+    Type* tipo = _parameterTypes->at(i);
+    Type* tipoParam = _parameters->at(i)->get_type();
+    if ( tipo != tipoParam ) {
+      ok = false;
+      if (tipoParam != ErrorType::getInstance())
+        error("Trying to pass a parameter of type '" + tipoParam->to_string() + "' to function '" + _name + "' instead of '" + tipo->to_string() + "'.");
+    }
+  }
+  if (ok) {
+    this->set_type(_return);
+  } else {
+    this->set_type(ErrorType::getInstance());
+  }
 }
 
 If::If(Expression* condicion, Statement* instrucciones)

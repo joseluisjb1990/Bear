@@ -32,12 +32,15 @@ class Assign : public Statement
 class Function : public Statement
 {
   public:
-    Function(std::string name, std::vector<Expression*>* parameters);
+    Function(std::string name, std::vector<Type*>* parameterTypes, std::vector<Expression*>* parameters, Type* returnType);
     std::string to_string();
+    void check();
 
   private:
     std::string               _name;
+    std::vector<Type*>*       _parameterTypes;
     std::vector<Expression*>* _parameters;
+    Type*                     _return;
 };
 
 class If : public Statement
