@@ -178,9 +178,10 @@ bool CuevaType::compareTypes (Type* t2)
 
 std::string CuevaType::to_string()
 {
-  std::string str(_tipo->to_string());
+  std::string str = "cueva ";
   for (unsigned int i=0; i<_longitudes->size(); ++i)
     str += "[" + _longitudes->at(i)->to_string() + "]";
+  str += " de " + _tipo->to_string();
   return str;
 }
 
@@ -233,7 +234,7 @@ PardoType::PardoType(std::string nombre)
 
 std::string PardoType::to_string()
 {
-  return _nombre;
+  return "pardo " + _nombre;
 }
 
 int PardoType::getSize()
@@ -272,7 +273,7 @@ GrizzliType::GrizzliType(std::string nombre)
 
 std::string GrizzliType::to_string()
 {
-  return _nombre;
+  return "grizzli " + _nombre;
 }
 
 int GrizzliType::getSize()
