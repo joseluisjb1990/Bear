@@ -14,7 +14,7 @@ class Expression : public Node
 
     Expression();
     virtual void check() {};
-    virtual std::string to_string();
+    virtual std::string to_string(int nesting);
 };
 
 class Constant : public Expression
@@ -27,7 +27,7 @@ class PolarExpr : public Constant
 
   public :
     PolarExpr(std::string valor);
-    std::string to_string();
+    std::string to_string(int nesting);
     std::string getValue();
     void check();
 
@@ -40,7 +40,7 @@ class KodiakExpr : public Constant
 
   public :
     KodiakExpr(std::string valor);
-    std::string to_string();
+    std::string to_string(int nesting);
     std::string getValue();
     void check();
 
@@ -53,7 +53,7 @@ class HormigueroExpr : public Constant
 
   public :
     HormigueroExpr(std::string valor);
-    std::string to_string();
+    std::string to_string(int nesting);
     std::string getValue();
     void check();
 
@@ -66,7 +66,7 @@ class MalayoExpr : public Constant
 
   public :
     MalayoExpr(std::string valor);
-    std::string to_string();
+    std::string to_string(int nesting);
     std::string getValue();
     void check();
 
@@ -79,7 +79,7 @@ class PandaExpr : public Constant
 
   public :
     PandaExpr(std::string valor);
-    std::string to_string();
+    std::string to_string(int nesting);
     std::string getValue();
     void check();
 
@@ -93,7 +93,7 @@ class Sum : public Expression
 
   public :
     Sum(Expression* izq, Expression* der);
-    std::string to_string();
+    std::string to_string(int nesting);
     void check();
 
 };
@@ -106,7 +106,7 @@ class Substraction : public Expression
 
   public :
     Substraction(Expression* izq, Expression* der);
-    std::string to_string();
+    std::string to_string(int nesting);
     void check();
 
 };
@@ -119,7 +119,7 @@ class Multiplication : public Expression
 
   public :
     Multiplication(Expression* izq, Expression* der);
-    std::string to_string();
+    std::string to_string(int nesting);
     void check();
 
 };
@@ -132,7 +132,7 @@ class Division : public Expression
 
   public :
     Division(Expression* izq, Expression* der);
-    std::string to_string();
+    std::string to_string(int nesting);
     void check();
 
 };
@@ -145,7 +145,7 @@ class Remainder : public Expression
 
   public :
     Remainder(Expression* izq, Expression* der);
-    std::string to_string();
+    std::string to_string(int nesting);
     void check();
 
 };
@@ -158,7 +158,7 @@ class Power : public Expression
 
   public :
     Power(Expression* izq, Expression* der);
-    std::string to_string();
+    std::string to_string(int nesting);
     void check();
 
 };
@@ -170,7 +170,7 @@ class Minus : public Expression
 
   public :
     Minus(Expression* operando);
-    std::string to_string();
+    std::string to_string(int nesting);
     void check();
 
 };
@@ -183,7 +183,7 @@ class Less : public Expression
 
   public :
     Less(Expression* izq, Expression* der);
-    std::string to_string();
+    std::string to_string(int nesting);
     void check();
 
 };
@@ -196,7 +196,7 @@ class LessEqual : public Expression
 
   public :
     LessEqual(Expression* izq, Expression* der);
-    std::string to_string();
+    std::string to_string(int nesting);
     void check();
 
 };
@@ -209,7 +209,7 @@ class Greater : public Expression
 
   public :
     Greater(Expression* izq, Expression* der);
-    std::string to_string();
+    std::string to_string(int nesting);
     void check();
 
 };
@@ -222,7 +222,7 @@ class GreaterEqual : public Expression
 
   public :
     GreaterEqual(Expression* izq, Expression* der);
-    std::string to_string();
+    std::string to_string(int nesting);
     void check();
 
 };
@@ -235,7 +235,7 @@ class Equal : public Expression
 
   public :
     Equal(Expression* izq, Expression* der);
-    std::string to_string();
+    std::string to_string(int nesting);
     void check();
 
 };
@@ -248,7 +248,7 @@ class NotEqual : public Expression
 
   public :
     NotEqual(Expression* izq, Expression* der);
-    std::string to_string();
+    std::string to_string(int nesting);
     void check();
 
 };
@@ -261,7 +261,7 @@ class And : public Expression
 
   public :
     And(Expression* izq, Expression* der);
-    std::string to_string();
+    std::string to_string(int nesting);
     void check();
 
 };
@@ -274,7 +274,7 @@ class Or : public Expression
 
   public :
     Or(Expression* izq, Expression* der);
-    std::string to_string();
+    std::string to_string(int nesting);
     void check();
 
 };
@@ -286,7 +286,7 @@ class Not : public Expression
 
   public :
     Not(Expression* operando);
-    std::string to_string();
+    std::string to_string(int nesting);
     void check();
 
 };
@@ -300,7 +300,7 @@ class SelectorExpr : public Expression
 
   public:
     SelectorExpr(Expression* condicion, Expression* brazoTrue, Expression* brazoFalse);
-    std::string to_string();
+    std::string to_string(int nesting);
 
 };
 
@@ -324,7 +324,7 @@ class IDExpr : public LValueExpr
 
   public:
     IDExpr(std::string nombre);
-    std::string to_string();
+    std::string to_string(int nesting);
 
 };
 
@@ -332,7 +332,7 @@ class FunctionExpr : public Expression
 {
   public:
     FunctionExpr(std::string name, std::vector<Type*>* parameterTypes, std::vector<Expression*>* parameters, Type* returnType);
-    std::string to_string();
+    std::string to_string(int nesting);
     void check();
 
   private:
@@ -346,7 +346,7 @@ class CuevaExpr : public LValueExpr
 {
   public:
     CuevaExpr(std::string cueva, std::vector<Expression*>* dimensions);
-    std::string to_string();
+    std::string to_string(int nesting);
     void addDimension(Expression* dimension);
 
   private:
@@ -360,7 +360,7 @@ class PardoExpr : public LValueExpr
   public:
     PardoExpr(LValueExpr* pardo, IDExpr* campo);
     PardoExpr(LValueExpr* pardo, CuevaExpr* campo);
-    std::string to_string();
+    std::string to_string(int nesting);
 
   private:
    LValueExpr* _pardo;
@@ -373,7 +373,7 @@ class GrizzliExpr : public LValueExpr
   public:
     GrizzliExpr(LValueExpr* grizzli, IDExpr* campo);
     GrizzliExpr(LValueExpr* grizzli, CuevaExpr* campo);
-    std::string to_string();
+    std::string to_string(int nesting);
 
   private:
    LValueExpr* _grizzli;

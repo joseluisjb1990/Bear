@@ -8,18 +8,20 @@ using namespace std;
 
 Expression::Expression() {}
 
-std::string Expression::to_string()
+std::string Expression::to_string(int nesting)
 {
-  return "";
+  std::string padding(nesting*2, ' ');
+  return padding + "Expresión\n";
 }
 
 PolarExpr::PolarExpr(std::string valor)
   : valor ( valor )
   {}
 
-std::string PolarExpr::to_string()
+std::string PolarExpr::to_string(int nesting)
 {
-  return "Constante polar, valor: " + getValue();
+  std::string padding(nesting*2, ' ');
+  return padding + getValue() + "\n";
 }
 
 std::string PolarExpr::getValue()
@@ -36,9 +38,10 @@ KodiakExpr::KodiakExpr(std::string valor)
   : valor ( valor )
   {}
 
-std::string KodiakExpr::to_string()
+std::string KodiakExpr::to_string(int nesting)
 {
-  return "Constante kodiak, valor: " + getValue();
+  std::string padding(nesting*2, ' ');
+  return padding + getValue() + "\n";
 }
 
 std::string KodiakExpr::getValue()
@@ -55,9 +58,10 @@ HormigueroExpr::HormigueroExpr(std::string valor)
   : valor ( valor )
   {}
 
-std::string HormigueroExpr::to_string()
+std::string HormigueroExpr::to_string(int nesting)
 {
-  return "Constante hormiguero, valor: " + getValue();
+  std::string padding(nesting*2, ' ');
+  return padding + "\"" + getValue() + "\"\n";
 }
 
 std::string HormigueroExpr::getValue()
@@ -74,9 +78,10 @@ MalayoExpr::MalayoExpr(std::string valor)
   : valor ( valor )
   {}
 
-std::string MalayoExpr::to_string()
+std::string MalayoExpr::to_string(int nesting)
 {
-  return "Constante malayo, valor: " + getValue();
+  std::string padding(nesting*2, ' ');
+  return padding + "'" + getValue() + "'\n";
 }
 
 std::string MalayoExpr::getValue()
@@ -93,9 +98,10 @@ PandaExpr::PandaExpr(std::string valor)
   : valor ( valor )
   {}
 
-std::string PandaExpr::to_string()
+std::string PandaExpr::to_string(int nesting)
 {
-  return "Constante panda, valor: " + getValue();
+  std::string padding(nesting*2, ' ');
+  return padding + getValue() + "\n";
 }
 
 std::string PandaExpr::getValue()
@@ -113,9 +119,10 @@ Sum::Sum(Expression* izq, Expression* der)
   , der ( der )
   {}
 
-std::string Sum::to_string()
+std::string Sum::to_string(int nesting)
 {
-  return "Operación: Suma.\nOperando izquierdo: " + izq->to_string() + "\nOperando derecho: " + der->to_string() + "\n";
+  std::string padding(nesting*2, ' ');
+  return izq->to_string(nesting+1) + padding + "+\n" + der->to_string(nesting+1);
 }
 
 void Sum::check()
@@ -130,7 +137,7 @@ void Sum::check()
   } else if ( t1 == ErrorType::getInstance() or t2 == ErrorType::getInstance() ) {
     this->set_type(ErrorType::getInstance());
   } else {
-    error("Cannot apply operator + between " + t1->to_string() + " and " + t2->to_string() + "types.\n");
+    error("Cannot apply operator '+' between " + t1->to_string() + " and " + t2->to_string() + "types\n");
     this->set_type(ErrorType::getInstance());
   }
 }
@@ -140,9 +147,10 @@ Substraction::Substraction(Expression* izq, Expression* der)
   , der ( der )
   {}
 
-std::string Substraction::to_string()
+std::string Substraction::to_string(int nesting)
 {
-  return "Operación: Resta.\nOperando izquierdo: " + izq->to_string() + "\nOperando derecho: " + der->to_string() + "\n";
+  std::string padding(nesting*2, ' ');
+  return izq->to_string(nesting+1) + padding + "-\n" + der->to_string(nesting+1);
 }
 
 void Substraction::check()
@@ -157,7 +165,7 @@ void Substraction::check()
   } else if ( t1 == ErrorType::getInstance() or t2 == ErrorType::getInstance() ) {
     this->set_type(ErrorType::getInstance());
   } else {
-    error("Cannot apply operator - between " + t1->to_string() + " and " + t2->to_string() + "types.\n");
+    error("Cannot apply operator '-' between " + t1->to_string() + " and " + t2->to_string() + "types\n");
     this->set_type(ErrorType::getInstance());
   }
 }
@@ -167,9 +175,10 @@ Multiplication::Multiplication(Expression* izq, Expression* der)
   , der ( der )
   {}
 
-std::string Multiplication::to_string()
+std::string Multiplication::to_string(int nesting)
 {
-  return "Operación: Multiplicación.\nOperando izquierdo: " + izq->to_string() + "\nOperando derecho: " + der->to_string() + "\n";
+  std::string padding(nesting*2, ' ');
+  return izq->to_string(nesting+1) + padding + "*\n" + der->to_string(nesting+1);
 }
 
 void Multiplication::check()
@@ -184,7 +193,7 @@ void Multiplication::check()
   } else if ( t1 == ErrorType::getInstance() or t2 == ErrorType::getInstance() ) {
     this->set_type(ErrorType::getInstance());
   } else {
-    error("Cannot apply operator * between " + t1->to_string() + " and " + t2->to_string() + "types.\n");
+    error("Cannot apply operator '*' between " + t1->to_string() + " and " + t2->to_string() + "types\n");
     this->set_type(ErrorType::getInstance());
   }
 }
@@ -194,9 +203,10 @@ Division::Division(Expression* izq, Expression* der)
   , der ( der )
   {}
 
-std::string Division::to_string()
+std::string Division::to_string(int nesting)
 {
-  return "Operación: División.\nOperando izquierdo: " + izq->to_string() + "\nOperando derecho: " + der->to_string() + "\n";
+  std::string padding(nesting*2, ' ');
+  return izq->to_string(nesting+1) + padding + "/\n" + der->to_string(nesting+1);
 }
 
 void Division::check()
@@ -211,7 +221,7 @@ void Division::check()
   } else if ( t1 == ErrorType::getInstance() or t2 == ErrorType::getInstance() ) {
     this->set_type(ErrorType::getInstance());
   } else {
-    error("Cannot apply operator / between " + t1->to_string() + " and " + t2->to_string() + "types.\n");
+    error("Cannot apply operator '/' between " + t1->to_string() + " and " + t2->to_string() + "types\n");
     this->set_type(ErrorType::getInstance());
   }
 }
@@ -221,9 +231,10 @@ Remainder::Remainder(Expression* izq, Expression* der)
   , der ( der )
   {}
 
-std::string Remainder::to_string()
+std::string Remainder::to_string(int nesting)
 {
-  return "Operación: Módulo.\nOperando izquierdo: " + izq->to_string() + "\nOperando derecho: " + der->to_string() + "\n";
+  std::string padding(nesting*2, ' ');
+  return izq->to_string(nesting+1) + padding + "%\n" + der->to_string(nesting+1);
 }
 
 void Remainder::check()
@@ -238,7 +249,7 @@ void Remainder::check()
   } else if ( t1 == ErrorType::getInstance() or t2 == ErrorType::getInstance() ) {
     this->set_type(ErrorType::getInstance());
   } else {
-    error("Cannot apply operator % between " + t1->to_string() + " and " + t2->to_string() + "types.\n");
+    error("Cannot apply operator '%' between " + t1->to_string() + " and " + t2->to_string() + "types\n");
     this->set_type(ErrorType::getInstance());
   }
 }
@@ -248,9 +259,10 @@ Power::Power(Expression* izq, Expression* der)
   , der ( der )
   {}
 
-std::string Power::to_string()
+std::string Power::to_string(int nesting)
 {
-  return "Operación: Potenciación.\nOperando izquierdo: " + izq->to_string() + "\nOperando derecho: " + der->to_string() + "\n";
+  std::string padding(nesting*2, ' ');
+  return izq->to_string(nesting+1) + padding + "**\n" + der->to_string(nesting+1);
 }
 
 void Power::check()
@@ -265,7 +277,7 @@ void Power::check()
   } else if ( t1 == ErrorType::getInstance() or t2 == ErrorType::getInstance() ) {
     this->set_type(ErrorType::getInstance());
   } else {
-    error("Cannot apply operator ** between " + t1->to_string() + " and " + t2->to_string() + "types.\n");
+    error("Cannot apply operator '**' between " + t1->to_string() + " and " + t2->to_string() + "types\n");
     this->set_type(ErrorType::getInstance());
   }
 }
@@ -274,9 +286,10 @@ Minus::Minus(Expression* operando)
   : operando ( operando )
   {}
 
-std::string Minus::to_string()
+std::string Minus::to_string(int nesting)
 {
-  return "Operación: Menos.\nOperando: " + operando->to_string();
+  std::string padding(nesting*2, ' ');
+  return padding + "-\n" + operando->to_string(nesting+1);
 }
 
 void Minus::check()
@@ -287,7 +300,7 @@ void Minus::check()
   if ( t == PolarType::getInstance() or t == KodiakType::getInstance() or t == ErrorType::getInstance() ) {
     this->set_type(t);
   } else {
-    error("Cannot apply operator - to " + t->to_string() + " types.\n");
+    error("Cannot apply operator '-' to " + t->to_string() + " type\n");
     this->set_type(ErrorType::getInstance());
   }
 }
@@ -297,9 +310,10 @@ Less::Less(Expression* izq, Expression* der)
   , der ( der )
   {}
 
-std::string Less::to_string()
+std::string Less::to_string(int nesting)
 {
-  return "Operación: Menor que.\nOperando izquierdo: " + izq->to_string() + "\nOperando derecho: " + der->to_string() + "\n";
+  std::string padding(nesting*2, ' ');
+  return izq->to_string(nesting+1) + padding + "<\n" + der->to_string(nesting+1);
 }
 
 void Less::check()
@@ -314,7 +328,7 @@ void Less::check()
   } else if ( t1 == ErrorType::getInstance() or t2 == ErrorType::getInstance() ) {
     this->set_type(ErrorType::getInstance());
   } else {
-    error("Cannot apply operator < between " + t1->to_string() + " and " + t2->to_string() + "types.\n");
+    error("Cannot apply operator '<' between " + t1->to_string() + " and " + t2->to_string() + "types\n");
     this->set_type(ErrorType::getInstance());
   }
 }
@@ -324,9 +338,10 @@ LessEqual::LessEqual(Expression* izq, Expression* der)
   , der ( der )
   {}
 
-std::string LessEqual::to_string()
+std::string LessEqual::to_string(int nesting)
 {
-  return "Operación: Menor igual que.\nOperando izquierdo: " + izq->to_string() + "\nOperando derecho: " + der->to_string() + "\n";
+  std::string padding(nesting*2, ' ');
+  return izq->to_string(nesting+1) + padding + "=<\n" + der->to_string(nesting+1);
 }
 
 void LessEqual::check()
@@ -341,7 +356,7 @@ void LessEqual::check()
   } else if ( t1 == ErrorType::getInstance() or t2 == ErrorType::getInstance() ) {
     this->set_type(ErrorType::getInstance());
   } else {
-    error("Cannot apply operator =< between " + t1->to_string() + " and " + t2->to_string() + "types.\n");
+    error("Cannot apply operator '=<' between " + t1->to_string() + " and " + t2->to_string() + "types\n");
     this->set_type(ErrorType::getInstance());
   }
 }
@@ -352,9 +367,10 @@ Greater::Greater(Expression* izq, Expression* der)
   , der ( der )
   {}
 
-std::string Greater::to_string()
+std::string Greater::to_string(int nesting)
 {
-  return "Operación: Mayor que.\nOperando izquierdo: " + izq->to_string() + "\nOperando derecho: " + der->to_string() + "\n";
+  std::string padding(nesting*2, ' ');
+  return izq->to_string(nesting+1) + padding + ">\n" + der->to_string(nesting+1);
 }
 
 void Greater::check()
@@ -369,7 +385,7 @@ void Greater::check()
   } else if ( t1 == ErrorType::getInstance() or t2 == ErrorType::getInstance() ) {
     this->set_type(ErrorType::getInstance());
   } else {
-    error("Cannot apply operator > between " + t1->to_string() + " and " + t2->to_string() + "types.\n");
+    error("Cannot apply operator '>' between " + t1->to_string() + " and " + t2->to_string() + "types\n");
     this->set_type(ErrorType::getInstance());
   }
 }
@@ -380,9 +396,10 @@ GreaterEqual::GreaterEqual(Expression* izq, Expression* der)
   , der ( der )
   {}
 
-std::string GreaterEqual::to_string()
+std::string GreaterEqual::to_string(int nesting)
 {
-  return "Operación: Mayor igual que.\nOperando izquierdo: " + izq->to_string() + "\nOperando derecho: " + der->to_string() + "\n";
+  std::string padding(nesting*2, ' ');
+  return izq->to_string(nesting+1) + padding + ">=\n" + der->to_string(nesting+1);
 }
 
 void GreaterEqual::check()
@@ -397,7 +414,7 @@ void GreaterEqual::check()
   } else if ( t1 == ErrorType::getInstance() or t2 == ErrorType::getInstance() ) {
     this->set_type(ErrorType::getInstance());
   } else {
-    error("Cannot apply operator >= between " + t1->to_string() + " and " + t2->to_string() + "types.\n");
+    error("Cannot apply operator '>=' between " + t1->to_string() + " and " + t2->to_string() + "types\n");
     this->set_type(ErrorType::getInstance());
   }
 }
@@ -408,9 +425,10 @@ Equal::Equal(Expression* izq, Expression* der)
   , der ( der )
   {}
 
-std::string Equal::to_string()
+std::string Equal::to_string(int nesting)
 {
-  return "Operación: Igualdad.\nOperando izquierdo: " + izq->to_string() + "\nOperando derecho: " + der->to_string() + "\n";
+  std::string padding(nesting*2, ' ');
+  return izq->to_string(nesting+1) + padding + "==\n" + der->to_string(nesting+1);
 }
 
 void Equal::check()
@@ -425,7 +443,7 @@ void Equal::check()
   } else if ( t1 == ErrorType::getInstance() or t2 == ErrorType::getInstance() ) {
     this->set_type(ErrorType::getInstance());
   } else {
-    error("Cannot apply operator == between " + t1->to_string() + " and " + t2->to_string() + "types.\n");
+    error("Cannot apply operator '==' between " + t1->to_string() + " and " + t2->to_string() + "types\n");
     this->set_type(ErrorType::getInstance());
   }
 }
@@ -436,9 +454,10 @@ NotEqual::NotEqual(Expression* izq, Expression* der)
   , der ( der )
   {}
 
-std::string NotEqual::to_string()
+std::string NotEqual::to_string(int nesting)
 {
-  return "Operación: Desigualdad.\nOperando izquierdo: " + izq->to_string() + "\nOperando derecho: " + der->to_string() + "\n";
+  std::string padding(nesting*2, ' ');
+  return izq->to_string(nesting+1) + padding + "=/=\n" + der->to_string(nesting+1);
 }
 
 void NotEqual::check()
@@ -453,7 +472,7 @@ void NotEqual::check()
   } else if ( t1 == ErrorType::getInstance() or t2 == ErrorType::getInstance() ) {
     this->set_type(ErrorType::getInstance());
   } else {
-    error("Cannot apply operator =/= between " + t1->to_string() + " and " + t2->to_string() + "types.\n");
+    error("Cannot apply operator '=/=' between " + t1->to_string() + " and " + t2->to_string() + "types\n");
     this->set_type(ErrorType::getInstance());
   }
 }
@@ -464,9 +483,10 @@ And::And(Expression* izq, Expression* der)
   , der ( der )
   {}
 
-std::string And::to_string()
+std::string And::to_string(int nesting)
 {
-  return "Operación: And.\nOperando izquierdo: " + izq->to_string() + "\nOperando derecho: " + der->to_string() + "\n";
+  std::string padding(nesting*2, ' ');
+  return izq->to_string(nesting+1) + padding + "&\n" + der->to_string(nesting+1);
 }
 
 void And::check()
@@ -481,7 +501,7 @@ void And::check()
   } else if ( t1 == ErrorType::getInstance() or t2 == ErrorType::getInstance() ) {
     this->set_type(ErrorType::getInstance());
   } else {
-    error("Cannot apply operator & between " + t1->to_string() + " and " + t2->to_string() + "types.\n");
+    error("Cannot apply operator '&' between " + t1->to_string() + " and " + t2->to_string() + "types\n");
     this->set_type(ErrorType::getInstance());
   }
 }
@@ -492,9 +512,10 @@ Or::Or(Expression* izq, Expression* der)
   , der ( der )
   {}
 
-std::string Or::to_string()
+std::string Or::to_string(int nesting)
 {
-  return "Operación: Or.\nOperando izquierdo: " + izq->to_string() + "\nOperando derecho: " + der->to_string() + "\n";
+  std::string padding(nesting*2, ' ');
+  return izq->to_string(nesting+1) + padding + "|\n" + der->to_string(nesting+1);
 }
 
 void Or::check()
@@ -509,7 +530,7 @@ void Or::check()
   } else if ( t1 == ErrorType::getInstance() or t2 == ErrorType::getInstance() ) {
     this->set_type(ErrorType::getInstance());
   } else {
-    error("Cannot apply operator | between " + t1->to_string() + " and " + t2->to_string() + "types.\n");
+    error("Cannot apply operator '|' between " + t1->to_string() + " and " + t2->to_string() + "types\n");
     this->set_type(ErrorType::getInstance());
   }
 }
@@ -519,9 +540,10 @@ Not::Not(Expression* operando)
   : operando ( operando )
   {}
 
-std::string Not::to_string()
+std::string Not::to_string(int nesting)
 {
-  return "Operación: Not.\nOperando: " + operando->to_string();
+  std::string padding(nesting*2, ' ');
+  return padding + "no\n" + operando->to_string(nesting+1);
 }
 
 void Not::check()
@@ -532,7 +554,7 @@ void Not::check()
   if ( t == PandaType::getInstance() ) {
     this->set_type(t);
   } else {
-    error("Cannot apply operator not to " + t->to_string() + " types.\n");
+    error("Cannot apply operator 'no' to " + t->to_string() + " types\n");
     this->set_type(ErrorType::getInstance());
   }
 }
@@ -544,9 +566,10 @@ SelectorExpr::SelectorExpr(Expression* condicion, Expression* brazoTrue, Express
   , _brazoFalse( brazoFalse )
   {}
 
-std::string SelectorExpr::to_string()
+std::string SelectorExpr::to_string(int nesting)
 {
-  return _condicion->to_string() + " ? " + _brazoTrue->to_string() + " : " + _brazoFalse->to_string() + "\n";
+  std::string padding(nesting*2, ' ');
+  return _condicion->to_string(nesting+1) + padding + "?\n" + _brazoTrue->to_string(nesting+1) + padding + ":\n" + _brazoFalse->to_string(nesting+1);
 }
 
 IDExpr::IDExpr(std::string nombre)
@@ -554,7 +577,7 @@ IDExpr::IDExpr(std::string nombre)
   , _nombre( nombre )
   {}
 
-std::string IDExpr::to_string()
+std::string IDExpr::to_string(int nesting)
 {
   return _nombre;
 }
@@ -567,11 +590,12 @@ FunctionExpr::FunctionExpr(std::string name, std::vector<Type*>* parameterTypes,
   , _return         ( returnType     )
   {}
 
-std::string FunctionExpr::to_string()
+std::string FunctionExpr::to_string(int nesting)
 {
-  std::string str = "Nombre: " + _name + ", Parametros: ";
+  std::string padding(nesting*2, ' ');
+  std::string str = padding + "Nombre: " + _name + "\n" + padding + "Parametros: \n";
   for (unsigned int i=0; i < _parameters->size(); ++i)
-    str += _parameters->at(i)->to_string();
+    str += _parameters->at(i)->to_string(nesting+1);
   return str;
 }
 
@@ -608,9 +632,10 @@ PardoExpr::PardoExpr(LValueExpr* pardo, CuevaExpr* campo)
   , _campo ( campo )
   {}
 
-std::string PardoExpr::to_string()
+std::string PardoExpr::to_string(int nesting)
 {
-  return "Acceso a pardo " + _pardo->to_string() + " Campo: " + _campo->to_string() + "\n";
+  std::string padding(nesting*2, ' ');
+  return _pardo->to_string(nesting+1) + padding + "->\n" + _campo->to_string(nesting+1);
 }
 
 GrizzliExpr::GrizzliExpr(LValueExpr* grizzli, IDExpr* campo)
@@ -625,9 +650,10 @@ GrizzliExpr::GrizzliExpr(LValueExpr* grizzli, CuevaExpr* campo)
   , _campo   ( campo   )
   {}
 
-std::string GrizzliExpr::to_string()
+std::string GrizzliExpr::to_string(int nesting)
 {
-  return "Acceso a grizzli: " + _grizzli->to_string() + " Campo: " + _campo->to_string() + "\n";
+  std::string padding(nesting*2, ' ');
+  return _grizzli->to_string(nesting+1) + padding + ".\n" + _campo->to_string(nesting+1);
 }
 
 CuevaExpr::CuevaExpr(std::string nombre, std::vector<Expression*>* dimensions)
@@ -636,11 +662,12 @@ CuevaExpr::CuevaExpr(std::string nombre, std::vector<Expression*>* dimensions)
   , _dimensions ( dimensions )
   {}
 
-std::string CuevaExpr::to_string()
+std::string CuevaExpr::to_string(int nesting)
 {
-  std::string str = "Acceso a cueva: Nombre: " + _nombre + " Dimensiones: ";
+  std::string padding(nesting*2, ' ');
+  std::string str = padding + _nombre + "\n";
   for (unsigned int i=0; i < _dimensions->size(); ++i) {
-    str +="[" + _dimensions->at(i)->to_string() + "]";
+    str += padding + "[\n" + _dimensions->at(i)->to_string(nesting+1) + padding + "]\n";
   }
   return str;
 }
