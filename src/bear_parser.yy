@@ -611,6 +611,7 @@ instruccion: defvariable                                                 { $$ = 
                                                                              if(c->getMutabilidad()) {
                                                                                $$ = new Increase($1);
                                                                                $$->set_type(c->getTipo());
+                                                                               $$->set_location(@1.begin.line, @1.begin.column, @3.end.line, @3.end.column);
                                                                              } else {
                                                                                driver.error(@1, @2, "Attempt to increase variable " + $1 + ", which is not mutable.");
                                                                                $$ = new Empty();
@@ -625,6 +626,7 @@ instruccion: defvariable                                                 { $$ = 
                                                                              if (c->getMutabilidad()) {
                                                                                $$ = new Decrement($1);
                                                                                $$->set_type(c->getTipo());
+                                                                               $$->set_location(@1.begin.line, @1.begin.column, @3.end.line, @3.end.column);
                                                                              } else {
                                                                                driver.error(@1, @2, "Attempt to decrease variable " + $1 + ", which is not mutable.");
                                                                                $$ = new Empty();

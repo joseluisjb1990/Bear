@@ -51,7 +51,7 @@ void Function::check()
     if ( tipo != tipoParam ) {
       ok = false;
       if (tipoParam != ErrorType::getInstance())
-        error("Trying to pass a parameter of type '" + tipoParam->to_string() + "' to function '" + _name + "' instead of '" + tipo->to_string() + "'.");
+        error("Trying to pass a parameter of type '" + tipoParam->to_string() + "' to function '" + _name + "' instead of '" + tipo->to_string() + "'");
     }
   }
   if (ok) {
@@ -79,7 +79,7 @@ void If::check()
 
   if(t != PandaType::getInstance() and t != ErrorType::getInstance())
   {
-    error("condition for 'si' is of type " + t->to_string() + " intead of type 'panda'");
+    error("Condition for 'si' must be a 'panda' type, instead of '" + t->to_string() + "'");
   }
 
   _instrucciones->check();
@@ -109,7 +109,7 @@ void IfElse::check()
   Type* t = _condicion->get_type();
 
   if (t != PandaType::getInstance() and t != ErrorType::getInstance()) {
-    error("Condicion must be a panda type, instead of '" + t->to_string() + "'");
+    error("Condition for 'si' must be a 'panda' type, instead of '" + t->to_string() + "'");
   }
 
   _brazoTrue->check();
@@ -176,7 +176,7 @@ void Read::check()
       dynamic_cast<PardoType*>(t) or
       dynamic_cast<GrizzliType*>(t))
   {
-    error("Cannot read a variable of type '" + t->to_string() + "'");
+    error("Error in function 'leer' cannot read a variable of type '" + t->to_string() + "'");
   }
 
   this->set_type(ExtintoType::getInstance());
@@ -198,9 +198,19 @@ std::string Body::to_string()
 
 void Body::check()
 {
+  bool ok = true;
   if (_listSta)
-    for(std::vector<Statement*>::iterator it = _listSta->begin(); it != _listSta->end(); it++)
+    for(std::vector<Statement*>::iterator it = _listSta->begin(); it != _listSta->end(); it++) {
       (*it)->check();
+      if ( (*it)->get_type() == ErrorType::getInstance() ) {
+        ok = false;
+      }
+    }
+    if (ok) {
+      this->set_type(ExtintoType::getInstance());
+    } else {
+      this->set_type(ErrorType::getInstance());
+    }
 }
 
 ComplexFor::ComplexFor(std::string id, Expression* begin, Expression* end, Expression* step, Statement* body)
@@ -229,21 +239,21 @@ void ComplexFor::check()
   Type* tbegin = _begin->get_type();
 
   if (tbegin != PolarType::getInstance() or tbegin != ErrorType::getInstance()) {
-    error("Lower bound of the para must be of type 'polar' instead of '" + tbegin->to_string() + "'");
+    error("Lower bound for 'para' must be of type 'polar' instead of '" + tbegin->to_string() + "'");
   }
 
   _end->check();
   Type* tend = _end->get_type();
 
   if (tend != PolarType::getInstance() or tend != ErrorType::getInstance()) {
-    error("Lower bound of the para must be of type 'polar' instead of '" + tend->to_string() + "'");
+    error("Lower bound for 'para' must be of type 'polar' instead of '" + tend->to_string() + "'");
   }
 
   _step->check();
   Type* tstep = _step->get_type();
 
   if (tstep != PolarType::getInstance() or tstep != ErrorType::getInstance()) {
-    error("Lower bound of the para must be of type 'polar' instead of '" + tstep->to_string() + "'");
+    error("Lower bound for 'para' must be of type 'polar' instead of '" + tstep->to_string() + "'");
   }
 
   _body->check();
@@ -379,9 +389,10 @@ std::string Increase::to_string()
 void Increase::check()
 {
   Type* type = get_type();
+  this->set_type(ExtintoType::getInstance());
   if(type != PolarType::getInstance())
   {
-    error("attempt to increase a variable of type " + type->to_string() + " instead of type POLAR");
+    error("Attempt to increase variable '"+ _id +"' of type '" + type->to_string() + "' instead of type 'polar'");
     set_type(ErrorType::getInstance());
   }
 }
@@ -397,17 +408,15 @@ std::string Decrement::to_string()
 }
 
 void Decrement::check()
-{/*
-  _id->check();
-  Type* t = _id->get_type();
-
-  if ( t != PolarType::getInstance()) {
-    error("Attempt to increase a variable of type '" + t->to_string() + "' instead of type polar.");
-    this->set_type(ErrorType::getInstance());
-  }
+{
+  Type* t = this->get_type();
 
   this->set_type(ExtintoType::getInstance());
-  */
+
+  if ( t != PolarType::getInstance()) {
+    error("Attempt to decrement variable '"+ _id + "' of type '" + t->to_string() + "' instead of type 'polar'");
+    this->set_type(ErrorType::getInstance());
+  }
 }
 
 Continue::Continue()
@@ -417,6 +426,11 @@ Continue::Continue()
 std::string Continue::to_string()
 {
   return "Nodo fondoBlanco sin etiqueta";
+}
+
+void Continue::check()
+{
+  this->set_type(ExtintoType::getInstance());
 }
 
 ContinueID::ContinueID(std::string id)
@@ -441,6 +455,11 @@ Break::Break()
 std::string Break::to_string()
 {
   return "Nodo roloePea sin etiqueta";
+}
+
+void Break::check()
+{
+  this->set_type(ExtintoType::getInstance());
 }
 
 BreakID::BreakID(std::string id)

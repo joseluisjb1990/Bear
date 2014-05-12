@@ -193,6 +193,7 @@ class Continue : public Statement
   public:
     Continue();
     std::string to_string();
+    void check();
 };
 
 class ContinueID : public Statement
@@ -211,6 +212,7 @@ class Break : public Statement
   public:
     Break();
     std::string to_string();
+    void check();
 };
 
 class BreakID : public Statement
