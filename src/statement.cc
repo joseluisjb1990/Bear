@@ -8,6 +8,9 @@ extern TablaSimbolos* tablaSimbolos;
 
 using namespace std;
 
+bool Statement::checkFunction = false;
+bool Statement::checkIter     = false;
+
 Assign::Assign(std::vector<Expression *>* ids, std::vector<Expression*>* expr)
   : Statement()
   , _ids  ( ids  )
@@ -199,18 +202,47 @@ std::string Body::to_string()
 void Body::check()
 {
   bool ok = true;
+  Statement* aux = nullptr;
+  _listReturn = new std::vector<Statement*>;
+
   if (_listSta)
     for(std::vector<Statement*>::iterator it = _listSta->begin(); it != _listSta->end(); it++) {
-      (*it)->check();
-      if ( (*it)->get_type() == ErrorType::getInstance() ) {
-        ok = false;
-      }
+      aux = *it;
+      aux->check();
+
+      if(aux->get_type() == ErrorType::getInstance()) ok = false;
+
+      if(aux->isReturn()) _listReturn->push_back(aux);
     }
-    if (ok) {
-      this->set_type(ExtintoType::getInstance());
-    } else {
-      this->set_type(ErrorType::getInstance());
-    }
+
+  if (ok) {
+    this->set_type(ExtintoType::getInstance());
+  } else {
+    this->set_type(ErrorType::getInstance());
+  }
+}
+
+bool Body::checkReturn(Type* type)
+{
+   bool ok = true;
+   if(_listReturn->size() != 0)
+   {
+     for(std::vector<Statement*>::iterator it = _listReturn->begin(); it != _listReturn->end(); ++it)
+     {
+       ok = ok and (*it)->checkReturn(type);
+     }
+   } else
+   {
+     if(ExtintoType::getInstance() != type)
+     {
+       error("function does not contain any return statement");
+       return false;
+     } else
+     {
+       return true;
+     }
+   }
+   return ok;
 }
 
 ComplexFor::ComplexFor(std::string id, Expression* begin, Expression* end, Expression* step, Statement* body)
@@ -238,25 +270,25 @@ void ComplexFor::check()
   _begin->check();
   Type* tbegin = _begin->get_type();
 
-  if (tbegin != PolarType::getInstance() or tbegin != ErrorType::getInstance()) {
+  if (tbegin != PolarType::getInstance() and tbegin != ErrorType::getInstance()) {
     error("Lower bound for 'para' must be of type 'polar' instead of '" + tbegin->to_string() + "'");
   }
 
   _end->check();
   Type* tend = _end->get_type();
 
-  if (tend != PolarType::getInstance() or tend != ErrorType::getInstance()) {
-    error("Lower bound for 'para' must be of type 'polar' instead of '" + tend->to_string() + "'");
+  if (tend != PolarType::getInstance() and tend != ErrorType::getInstance()) {
+    error("Higher bound for 'para' must be of type 'polar' instead of '" + tend->to_string() + "'");
   }
 
   _step->check();
   Type* tstep = _step->get_type();
 
-  if (tstep != PolarType::getInstance() or tstep != ErrorType::getInstance()) {
-    error("Lower bound for 'para' must be of type 'polar' instead of '" + tstep->to_string() + "'");
+  if (tstep != PolarType::getInstance() and tstep != ErrorType::getInstance()) {
+    error("step for 'para' must be of type 'polar' instead of '" + tstep->to_string() + "'");
   }
 
-  _body->check();
+  Statement::checkIter = true; _body->check(); Statement::checkIter = false;
   Type* tbody = _body->get_type();
 
   if (tbegin == ErrorType::getInstance() or
@@ -306,7 +338,7 @@ void SimpleFor::check()
     error("ending expression inside 'para' is of type '" + tb->to_string() + "' instead of type 'polar'");
   }
 
-  _body->check();
+  Statement::checkIter = true; _body->check(); Statement::checkIter = false;
 
   Type* tbody = _body->get_type();
 
@@ -335,7 +367,7 @@ std::string IdFor::to_string()
 void IdFor::check()
 {
   // AQUI FALTA QUE PASA SI LA VARIABLE A ITERAR NO ES UNA CUEVA, PARA ESO NECESITO LA TABLA.
-  _body->check();
+  Statement::checkIter = true; _body->check(); Statement::checkIter = false;
   Type* t = _body->get_type();
 
   if (t == ErrorType::getInstance()) {
@@ -352,6 +384,21 @@ Return::Return()
 std::string Return::to_string()
 {
   return "Nodo Vomita sin etiqueta";
+}
+
+void Return::check()
+{
+  set_type(ExtintoType::getInstance());
+}
+
+bool Return::checkReturn(Type* type)
+{
+  cout << "ASDASDASDAS";
+  if(!type->compareTypes(get_type()))
+  {
+    error("type of return statement does not match the function type");
+    return false;
+  } else return true;
 }
 
 ReturnExpr::ReturnExpr(Expression* expr)
@@ -372,8 +419,17 @@ void ReturnExpr::check()
   if (t == ErrorType::getInstance()) {
     this->set_type(ErrorType::getInstance());
   } else {
-    this->set_type(ExtintoType::getInstance());
+    this->set_type(t);
   }
+}
+
+bool ReturnExpr::checkReturn(Type* type)
+{
+  if(!type->compareTypes(get_type()))
+  {
+    error("type of return statement does not match the function type");
+    return false;
+  } else return true;
 }
 
 Increase::Increase(std::string id)
@@ -430,7 +486,13 @@ std::string Continue::to_string()
 
 void Continue::check()
 {
-  this->set_type(ExtintoType::getInstance());
+  if(Statement::checkIter)
+    this->set_type(ExtintoType::getInstance());
+  else
+  {
+    this->set_type(ErrorType::getInstance());
+    error("'fondoBlanco' statement outside an iteration");
+  }
 }
 
 ContinueID::ContinueID(std::string id)
@@ -445,7 +507,13 @@ std::string ContinueID::to_string()
 
 void ContinueID::check()
 {
-  this->set_type(ExtintoType::getInstance());
+  if(Statement::checkIter)
+    this->set_type(ExtintoType::getInstance());
+  else
+  {
+    this->set_type(ErrorType::getInstance());
+    error("'fondoBlanco' statement outside an itaration");
+  }
 }
 
 Break::Break()
@@ -459,7 +527,13 @@ std::string Break::to_string()
 
 void Break::check()
 {
-  this->set_type(ExtintoType::getInstance());
+  if(Statement::checkIter)
+    this->set_type(ExtintoType::getInstance());
+  else
+  {
+    this->set_type(ErrorType::getInstance());
+    error("'roloePea' statement outside an iteration");
+  }
 }
 
 BreakID::BreakID(std::string id)
@@ -474,7 +548,13 @@ std::string BreakID::to_string()
 
 void BreakID::check()
 {
-  this->set_type(ExtintoType::getInstance());
+  if(Statement::checkIter)
+    this->set_type(ExtintoType::getInstance());
+  else
+  {
+    this->set_type(ErrorType::getInstance());
+    error("'roloePea' statement outside an iteration");
+  }
 }
 
 While::While(Expression* expr, Statement* body)
@@ -500,7 +580,8 @@ void While::check()
     error("Condition for 'mientras' must be a 'panda' type instead of '" + texp->to_string() + "'");
   }
 
-  _body->check();
+  Statement::checkIter = true; _body->check(); Statement::checkIter = false;
+
   Type* tbody = _body->get_type();
 
   if (texp == ErrorType::getInstance() or tbody == ErrorType::getInstance()) {

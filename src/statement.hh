@@ -14,6 +14,11 @@ public :
     Statement(){};
     Statement(Type* type) : Node( type ) {}
     virtual std::string to_string(){ return "INSTRUCCIÓN:"; };
+    static bool checkFunction;
+    static bool checkIter    ;
+    virtual bool isReturn() { return  false; };
+    virtual bool isBody() { return  false; };
+    virtual bool checkReturn(Type* type) { return true; }
 };
 
 class Assign : public Statement
@@ -100,9 +105,11 @@ class Body : public Statement
     Body( std::vector<Statement *>* listSta );
     std::string to_string();
     void check();
-
+    bool isBody() { return true; }
+    bool checkReturn(Type* type);
   private:
     std::vector<Statement *>  * _listSta;
+    std::vector<Statement *>  * _listReturn;
 };
 
 class ComplexFor : public Statement
@@ -152,6 +159,9 @@ class Return : public Statement
   public:
     Return();
     std::string to_string();
+    bool isReturn() { return true; };
+    bool checkReturn(Type* type);
+    void check();
 };
 
 class ReturnExpr : public Statement
@@ -160,6 +170,8 @@ class ReturnExpr : public Statement
     ReturnExpr(Expression* expr);
     std::string to_string();
     void check();
+    bool checkReturn(Type* type);
+    bool isReturn() { return true; };
 
   private:
     Expression* _expr;

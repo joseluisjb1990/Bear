@@ -172,7 +172,7 @@ programa : definiciones "oso" "(" ")" "=>" EXTINTO           { driver.tabla.ente
                                                                driver.tabla.add_function("oso",ExtintoType::getInstance(),@2.begin.line,@2.begin.column, @2.begin.line, @2.begin.column, paramVacio);
                                                              }
            bloqueespecial                                    { driver.tabla.exit_scope();
-                                                               $$ = new Program($1,$8);
+                                                               $$ = new Program($1, new DefFunction("oso", new vector<Parameter*>, ExtintoType::getInstance(), $8));
                                                                driver.AST = $$;
                                                              }
          | definiciones "oso" "(" error ")" "=>" EXTINTO     { driver.error(@4, "Main function oso must not recieve parameters.");
@@ -180,7 +180,7 @@ programa : definiciones "oso" "(" ")" "=>" EXTINTO           { driver.tabla.ente
                                                                driver.tabla.enter_scope();
                                                              }
            bloqueespecial                                    { driver.tabla.exit_scope();
-                                                               $$ = new Program($1,$9);
+                                                               $$ = new Program($1, new DefFunction("oso", new vector<Parameter*>, ExtintoType::getInstance(), $9));
                                                                driver.AST = $$;
                                                              }
          | definiciones "oso" error "=>" EXTINTO             { driver.error(@3, "Missing \"()\" in main function oso.");
@@ -188,7 +188,7 @@ programa : definiciones "oso" "(" ")" "=>" EXTINTO           { driver.tabla.ente
                                                                driver.tabla.enter_scope();
                                                              }
            bloqueespecial                                    { driver.tabla.exit_scope();
-                                                               $$ = new Program($1,$7);
+                                                               $$ = new Program($1, new DefFunction("oso", new vector<Parameter*>, ExtintoType::getInstance(), $7));
                                                                driver.AST = $$;
                                                              }
          | definiciones "oso" "(" ")" "=>" error             { driver.error(@6, "Return type for main function oso must be extinto.");
@@ -196,7 +196,7 @@ programa : definiciones "oso" "(" ")" "=>" EXTINTO           { driver.tabla.ente
                                                                driver.tabla.enter_scope();
                                                              }
            bloqueespecial                                    { driver.tabla.exit_scope();
-                                                               $$ = new Program($1,$8);
+                                                               $$ = new Program($1, new DefFunction("oso", new vector<Parameter*>, ExtintoType::getInstance(), $8));
                                                                driver.AST = $$;
                                                              }
          | definiciones "oso" error "=>" error               { driver.error(@3, "Missing \"()\" in main function oso.");
@@ -205,7 +205,7 @@ programa : definiciones "oso" "(" ")" "=>" EXTINTO           { driver.tabla.ente
                                                                driver.tabla.enter_scope();
                                                              }
            bloqueespecial                                    { driver.tabla.exit_scope();
-                                                               $$ = new Program($1,$7);
+                                                               $$ = new Program($1, new DefFunction("oso", new vector<Parameter*>, ExtintoType::getInstance(), $7));
                                                                driver.AST = $$;
                                                              }
          | definiciones "oso" error "=>" error error         { driver.error(@3, "Missing \"()\" in main function oso.");
@@ -214,7 +214,7 @@ programa : definiciones "oso" "(" ")" "=>" EXTINTO           { driver.tabla.ente
                                                                driver.tabla.enter_scope();
                                                              }
            bloqueespecial                                    { driver.tabla.exit_scope();
-                                                               $$ = new Program($1,$8);
+                                                               $$ = new Program($1, new DefFunction("oso", new vector<Parameter*>, ExtintoType::getInstance(), $8));
                                                                driver.AST = $$;
                                                              }
          | definiciones "oso" "(" ")" "=>" error error       { driver.error(@6, "Return type for main function oso must be extinto.");
@@ -222,7 +222,7 @@ programa : definiciones "oso" "(" ")" "=>" EXTINTO           { driver.tabla.ente
                                                                driver.tabla.enter_scope();
                                                              }
            bloqueespecial                                    { driver.tabla.exit_scope();
-                                                               $$ = new Program($1,$9);
+                                                               $$ = new Program($1, new DefFunction("oso", new vector<Parameter*>, ExtintoType::getInstance(), $9));
                                                                driver.AST = $$;
                                                              }
          | definiciones "oso" "(" error ")" "=>" error       { driver.error(@4, "Main function oso must not recieve parameters.");
@@ -230,7 +230,7 @@ programa : definiciones "oso" "(" ")" "=>" EXTINTO           { driver.tabla.ente
                                                                yyerrok;
                                                              }
            bloqueespecial                                    { driver.tabla.exit_scope();
-                                                               $$ = new Program($1,$9);
+                                                               $$ = new Program($1, new DefFunction("oso", new vector<Parameter*>, ExtintoType::getInstance(), $9));
                                                                driver.AST = $$;
                                                              }
          | definiciones "oso" "(" error ")" "=>" error error { driver.error(@4, "Main function oso must not recieve parameters.");
@@ -238,12 +238,12 @@ programa : definiciones "oso" "(" ")" "=>" EXTINTO           { driver.tabla.ente
                                                                yyerrok;
                                                              }
            bloqueespecial                                    { driver.tabla.exit_scope();
-                                                               $$ = new Program($1,$10);
+                                                               $$ = new Program($1, new DefFunction("oso", new vector<Parameter*>, ExtintoType::getInstance(), $10));
                                                                driver.AST = $$;
                                                              }
          | definiciones                                      { driver.error("Missing main function oso with no parameters and return type extinto.");
                                                                yyerrok;
-                                                               $$ = new Program($1,new Empty());
+                                                               $$ = new Program($1,new EmptyDef());
                                                                driver.AST = $$;
                                                              }
          ;

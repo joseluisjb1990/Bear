@@ -88,7 +88,7 @@ class Parameter : public Definition
     std::string get_id();
     Type*       get_tipo();
     bool        get_ref();
-
+    void        check() { set_type(_tipo); }
   private:
     std::string _id;
     Type*       _tipo;
@@ -130,6 +130,7 @@ class DefFunction : public Definition
                );
 
     std::string to_string();
+    void check();
 
   private:
     std::string               _id;

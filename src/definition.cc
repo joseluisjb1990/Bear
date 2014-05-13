@@ -130,4 +130,22 @@ std::string DefFunction::to_string()
 {
   return "Defincion de funcion\nNombre: " + _id + "\nParametros: " + "CICLO DE LOS PARAMETROS" + "\nTipo: " + _type->to_string() + "\nInstrucciones: " + _statements->to_string();
 }
+
+void DefFunction::check()
+{
+  bool ok = true;
+
+  for(std::vector<Parameter*>::iterator it = _parameters->begin(); it != _parameters->end(); it++)
+  {
+    (*it)->check();
+    if((*it)->get_type() == ErrorType::getInstance()) ok = false;
+  }
+
+  _statements->check();
+  _statements->checkReturn(_type);
+  if(_statements->get_type() == ErrorType::getInstance() or !ok)
+    set_type(ErrorType::getInstance());
+  else
+    set_type(_type);
+}
 #endif

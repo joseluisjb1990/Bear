@@ -3,7 +3,7 @@
 
 #include "program.hh"
 
-Program::Program(std::vector<Definition*>* definitions, Statement* statement)
+Program::Program(std::vector<Definition*>* definitions, Definition* statement)
   : Node()
   , _definitions( definitions )
   , _statement  ( statement   )
