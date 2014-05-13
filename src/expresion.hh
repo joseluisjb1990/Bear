@@ -15,6 +15,7 @@ class Expression : public Node
     Expression();
     virtual void check() {};
     virtual std::string to_string(int nesting);
+    std::string to_string() { return "expression"; };
 };
 
 class Constant : public Expression
