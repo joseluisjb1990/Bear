@@ -393,7 +393,6 @@ void Return::check()
 
 bool Return::checkReturn(Type* type)
 {
-  cout << "ASDASDASDAS";
   if(!type->compareTypes(get_type()))
   {
     error("type of return statement does not match the function type");
