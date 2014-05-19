@@ -13,12 +13,13 @@ public :
 
     Statement(){};
     Statement(Type* type) : Node( type ) {}
-    virtual std::string to_string(){ return "INSTRUCCIÓN:"; };
     static bool checkFunction;
     static bool checkIter    ;
-    virtual bool isReturn() { return  false; };
-    virtual bool isBody() { return  false; };
-    virtual bool checkReturn(Type* type) { return true; }
+    virtual std::string to_string()      { return "INSTRUCCIÓN:"; };
+    virtual bool isReturn()              { return false;          };
+    virtual bool isBody()                { return false;          };
+    virtual bool checkReturn(Type* type) { return true;           };
+    virtual bool getReturn()             { return false;          };
 };
 
 class Assign : public Statement
@@ -54,6 +55,7 @@ class If : public Statement
     If(Expression* condicion, Statement* instrucciones);
     std::string to_string();
     void check();
+    bool checkReturn(Type* type);
 
   private:
     Expression* _condicion;
@@ -67,6 +69,7 @@ class IfElse : public Statement
     IfElse(Expression* condicion, Statement* brazoTrue, Statement* brazoFalse);
     std::string to_string();
     void check();
+    bool checkReturn(Type* type);
 
   private:
     Expression* _condicion;
@@ -105,11 +108,13 @@ class Body : public Statement
     Body( std::vector<Statement *>* listSta );
     std::string to_string();
     void check();
-    bool isBody() { return true; }
     bool checkReturn(Type* type);
+    bool isBody() { return true; }
+    void setReturn() { hasReturn = true; }
+    bool getReturn() { return hasReturn; }
   private:
     std::vector<Statement *>  * _listSta;
-    std::vector<Statement *>  * _listReturn;
+    bool hasReturn = false;
 };
 
 class ComplexFor : public Statement
@@ -118,6 +123,7 @@ class ComplexFor : public Statement
     ComplexFor(std::string id, Expression* begin, Expression* end, Expression* step, Statement* body);
     std::string to_string();
     void check();
+    bool checkReturn(Type* type);
 
   private:
     std::string _id;
@@ -133,6 +139,7 @@ class SimpleFor : public Statement
     SimpleFor(std::string id, Expression* begin, Expression* end, Statement* body);
     std::string to_string();
     void check();
+    bool checkReturn(Type* type);
 
   private:
     std::string _id;
@@ -147,6 +154,7 @@ class IdFor : public Statement
     IdFor(std::string id, std::string iterVar, Statement* body);
     std::string to_string();
     void check();
+    bool checkReturn(Type* type);
 
   private:
     std::string _id;
@@ -244,6 +252,7 @@ class While : public Statement
     While(Expression* expr, Statement* body);
     std::string to_string();
     void check();
+    bool checkReturn(Type* type);
 
   private:
     Expression* _expr;
@@ -255,6 +264,8 @@ class TagWhile : public Statement
   public:
     TagWhile(std::string id, Expression* expr, Statement* body);
     std::string to_string();
+    void check();
+    bool checkReturn(Type* type);
 
   private:
     std::string _id;

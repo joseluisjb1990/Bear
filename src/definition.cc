@@ -143,6 +143,19 @@ void DefFunction::check()
 
   _statements->check();
   _statements->checkReturn(_type);
+
+  if(!_statements->getReturn())
+  {
+    if(ExtintoType::getInstance() != _type)
+    {
+      error("function does not contain any explicit return statement");
+      ok = false;
+    } else
+    {
+      ok = ok and true;
+    }
+  }
+
   if(_statements->get_type() == ErrorType::getInstance() or !ok)
     set_type(ErrorType::getInstance());
   else

@@ -94,6 +94,8 @@ void If::check()
 
 }
 
+bool If::checkReturn(Type* type) { return _instrucciones->checkReturn( type ); }
+
 IfElse::IfElse(Expression* condicion, Statement* brazoTrue, Statement* brazoFalse)
   : Statement()
   , _condicion  ( condicion  )
@@ -126,6 +128,12 @@ void IfElse::check()
 
 }
 
+bool IfElse::checkReturn(Type* type)
+{
+  bool bt = _brazoTrue->checkReturn( type );
+  bool bf = _brazoFalse->checkReturn( type );
+  return  bt and bf;
+}
 
 Write::Write(Expression* expr)
   : Statement()
@@ -203,7 +211,6 @@ void Body::check()
 {
   bool ok = true;
   Statement* aux = nullptr;
-  _listReturn = new std::vector<Statement*>;
 
   if (_listSta)
     for(std::vector<Statement*>::iterator it = _listSta->begin(); it != _listSta->end(); it++) {
@@ -212,7 +219,7 @@ void Body::check()
 
       if(aux->get_type() == ErrorType::getInstance()) ok = false;
 
-      if(aux->isReturn()) _listReturn->push_back(aux);
+      if(aux->isReturn()) setReturn();
     }
 
   if (ok) {
@@ -225,21 +232,11 @@ void Body::check()
 bool Body::checkReturn(Type* type)
 {
    bool ok = true;
-   if(_listReturn->size() != 0)
+   if(_listSta->size() != 0)
    {
-     for(std::vector<Statement*>::iterator it = _listReturn->begin(); it != _listReturn->end(); ++it)
+     for(std::vector<Statement*>::iterator it = _listSta->begin(); it != _listSta->end(); ++it)
      {
        ok = ok and (*it)->checkReturn(type);
-     }
-   } else
-   {
-     if(ExtintoType::getInstance() != type)
-     {
-       error("function does not contain any return statement");
-       return false;
-     } else
-     {
-       return true;
      }
    }
    return ok;
@@ -301,6 +298,8 @@ void ComplexFor::check()
   }
 }
 
+bool ComplexFor::checkReturn(Type* type) { return _body->checkReturn(type); }
+
 SimpleFor::SimpleFor(std::string id, Expression* begin, Expression* end, Statement* body)
   : Statement()
   , _id( id )
@@ -348,6 +347,8 @@ void SimpleFor::check()
     set_type(ExtintoType::getInstance());
 }
 
+bool SimpleFor::checkReturn(Type* type) { return _body->checkReturn(type); }
+
 IdFor::IdFor(std::string id, std::string iterVar, Statement* body)
   : Statement()
   , _id( id )
@@ -376,6 +377,8 @@ void IdFor::check()
     this->set_type(ExtintoType::getInstance());
   }
 }
+
+bool IdFor::checkReturn(Type* type) { return _body->checkReturn(type); }
 
 Return::Return()
   : Statement()
@@ -590,6 +593,8 @@ void While::check()
   }
 }
 
+bool While::checkReturn(Type* type) { return _body->checkReturn(type); }
+
 TagWhile::TagWhile(std::string id, Expression* expr, Statement* body)
   : _id   ( id )
   , _expr ( expr )
@@ -605,6 +610,27 @@ std::string TagWhile::to_string()
         ;
 }
 
+void TagWhile::check()
+{
+  _expr->check();
+  Type* texp = _expr->get_type();
+
+  if (texp != PandaType::getInstance() and texp != ErrorType::getInstance()) {
+    error("Condition for 'mientras' must be a 'panda' type instead of '" + texp->to_string() + "'");
+  }
+
+  Statement::checkIter = true; _body->check(); Statement::checkIter = false;
+
+  Type* tbody = _body->get_type();
+
+  if (texp == ErrorType::getInstance() or tbody == ErrorType::getInstance()) {
+    this->set_type(ErrorType::getInstance());
+  } else {
+    this->set_type(ExtintoType::getInstance());
+  }
+}
+
+bool TagWhile::checkReturn(Type* type) {  return _body->checkReturn(type); }
 
 Empty::Empty()
   : Statement()
