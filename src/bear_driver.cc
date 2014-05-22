@@ -11,6 +11,7 @@ int bear_driver::parse (const std::string &f)
   int res = parser.parse ();
   TablaSimbolos* tablaSimbolos = &tabla;
   if (0 == errores) {
+    cout << AST->to_string();
     AST->check();
   }
   scan_end();

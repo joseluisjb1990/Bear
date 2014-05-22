@@ -11,7 +11,15 @@ Program::Program(std::vector<Definition*>* definitions, Definition* statement)
 
 std::string Program::to_string()
 {
-  return "PROGRAM";
+  cout << "PROGRAM \n";
+
+  if(_definitions)
+    for(std::vector<Definition*>::iterator it = _definitions->begin(); it != _definitions->end(); ++it)
+      cout << (*it)->to_string();
+
+  cout << _statement->to_string();
+
+  return "";
 }
 
 void Program::check()
