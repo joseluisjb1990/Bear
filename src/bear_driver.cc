@@ -9,7 +9,7 @@ int bear_driver::parse (const std::string &f)
   scan_begin ();
   yy::bear_parser parser (*this);
   int res = parser.parse ();
-  TablaSimbolos* tablaSimbolos = &tabla;
+    cout << tabla;
   if (0 == errores) {
     cout << AST->to_string();
     AST->check();
@@ -103,8 +103,20 @@ void bear_driver::agregarSinInicializacion(std::vector<elementoLista>* ids, Cate
 
 bool bear_driver::compare_parameters(std::vector<Parameter*>* list1, std::vector<Parameter*>* list2)
 {
-  if( !(list1) or !(list2) ) return false;
-  if( list1->size() != list2->size() ) return false;
-  return true;
+  if(!(list1) or !(list2))           return false;
+  if(list1->size() != list2->size()) return false;
+
+  Parameter* p1;
+  Parameter* p2;
+  bool ok = true;
+
+  for (unsigned int i = 0; i < list1->size(); ++i)
+  {
+    p1 = list1->at(i);
+    p2 = list2->at(i);
+
+    ok = p1->compareParameters(p2) and ok;
+  }
+  return ok;
   //Aqui va la comparacion de tipos y nombres de los parametros
 }

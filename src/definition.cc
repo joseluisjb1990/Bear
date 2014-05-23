@@ -62,6 +62,8 @@ std::string DefVarNoInit::to_string()
   return str;
 }
 
+void DefVarNoInit::check() { set_type(_tipo); }
+
 DefArray::DefArray(Type* tipo, std::string id)
   : _tipo( tipo )
   , _id( id )
@@ -71,6 +73,8 @@ std::string DefArray::to_string()
 {
   return "Definicion de cueva : \n Nombre: " + _id + ", Tipo : " + _tipo->to_string();
 }
+
+void DefArray::check() { set_type(_tipo); }
 
 DecFunction::DecFunction ( std::string         name
                          , std::vector<Parameter*>* parametros
@@ -93,6 +97,14 @@ std::string DecFunction::to_string()
   return str;
 }
 
+void DecFunction::check()
+{
+  for(std::vector<Parameter*>::iterator it = _parametros->begin(); it != _parametros->end(); ++it)
+    (*it)->check();
+
+  set_type(_tipoRetorno);
+}
+
 Parameter::Parameter ( std::string id
                      , Type* tipo
                      , bool ref
@@ -111,9 +123,20 @@ std::string Parameter::to_string()
   return str;
 }
 
-std::string Parameter::get_id()   { return _id;   }
-Type*       Parameter::get_tipo() { return _tipo; }
-bool        Parameter::get_ref()  { return _ref;  }
+std::string Parameter::get_id()   { return _id;      }
+Type*       Parameter::get_tipo() { return _tipo;    }
+bool        Parameter::get_ref()  { return _ref;     }
+void        Parameter::check()    { set_type(_tipo); }
+
+bool        Parameter::compareParameters(Parameter* p2)
+{
+  if (!_tipo->compareTypes(p2->get_tipo()) or !(_id == p2->get_id()))
+  {
+    error("parameter " + to_string() + " in function definition don't match parameter " + p2->to_string() + " in function declaration");
+    return false;
+  }
+  return true;
+}
 
 DefFunction::DefFunction ( std::string               id
                          , std::vector<Parameter*>*  parameters
