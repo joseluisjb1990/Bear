@@ -641,6 +641,19 @@ std::string PardoExpr::to_string(int nesting)
   return _pardo->to_string(nesting+1) + padding + "->\n" + _campo->to_string(nesting+1);
 }
 
+void PardoExpr::check()
+{
+  _pardo->check();
+  if (!dynamic_cast<PardoType*>(_pardo->get_type())) {
+    error("Trying to access a field in something that is of type '"+_pardo->get_type()->to_string()+"' instead of 'pardo'.");
+    this->set_type(ErrorType::getInstance());
+    return;
+  }
+  _campo->check();
+  Type* tipo = _campo->get_type();
+  this->set_type(tipo);
+}
+
 GrizzliExpr::GrizzliExpr(LValueExpr* grizzli, IDExpr* campo)
   : LValueExpr()
   , _grizzli ( grizzli )
@@ -657,6 +670,19 @@ std::string GrizzliExpr::to_string(int nesting)
 {
   std::string padding(nesting*2, ' ');
   return _grizzli->to_string(nesting+1) + padding + ".\n" + _campo->to_string(nesting+1);
+}
+
+void GrizzliExpr::check()
+{
+  _grizzli->check();
+  if (!dynamic_cast<GrizzliType*>(_grizzli->get_type())) {
+    error("Trying to access a field in something that is of type '"+_grizzli->get_type()->to_string()+"' instead of 'grizzli'.");
+    this->set_type(ErrorType::getInstance());
+    return;
+  }
+  _campo->check();
+  Type* tipo = _campo->get_type();
+  this->set_type(tipo);
 }
 
 CuevaExpr::CuevaExpr(std::string cueva, std::vector<Expression*>* dimensions)

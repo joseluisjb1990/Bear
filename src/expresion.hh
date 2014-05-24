@@ -364,7 +364,7 @@ class PardoExpr : public LValueExpr
     PardoExpr(LValueExpr* pardo, IDExpr* campo);
     PardoExpr(LValueExpr* pardo, CuevaExpr* campo);
     std::string to_string(int nesting);
-    //void check();
+    void check();
 
   private:
    LValueExpr* _pardo;
@@ -378,6 +378,7 @@ class GrizzliExpr : public LValueExpr
     GrizzliExpr(LValueExpr* grizzli, IDExpr* campo);
     GrizzliExpr(LValueExpr* grizzli, CuevaExpr* campo);
     std::string to_string(int nesting);
+    void check();
 
   private:
    LValueExpr* _grizzli;
