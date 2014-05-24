@@ -26,7 +26,35 @@ std::string Assign::to_string()
   return str;
 }
 
-void Assign::check() {}
+void Assign::check()
+{
+  Expression * auxid;
+  Expression * auxex;
+  Type * tauxid;
+  Type * tauxex;
+  bool ok = true;
+
+  for(unsigned int i=0; i < _ids->size(); ++i)
+  {
+    auxid = _ids ->at(i);
+    auxex = _expr->at(i);
+
+    auxid->check();
+    auxex->check();
+
+    tauxid = auxid->get_type();
+    tauxex = auxex->get_type();
+
+    if(tauxid != ErrorType::getInstance() and tauxex != ErrorType::getInstance() and !tauxid->compareTypes(tauxex))
+    {
+       error("types in asignment " + auxid->to_string() + " = " + auxex->to_string() + " don't match");
+       ok = false;
+    }
+  }
+
+  if (ok) set_type(ExtintoType::getInstance());
+  else    set_type(ErrorType::getInstance());
+}
 
 Function::Function(std::string name, std::vector<Type*>* parameterTypes, std::vector<Expression*>* parameters, Type* returnType)
   : Statement()
@@ -367,7 +395,6 @@ std::string IdFor::to_string()
 
 void IdFor::check()
 {
-  // AQUI FALTA QUE PASA SI LA VARIABLE A ITERAR NO ES UNA CUEVA, PARA ESO NECESITO LA TABLA.
   Statement::checkIter = true; _body->check(); Statement::checkIter = false;
   Type* t = _body->get_type();
 

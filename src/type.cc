@@ -173,7 +173,7 @@ int CuevaType::getSize()
 
 bool CuevaType::compareTypes (Type* t2)
 {
-  return dynamic_cast<CuevaType*> (t2);
+  return this == t2;
 }
 
 std::string CuevaType::to_string()

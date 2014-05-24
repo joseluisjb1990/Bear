@@ -57,6 +57,7 @@ class DefVarNoInit : public Definition
   public:
     DefVarNoInit(Type* tipo, std::vector<std::string>* ids);
     std::string to_string();
+    void check();
 
   private:
     Type* _tipo;
@@ -69,6 +70,7 @@ class DefArray : public Definition
   public:
     DefArray(Type* tipo, std::string id);
     std::string to_string();
+    void check();
 
   private:
     Type* _tipo;
@@ -88,7 +90,9 @@ class Parameter : public Definition
     std::string get_id();
     Type*       get_tipo();
     bool        get_ref();
-    void        check() { set_type(_tipo); }
+    void        check();
+    bool        compareParameters(Parameter* p2);
+
   private:
     std::string _id;
     Type*       _tipo;
@@ -100,15 +104,16 @@ class EmptyParam : public Parameter
   public:
     EmptyParam(){};
     std::string to_string() { return "No parameters"; };
+    void check() { set_type(ExtintoType::getInstance()); }
 
 };
 
 class DecFunction : public Definition
 {
   private:
-    std::string                 _name;
+    std::string                _name;
     std::vector<Parameter*>*   _parametros;
-    Type*                       _tipoRetorno;
+    Type*                      _tipoRetorno;
 
   public:
     DecFunction ( std::string                name
@@ -117,6 +122,7 @@ class DecFunction : public Definition
                 );
 
     std::string to_string();
+    void check();
 
 };
 
