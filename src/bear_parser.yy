@@ -586,7 +586,7 @@ instruccion: defvariable                                                 { $$ = 
                                                                            CuevaType* cuevita = (CuevaType*) c->getTipo();
                                                                            Type* tipo = cuevita->getTipo();
                                                                            driver.tabla.enter_scope();
-                                                                           driver.tabla.add_symbol($2, tipo, Var, @2.begin.line, @2.begin.column, @2.end.line, @2.end.column, false);
+                                                                           driver.tabla.add_symbol($2, tipo, Cueva, @2.begin.line, @2.begin.column, @2.end.line, @2.end.column, false);
                                                                          }
             bloqueespecial                                               { driver.tabla.exit_scope();
                                                                            $$ = new IdFor($2, $4, $6);
@@ -600,7 +600,7 @@ instruccion: defvariable                                                 { $$ = 
                                                                            CuevaType* cuevita = (CuevaType*) c->getTipo();
                                                                            Type* tipo = cuevita->getTipo();
                                                                            driver.tabla.enter_scope();
-                                                                           driver.tabla.add_symbol($2, tipo, Var, @2.begin.line, @2.begin.column, @2.end.line, @2.end.column, false);
+                                                                           driver.tabla.add_symbol($2, tipo, Cueva, @2.begin.line, @2.begin.column, @2.end.line, @2.end.column, false);
                                                                          }
             bloqueespecial                                               { driver.tabla.exit_scope();
                                                                            $$ = new IdFor($2, $4, $6);
@@ -690,52 +690,52 @@ lvalues: lvalue             { $$ = new std::vector<Expression*>(); $$->push_back
        ;
 
           /*CAMBIE ESTO PORQUE CUANDO SE HACE UNA LLAMDA A FUNCION SOLO SE PASA EL NOMBRE DE LA CUEVA Y NO TIENE CORCHETES*/
-lvalue: ID maybecueva             {
-                                    Contenido* c = driver.tabla.find_symbol($1, Var);
-                                    if(c) {
-                                      if(nullptr == $2) {
+lvalue: ID maybecueva             { if (nullptr == $2) {
+                                      Contenido* c = driver.tabla.find_symbol($1, Var);
+                                      if (c) {
                                         $$ = new IDExpr($1);
                                         $$->set_location(@1.begin.line, @1.begin.column, @1.end.line, @1.end.column);
                                         $$->set_type(c->getTipo());
                                         if (!c->getTipo()->isSimple()) {
                                           Contenedor* tipo = driver.tabla.find_container(c->getTipo()->getName());
-                                          if ( tipo->getDef() ) {
+                                          if ( tipo->getDef() ){
                                             ALCANCE_LVALUE = tipo->get_alcanceCampos();
                                           } else {
                                             driver.error(@1, "Type " + tipo->getTipo()->getName() + " is never defined.");
-                                            $$ = new EmptyExpr();
                                             ALCANCE_LVALUE = -1;
                                           }
                                         } else {
-                                          ALCANCE_LVALUE = -1;
+                                          ALCANCE_LVALUE = c->getAlcance();
                                         }
                                       } else {
-                                        driver.error("Variable " + $1 + " is not of type cueva, is of type" + c->getTipo()->to_string());
+                                        driver.error(@1, "Variable " + $1 + " is not defined.");
+                                        ALCANCE_LVALUE = -1;
                                         $$ = new EmptyExpr();
                                       }
                                     } else {
                                       Contenido* c = driver.tabla.find_symbol($1, Cueva);
-                                      if(c) {
-                                        if(nullptr != $2) {
-                                          $$ = new CuevaExpr($1, $2);
-                                        } else {
-                                          $$ = new IDExpr($1);
-                                        }
+                                      if (c) {
+                                        Type* ctype = c->getTipo();
+                                        $$ = new CuevaExpr(ctype, $2);
                                         $$->set_location(@1.begin.line, @1.begin.column, @2.end.line, @2.end.column);
                                         $$->set_type(c->getTipo());
-                                        CuevaType*  cueva = (CuevaType*) c->getTipo();
-                                        Type* tipo = cueva->getTipo();
-                                        if (!tipo->isSimple()) {
-                                          Contenedor* ctipo = driver.tabla.find_container(tipo->getName());
-                                          if (ctipo->getDef()){
-                                            ALCANCE_LVALUE = ctipo->get_alcanceCampos();
+                                        if (!c->getTipo()->isSimple()) {
+                                          Contenedor* tipo = driver.tabla.find_container(c->getTipo()->getName());
+                                          if ( tipo->getDef() ){
+                                            ALCANCE_LVALUE = tipo->get_alcanceCampos();
                                           } else {
-                                            driver.error(@1, "Type " + ctipo->getTipo()->getName() + " is never defined.");
+                                            driver.error(@1, "Type " + tipo->getTipo()->getName() + " is never defined.");
                                             ALCANCE_LVALUE = -1;
-                                            $$ = new EmptyExpr();
                                           }
                                         } else {
+                                          CuevaType* cueva = (CuevaType*) c->getTipo();
+                                          Contenedor* tipo = driver.tabla.find_container(cueva->getTipo()->getName());
+                                          if(tipo)
+                                          {
+                                            ALCANCE_LVALUE = tipo->get_alcanceCampos();
+                                          } else {
                                             ALCANCE_LVALUE = -1;
+                                          }
                                         }
                                       } else {
                                         driver.error(@1, "Variable " + $1 + " is not defined.");
@@ -754,7 +754,8 @@ lvalue: ID maybecueva             {
                                         $$->set_type(c->getTipo());
                                       } else {
                                         c = driver.tabla.find_scope($3, Cueva, ALCANCE_LVALUE);
-                                        $$ = new CuevaExpr($3, $4);
+                                        Type* ctype = c->getTipo();
+                                        $$ = new CuevaExpr(ctype, $4);
                                         $$->set_location(@1.begin.line, @1.begin.column, @4.end.line, @4.end.column);
                                         $$->set_type(c->getTipo());
                                       }
@@ -800,7 +801,8 @@ lvalue: ID maybecueva             {
                                         $$->set_type(c->getTipo());
                                       } else {
                                         c = driver.tabla.find_scope($3, Cueva, ALCANCE_LVALUE);
-                                        $$ = new CuevaExpr($3, $4);
+                                        Type* ctype = c->getTipo();
+                                        $$ = new CuevaExpr(ctype, $4);
                                         $$->set_location(@1.begin.line, @1.begin.column, @4.end.line, @4.end.column);
                                         $$->set_type(c->getTipo());
                                       }

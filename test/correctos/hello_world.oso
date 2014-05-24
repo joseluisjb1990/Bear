@@ -4,4 +4,9 @@
 oso() => extinto
 {
   escribir("¡Hola, Mundo! <3");
+  si (42) {
+    escribir("aychamo");
+  } sino {
+    escribir("blah");
+  }
 }
