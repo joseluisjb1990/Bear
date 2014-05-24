@@ -659,7 +659,7 @@ std::string GrizzliExpr::to_string(int nesting)
   return _grizzli->to_string(nesting+1) + padding + ".\n" + _campo->to_string(nesting+1);
 }
 
-CuevaExpr::CuevaExpr(Type* cueva, std::vector<Expression*>* dimensions)
+CuevaExpr::CuevaExpr(std::string cueva, std::vector<Expression*>* dimensions)
   : LValueExpr()
   , _cueva      ( cueva      )
   , _dimensions ( dimensions )
@@ -668,7 +668,7 @@ CuevaExpr::CuevaExpr(Type* cueva, std::vector<Expression*>* dimensions)
 std::string CuevaExpr::to_string(int nesting)
 {
   std::string padding(nesting*2, ' ');
-  std::string str = padding + _cueva->to_string() + "\n";
+  std::string str = padding + _cueva + "\n";
   for (unsigned int i=0; i < _dimensions->size(); ++i) {
     str += padding + "[\n" + _dimensions->at(i)->to_string(nesting+1) + padding + "]\n";
   }
@@ -682,6 +682,17 @@ void CuevaExpr::addDimension(Expression* dimension)
 
 void CuevaExpr::check()
 {
+  Type* t = this->get_type();
+  for (unsigned int i=0; i<_dimensions->size(); ++i) {
+    if (dynamic_cast<CuevaType*>(t)) {
+      t = dynamic_cast<CuevaType*>(t)->getTipo();
+    } else {
+      error("Trying to access a field on the 'cueva' that does not exist");
+      this->set_type(ErrorType::getInstance());
+      break;
+    }
+  }
+  this->set_type(t);
 }
 
 #endif

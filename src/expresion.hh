@@ -347,13 +347,13 @@ class FunctionExpr : public Expression
 class CuevaExpr : public LValueExpr
 {
   public:
-    CuevaExpr(Type* cueva, std::vector<Expression*>* dimensions);
+    CuevaExpr(std::string cueva, std::vector<Expression*>* dimensions);
     std::string to_string(int nesting);
     void addDimension(Expression* dimension);
     void check();
 
   private:
-    Type*                     _cueva;
+    std::string                     _cueva;
     std::vector<Expression*>* _dimensions;
 
 };
@@ -364,6 +364,7 @@ class PardoExpr : public LValueExpr
     PardoExpr(LValueExpr* pardo, IDExpr* campo);
     PardoExpr(LValueExpr* pardo, CuevaExpr* campo);
     std::string to_string(int nesting);
+    //void check();
 
   private:
    LValueExpr* _pardo;

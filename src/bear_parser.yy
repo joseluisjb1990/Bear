@@ -760,12 +760,14 @@ lvalue: ID maybecueva             {
                                     Contenido* c;
                                       if (nullptr == $4) {
                                         c = driver.tabla.find_scope($3, Campo, ALCANCE_LVALUE);
-                                        $$ = new IDExpr($3);
+                                        IDExpr* id = new IDExpr($3);
+                                        $$ = new PardoExpr($1, id);
                                         $$->set_location(@1.begin.line, @1.begin.column, @3.end.line, @3.end.column);
                                         $$->set_type(c->getTipo());
                                       } else {
                                         c = driver.tabla.find_scope($3, Cueva, ALCANCE_LVALUE);
-                                        $$ = new CuevaExpr($3, $4);
+                                        CuevaExpr* cueva = new CuevaExpr($3, $4);
+                                        $$ = new PardoExpr($1, cueva);
                                         $$->set_location(@1.begin.line, @1.begin.column, @4.end.line, @4.end.column);
                                         $$->set_type(c->getTipo());
                                       }
