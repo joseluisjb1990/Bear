@@ -159,10 +159,10 @@ bool HormigueroType::compareTypes (Type* t2)
   return dynamic_cast<HormigueroType*> (t2);
 }
 
-CuevaType::CuevaType(Type* tipo, std::vector<Expression*>* longitudes)
+CuevaType::CuevaType(Type* tipo, int longitud)
   : Type(0)
-  , _tipo       ( tipo       )
-  , _longitudes ( longitudes )
+  , _tipo     ( tipo     )
+  , _longitud ( longitud )
   {}
 
 int CuevaType::getSize()
@@ -178,16 +178,14 @@ bool CuevaType::compareTypes (Type* t2)
 
 std::string CuevaType::to_string()
 {
-  std::string str = "cueva ";
-  for (unsigned int i=0; i<_longitudes->size(); ++i)
-    str += "[" + _longitudes->at(i)->to_string() + "]";
+  std::string str = "cueva [" + std::to_string(_longitud) + "]";
   str += " de " + _tipo->to_string();
   return str;
 }
 
-std::vector<Expression*>* CuevaType::getLongitudes()
+int CuevaType::getLongitud()
 {
-  return _longitudes;
+  return _longitud;
 };
 
 bool CuevaType::isSimple()

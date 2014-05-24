@@ -154,11 +154,11 @@ std::vector<std::string>* extraerIds(std::vector<elementoLista>* ids);
 %type  <std::vector<Definition*>*>   definiciones
 %type  <std::vector<Definition*>*>   listadefglobales
 %type  <std::vector<Expression*>*>   accesocueva
-%type  <std::vector<Expression*>*>   cuevas
+%type  <std::vector<int>*>           cuevas
 %type  <std::vector<Expression*>*>   expresiones
 %type  <std::vector<Expression*>*>   lvalues
 %type  <std::vector<Expression*>*>   maybecueva
-%type  <std::vector<Expression*>*>   parametrocueva
+%type  <std::vector<int>*>           parametrocueva
 %type  <std::vector<Parameter*>*>    defparametros
 %type  <std::vector<Statement*>*>    instrucciones
 %type  <std::vector<Type*>*>         campos
@@ -320,15 +320,20 @@ defparametro: tipo ID        { $$ = new Parameter($2, $1, false); }
             | tipocueva ID   { $$ = new Parameter($2, $1, false); }
             ;
 
-tipocueva: parametrocueva tipo { $$ = new CuevaType($2, $1); }
+tipocueva: parametrocueva tipo { Type* tipo = $2;
+                                 for (unsigned int i= $1->size()-1; i > 0; --i) {
+                                   tipo = new CuevaType(tipo, $1->at(i));
+                                 }
+                                 $$ = new CuevaType(tipo, $1->at(0));
+                               }
          ;
 
-parametrocueva: CUEVA "[" "]" DE                             { $$ = new std::vector<Expression*>(); $$->push_back(new EmptyExpr());          }
-              | CUEVA "[" "]" error                          { $$ = new std::vector<Expression*>(); $$->push_back(new EmptyExpr()); yyerrok; }
-              | parametrocueva CUEVA "[" expresion "]" DE    { $$ = $1; $$->push_back($4);                                               }
-              | parametrocueva error "[" expresion "]" DE    { $$ = $1; $$->push_back($4); yyerrok;                                      }
-              | parametrocueva error "[" expresion "]" error { $$ = $1; $$->push_back($4); yyerrok;                                      }
-              | parametrocueva CUEVA "[" expresion "]" error { $$ = $1; $$->push_back($4); yyerrok;                                      }
+parametrocueva: CUEVA "[" "]" DE                             { $$ = new std::vector<int>(); $$->push_back(0);          }
+              | CUEVA "[" "]" error                          { $$ = new std::vector<int>(); $$->push_back(0); yyerrok; }
+              | parametrocueva CUEVA "[" CONSTPOLAR "]" DE    { $$ = $1; $$->push_back(std::stoi($4));                                               }
+              | parametrocueva error "[" CONSTPOLAR "]" DE    { $$ = $1; $$->push_back(std::stoi($4)); yyerrok;                                      }
+              | parametrocueva error "[" CONSTPOLAR "]" error { $$ = $1; $$->push_back(std::stoi($4)); yyerrok;                                      }
+              | parametrocueva CUEVA "[" CONSTPOLAR "]" error { $$ = $1; $$->push_back(std::stoi($4)); yyerrok;                                      }
               ;
 
 defconstante: CONST tipo identificadores "=" expresiones ";"   { if ($3->size() == $5->size()) {
@@ -395,11 +400,17 @@ identificadores: ID                     { $$ = new std::vector<elementoLista>();
 
 
 
-defcueva: cuevas tipo { $$ = new CuevaType($2,$1); }
+defcueva: cuevas tipo { Type* tipo = $2;
+                        for (unsigned int i=$1->size()-1; i > 0; --i) {
+                          tipo = new CuevaType(tipo, $1->at(i));
+                        }
+                        $$ = new CuevaType(tipo,$1->at(0));
+                        cout << $$->to_string() << std::endl;
+                      }
         ;
 
-cuevas: CUEVA        "[" expresion "]" DE { $$ = new std::vector<Expression*>; $$->push_back($3); }
-      | cuevas CUEVA "[" expresion "]" DE { $$ = $1; $$->push_back($4);                           }
+cuevas: CUEVA        "[" CONSTPOLAR "]" DE { $$ = new std::vector<int>; $$->push_back(std::stoi($3)); }
+      | cuevas CUEVA "[" CONSTPOLAR "]" DE { $$ = $1; $$->push_back(std::stoi($4));                           }
       ;
 
 
