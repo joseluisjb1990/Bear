@@ -185,7 +185,10 @@ std::string CuevaType::to_string()
   return str;
 }
 
-std::vector<Expression*>* CuevaType::getLongitudes();
+std::vector<Expression*>* CuevaType::getLongitudes()
+{
+  return _longitudes;
+};
 
 bool CuevaType::isSimple()
 {
