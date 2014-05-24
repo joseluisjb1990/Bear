@@ -198,6 +198,7 @@ class CuevaType : public Type
     bool isSimple();
     int getSize();
     std::string to_string();
+    std::vector<Expression*>* getLongitudes();
 
     /**
      * Retorna tipo de los elementos de la cueva.

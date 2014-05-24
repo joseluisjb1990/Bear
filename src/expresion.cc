@@ -579,8 +579,11 @@ IDExpr::IDExpr(std::string nombre)
 
 std::string IDExpr::to_string(int nesting)
 {
-  return _nombre;
+  std::string padding(nesting*2, ' ');
+  return padding + _nombre;
 }
+
+void IDExpr::check(){};
 
 FunctionExpr::FunctionExpr(std::string name, std::vector<Type*>* parameterTypes, std::vector<Expression*>* parameters, Type* returnType)
   : Expression()
@@ -656,16 +659,16 @@ std::string GrizzliExpr::to_string(int nesting)
   return _grizzli->to_string(nesting+1) + padding + ".\n" + _campo->to_string(nesting+1);
 }
 
-CuevaExpr::CuevaExpr(std::string nombre, std::vector<Expression*>* dimensions)
+CuevaExpr::CuevaExpr(Type* cueva, std::vector<Expression*>* dimensions)
   : LValueExpr()
-  , _nombre     ( nombre     )
+  , _cueva      ( cueva      )
   , _dimensions ( dimensions )
   {}
 
 std::string CuevaExpr::to_string(int nesting)
 {
   std::string padding(nesting*2, ' ');
-  std::string str = padding + _nombre + "\n";
+  std::string str = padding + _cueva->to_string() + "\n";
   for (unsigned int i=0; i < _dimensions->size(); ++i) {
     str += padding + "[\n" + _dimensions->at(i)->to_string(nesting+1) + padding + "]\n";
   }
@@ -675,6 +678,10 @@ std::string CuevaExpr::to_string(int nesting)
 void CuevaExpr::addDimension(Expression* dimension)
 {
   _dimensions->push_back(dimension);
+}
+
+void CuevaExpr::check()
+{
 }
 
 #endif
