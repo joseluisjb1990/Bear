@@ -395,7 +395,6 @@ std::string IdFor::to_string()
 
 void IdFor::check()
 {
-  // AQUI FALTA QUE PASA SI LA VARIABLE A ITERAR NO ES UNA CUEVA, PARA ESO NECESITO LA TABLA.
   Statement::checkIter = true; _body->check(); Statement::checkIter = false;
   Type* t = _body->get_type();
 
