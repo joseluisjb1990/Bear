@@ -152,6 +152,7 @@ std::string Contenido::to_string()
   std::string columnaDef  = std::to_string(_columnaDef);
   std::string mutab       = std::to_string(_mutable);
   std::string def         = std::to_string(_definido);
+  std::string offset      = std::to_string(_offset);
   std::string cat         = return_category(_categoria);
 
   if(_definido)
@@ -181,6 +182,7 @@ std::string Contenido::to_string()
           +               std::string(SMALL_WIDTH                         , ' ') + SEPARADOR
           + def         + std::string(SMALL_WIDTH   - def.length()        , ' ') + SEPARADOR
           + cat         + std::string(SMALL_WIDTH   - cat.length()        , ' ') + SEPARADOR
+          + offset      + std::string(SMALL_WIDTH   - offset.length()     , ' ') + SEPARADOR
           ;
 
   }

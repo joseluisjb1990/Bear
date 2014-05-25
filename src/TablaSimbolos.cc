@@ -17,6 +17,7 @@
 #ifndef TABLASIMBOLOS_CC
 #define TABLASIMBOLOS_CC
 #include "TablaSimbolos.hh"
+#include "type.hh"
 #include <algorithm>
 
 using namespace std;
@@ -50,7 +51,7 @@ Contenedor* TablaSimbolos::add_container( std::string nombre
 
 TablaSimbolos::TablaSimbolos ()
   :_alcance( 0 )
-  { _pila.push_back( 0 ); }
+  { _pila.push_back( 0 ); _offsets.push_back( 0 ); }
 
 Contenido* TablaSimbolos::find_symbol(  std::string nombre
                                      ,  Categorias cat
@@ -113,12 +114,14 @@ bool TablaSimbolos::check_scope( std::string nombre )
 unsigned int TablaSimbolos::exit_scope()
 {
   _pila.pop_back();
+  _offsets.pop_back();
   return _pila.back();
 }
 
 unsigned int TablaSimbolos::enter_scope()
 {
   _pila.push_back(++_alcance);
+  _offsets.push_back(0);
   return _alcance;
 }
 
@@ -197,7 +200,18 @@ unsigned int TablaSimbolos::add_symbol( std::string nombre
                                       )
 {
   Contenido *cont = new Contenido( tipo, categoria, _pila.back(), linea, columna, mut );
+
+  unsigned int top = _offsets.back(); _offsets.pop_back();
+  cont->addOffset(top);
+
   _dicc.insert(std::make_pair( nombre, cont ) );
+
+  unsigned int tam = tipo->getAlign();
+
+  top = top + tam;
+
+  _offsets.push_back(top);
+
   return _alcance;
 }
 

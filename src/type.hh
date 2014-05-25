@@ -27,6 +27,7 @@ class Type
 {
   private:
     int _tam; // Guarda el tamaño en bytes del tipo.
+    unsigned int _align;
 
   public:
 
@@ -36,7 +37,7 @@ class Type
      *  Parámetros:
      *   tam: tamaño del tipo en bytes.
      */
-    Type(int tam);
+    Type(int tam, unsigned int align);
 
     /**
      * Retorna una representación en string del tipo
@@ -53,6 +54,7 @@ class Type
      *   Ninguno.
      */
     virtual int getSize();
+    virtual unsigned int getAlign();
 
     /**
      * Retorna true si el tipo es simple y

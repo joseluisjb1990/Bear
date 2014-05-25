@@ -21,8 +21,9 @@
 
 using namespace std;
 
-Type::Type(int tam)
-  : _tam (tam)
+Type::Type(int tam, unsigned int align)
+  : _tam   (tam)
+  , _align (align)
   {}
 
 std::string Type::to_string()
@@ -35,8 +36,13 @@ int Type::getSize()
   return _tam;
 }
 
+unsigned int Type::getAlign()
+{
+  return _align;
+}
+
 PandaType::PandaType()
-  : Type(4)
+  : Type(1, 2)
   {}
 
 PandaType* PandaType::_instance = 0;
@@ -57,7 +63,7 @@ bool PandaType::isSimple()
 }
 
 PolarType::PolarType()
-  : Type(4)
+  : Type(4, 4)
   {}
 
 std::string PolarType::to_string()
@@ -78,7 +84,7 @@ bool PolarType::compareTypes (Type* t2)
 }
 
 KodiakType::KodiakType()
-  : Type(4)
+  : Type(8,8)
   {}
 
 std::string KodiakType::to_string()
@@ -99,7 +105,7 @@ bool KodiakType::compareTypes (Type* t2)
 }
 
 MalayoType::MalayoType()
-  : Type(4)
+  : Type(1, 2)
   {}
 
 std::string MalayoType::to_string()
@@ -120,7 +126,7 @@ bool MalayoType::compareTypes (Type* t2)
 }
 
 ExtintoType::ExtintoType()
-  : Type(4)
+  : Type(0, 0)
   {}
 
 std::string ExtintoType::to_string()
@@ -141,7 +147,7 @@ bool ExtintoType::compareTypes (Type* t2)
 }
 
 HormigueroType::HormigueroType()
-  : Type(4)
+  : Type(0,1)
   {}
 
 std::string HormigueroType::to_string()
@@ -160,7 +166,7 @@ bool HormigueroType::compareTypes (Type* t2)
 }
 
 CuevaType::CuevaType(Type* tipo, int longitud)
-  : Type(0)
+  : Type(0,1)
   , _tipo     ( tipo     )
   , _longitud ( longitud )
   {}
@@ -199,7 +205,7 @@ Type* CuevaType::getTipo()
 }
 
 CampoType::CampoType(Type* tipo, std::string nombre)
-  : Type(0)
+  : Type(0,1)
   , _tipo   ( tipo   )
   , _nombre ( nombre )
   {}
@@ -225,13 +231,13 @@ bool CampoType::compareTypes (Type* t2)
 }
 
 PardoType::PardoType(std::vector<Type*>* campos, std::string nombre)
-  : Type(0)
+  : Type(0,1)
   , _campos ( campos )
   , _nombre ( nombre )
   {}
 
 PardoType::PardoType(std::string nombre)
-  : Type(0)
+  : Type(0,1)
   , _nombre ( nombre )
   {}
 
@@ -264,13 +270,13 @@ std::string PardoType::getName()
 }
 
 GrizzliType::GrizzliType(std::vector<Type*>* campos, std::string nombre)
-  : Type(0)
+  : Type(0,1)
   , _campos ( campos )
   , _nombre ( nombre )
   {}
 
 GrizzliType::GrizzliType(std::string nombre)
-  : Type(0)
+  : Type(0,1)
   , _nombre ( nombre )
   {}
 
@@ -305,7 +311,7 @@ bool GrizzliType::compareTypes (Type* t2)
 }
 
 ErrorType::ErrorType()
-  : Type(4)
+  : Type(0,1)
   {}
 
 std::string ErrorType::to_string()
@@ -327,7 +333,7 @@ bool ErrorType::compareTypes (Type* t2)
 
 
 TagType::TagType()
-  : Type(4)
+  : Type(4,4)
   {}
 
 std::string TagType::to_string()
@@ -347,7 +353,7 @@ bool TagType::compareTypes (Type* t2)
 
 
 Tuple::Tuple(Type* izq, Type* der)
-  : Type(0)
+  : Type(0,1)
   , _izq( izq )
   , _der( der )
   {}

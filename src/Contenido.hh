@@ -120,6 +120,7 @@ class Contenido
     unsigned int getLineaDef()      { return _lineaDef;   };
     unsigned int getColumnaDef()    { return _columnaDef; };
     Categorias getCategoria()       { return _categoria;  };
+    void addOffset(unsigned int offset) { _offset = offset;   };
 
   private:
 
@@ -130,6 +131,7 @@ class Contenido
     unsigned int  _columnaDec;
     unsigned int  _lineaDef;
     unsigned int  _columnaDef;
+    unsigned int  _offset;
     bool          _mutable;
     bool          _definido;
 

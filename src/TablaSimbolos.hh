@@ -41,6 +41,7 @@ private:
 
     Diccionario   _dicc;      /* Diccionario para llevar la asociación entrevariables e información sobre ésta  */
     Stack         _pila;      /* Pila de enteros para manejar los alcances activos.                             */
+    Stack         _offsets;      /* Pila de enteros para manejar los alcances activos.                             */
     unsigned int  _alcance;   /* Variable para llevar los identificadores de los alcances.                      */
 
 public:
