@@ -138,6 +138,17 @@ bool        Parameter::compareParameters(Parameter* p2)
   return true;
 }
 
+bool Parameter::compareTypes(Type* tipo)
+{
+  if(tipo->isArray() and _tipo->isArray())
+  {
+    return _tipo->compareStructure(tipo);
+  } else
+  {
+    return _tipo->compareTypes(tipo);
+  }
+}
+
 DefFunction::DefFunction ( std::string               id
                          , std::vector<Parameter*>*  parameters
                          , Type*                     type

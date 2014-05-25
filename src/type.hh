@@ -30,7 +30,8 @@ class Type
     unsigned int _align;
 
   public:
-
+    virtual bool isArray() { return false; };
+    virtual bool compareStructure(Type* type) { return compareTypes(type); };
     /**
      * Constructor para la clase.
      *
@@ -201,6 +202,8 @@ class CuevaType : public Type
     int getSize();
     std::string to_string();
     int getLongitud();
+    bool isArray() { return true; };
+    bool compareStructure(Type* type);
 
     /**
      * Retorna tipo de los elementos de la cueva.

@@ -188,6 +188,16 @@ std::string CuevaType::to_string()
   str += " de " + _tipo->to_string();
   return str;
 }
+bool CuevaType::compareStructure(Type* type)
+{
+  if(type->isArray())
+  {
+    return _tipo->compareStructure(((CuevaType*)type)->getTipo());
+  } else
+  {
+    return false;
+  }
+}
 
 int CuevaType::getLongitud()
 {
@@ -328,7 +338,7 @@ ErrorType* ErrorType::_instance = 0;
 
 bool ErrorType::compareTypes (Type* t2)
 {
-  return t2 == getInstance();
+  return false;
 }
 
 

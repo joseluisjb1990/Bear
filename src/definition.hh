@@ -85,6 +85,7 @@ class Parameter : public Definition
               , bool ref
               );
     Parameter(){};
+    bool compareTypes(Type* tipo);
 
     std::string to_string();
     std::string get_id();
@@ -116,9 +117,9 @@ class DecFunction : public Definition
     Type*                      _tipoRetorno;
 
   public:
-    DecFunction ( std::string                name
+    DecFunction ( std::string               name
                 , std::vector<Parameter*>*  parametros
-                , Type*                      tipoRetorno
+                , Type*                     tipoRetorno
                 );
 
     std::string to_string();

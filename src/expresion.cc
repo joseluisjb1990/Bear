@@ -1,6 +1,7 @@
 #ifndef EXPRESSION_CC
 #define EXPRESSION_CC
 #include "expresion.hh"
+#include "definition.hh"
 
 extern TablaSimbolos* tablaSimbolos;
 
@@ -609,7 +610,7 @@ void FunctionExpr::check()
     _parameters->at(i)->check();
     Type* tipo = _parameterTypes->at(i);
     Type* tipoParam = _parameters->at(i)->get_type();
-    if ( tipo != tipoParam ) {
+    if ( !tipoParam->compareStructure(tipo) ) {
       ok = false;
       if (tipoParam != ErrorType::getInstance())
         error("Trying to pass a parameter of type '" + tipoParam->to_string() + "' to function '" + _name + "' instead of '" + tipo->to_string() + "'.");
