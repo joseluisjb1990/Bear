@@ -435,16 +435,6 @@ defcompleja: PARDO ID "{"   { driver.tabla.enter_scope(); }
                               $$ = new EmptyDef();
                             }
 
-           | PARDO ID ";"   { Contenedor* c = driver.tabla.find_container($2);
-                              PardoType* p = new PardoType($2);
-                              if (!c) {
-                                driver.tabla.add_container($2, p, Compuesto, @1.begin.line, @1.begin.column);
-                              } else {
-                                driver.warning(@1, @2, "Type " + $2 + " already declared in " + std::to_string(c->getLineaDec()) + "." + std::to_string(c->getColumnaDec()) + ".");
-                              }
-                              $$ = new EmptyDef();
-                            }
-
            | GRIZZLI ID "{" { driver.tabla.enter_scope(); }
              campos "}"     { int alcanceCampos = driver.tabla.get_actual_scope();
                               driver.tabla.exit_scope();
@@ -458,16 +448,6 @@ defcompleja: PARDO ID "{"   { driver.tabla.enter_scope(); }
                                 }
                               } else {
                                 driver.tabla.add_container($2, g, Compuesto, @1.begin.line, @1.begin.column, @1.begin.line, @1.begin.column, alcanceCampos);
-                              }
-                              $$ = new EmptyDef();
-                            }
-
-           | GRIZZLI ID ";" { Contenedor* c = driver.tabla.find_container($2);
-                              GrizzliType* g = new GrizzliType($2);
-                              if (!c) {
-                                driver.tabla.add_container($2, g, Compuesto, @1.begin.line, @1.begin.column);
-                              } else {
-                                driver.warning(@1, @2, "Type " + $2 + " already declared in " + std::to_string(c->getLineaDec()) + "." + std::to_string(c->getColumnaDec()) + ".");
                               }
                               $$ = new EmptyDef();
                             }

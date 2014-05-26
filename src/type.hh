@@ -32,6 +32,7 @@ class Type
   public:
     virtual bool isArray() { return false; };
     virtual bool compareStructure(Type* type) { return compareTypes(type); };
+    virtual bool isHormiguero() { return false; };
     /**
      * Constructor para la clase.
      *
@@ -180,6 +181,7 @@ class HormigueroType : public Type
     bool isSimple();
     HormigueroType();
     bool compareTypes(Type* t2);
+    bool isHormiguero();
 };
 
 class CuevaType : public Type
@@ -252,7 +254,7 @@ class PardoType : public Type
      *   campos: lista de campos del tipo.
      *   nombre: nombre del tipo pardo.
      */
-    PardoType(std::vector<Type*>* campos, std::string nombre);
+    PardoType(std::vector<Type*>* campos, std::string nombre,unsigned int tamanio);
 
     /**
      * Constructor para la clase
