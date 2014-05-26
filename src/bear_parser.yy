@@ -304,7 +304,10 @@ deffuncion: ID "(" defparametros ")" "=>" tipo ";"        { Funcion* f = driver.
                                                               }
                                                             }
                                                           }
-            bloqueespecial                                { driver.tabla.exit_scope(); $$ = new DefFunction($1, $3, $6, $8); }
+            bloqueespecial                                {
+                                                            driver.tabla.exit_scope(); $$ = new DefFunction($1, $3, $6, $8);
+                                                            $$->set_location(@1.begin.line, @1.begin.column, @6.end.line, @6.end.column);
+                                                          }
           | ID "(" defparametros ")" "=>" tipo error      { yyerrok; $$ = new EmptyDef(); }
           | ID "(" defparametros ")" error bloqueespecial { yyerrok; $$ = new EmptyDef(); }
           ;
@@ -416,8 +419,9 @@ cuevas: CUEVA        "[" CONSTPOLAR "]" DE { $$ = new std::vector<int>; $$->push
 
 defcompleja: PARDO ID "{"   { driver.tabla.enter_scope(); }
              campos "}"     { int alcanceCampos = driver.tabla.get_actual_scope();
+                              unsigned int tamanio = driver.tabla.get_actual_tam();
                               driver.tabla.exit_scope();
-                              PardoType* p = new PardoType($5, $2);
+                              PardoType* p = new PardoType($5, $2,tamanio);
                               Contenedor* c = driver.tabla.find_container($2);
                               if (c) {
                                 if (c->getDef()) {

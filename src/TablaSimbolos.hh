@@ -41,8 +41,9 @@ private:
 
     Diccionario   _dicc;      /* Diccionario para llevar la asociación entrevariables e información sobre ésta  */
     Stack         _pila;      /* Pila de enteros para manejar los alcances activos.                             */
-    Stack         _offsets;      /* Pila de enteros para manejar los alcances activos.                             */
+    Stack         _offsets;   /* Pila de enteros para manejar los alcances activos.                             */
     unsigned int  _alcance;   /* Variable para llevar los identificadores de los alcances.                      */
+    void insert_symbol(std::string nombre, Contenido* cont);
 
 public:
 
@@ -239,6 +240,7 @@ public:
      *
      */
     unsigned int get_actual_scope();
+    unsigned int get_actual_tam();
 
     /**
      *  Busca una variable función en la tabla de símbolos.

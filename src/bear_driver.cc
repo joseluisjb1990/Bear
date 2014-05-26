@@ -74,6 +74,7 @@ bear_driver::warning (const std::string& m)
 void bear_driver::agregarConInicializacion(std::vector<elementoLista>* ids, Categorias categoria, Type* tipo, bool mut)
 {
   elementoLista e;
+  if(tipo->isHormiguero()) mut = false;
   for (unsigned int i = 0; i < ids->size(); ++i)
   {
     e = ids->at(i);

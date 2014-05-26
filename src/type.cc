@@ -165,16 +165,17 @@ bool HormigueroType::compareTypes (Type* t2)
   return dynamic_cast<HormigueroType*> (t2);
 }
 
+bool HormigueroType::isHormiguero() { return true; }
+
 CuevaType::CuevaType(Type* tipo, int longitud)
-  : Type(0,1)
+  : Type(tipo->getSize() * longitud, tipo->getAlign())
   , _tipo     ( tipo     )
   , _longitud ( longitud )
   {}
 
 int CuevaType::getSize()
 {
-  int size = _tipo->getSize();
-  return size;
+  return Type::getSize();
 }
 
 bool CuevaType::compareTypes (Type* t2)
@@ -215,7 +216,7 @@ Type* CuevaType::getTipo()
 }
 
 CampoType::CampoType(Type* tipo, std::string nombre)
-  : Type(0,1)
+  : Type(tipo->getSize(),tipo->getAlign())
   , _tipo   ( tipo   )
   , _nombre ( nombre )
   {}
@@ -227,7 +228,7 @@ std::string CampoType::to_string()
 
 int CampoType::getSize()
 {
-  return _tipo->getSize();
+  return Type::getSize();
 }
 
 bool CampoType::isSimple()
@@ -240,8 +241,8 @@ bool CampoType::compareTypes (Type* t2)
   return dynamic_cast<CampoType*> (t2);
 }
 
-PardoType::PardoType(std::vector<Type*>* campos, std::string nombre)
-  : Type(0,1)
+PardoType::PardoType(std::vector<Type*>* campos, std::string nombre, unsigned int tamanio)
+  : Type(tamanio,campos->at(0)->getAlign())
   , _campos ( campos )
   , _nombre ( nombre )
   {}
@@ -258,10 +259,7 @@ std::string PardoType::to_string()
 
 int PardoType::getSize()
 {
-  int size = 0;
-  for (unsigned int i=0; i < _campos->size(); ++i)
-    size += _campos->at(i)->getSize();
-  return size;
+  return Type::getSize();
 }
 
 bool PardoType::compareTypes (Type* t2)

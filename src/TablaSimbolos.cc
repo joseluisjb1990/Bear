@@ -191,6 +191,21 @@ std::ostream& operator<<(std::ostream& os, TablaSimbolos &ts)
 
   return os;
 }
+
+void TablaSimbolos::insert_symbol(std::string nombre, Contenido* cont)
+{
+  Type* tipo = cont->getTipo();
+  unsigned int top   = _offsets.back(); _offsets.pop_back();
+  unsigned int align = tipo->getAlign();
+  unsigned int tam   = tipo->getSize();
+
+  if((top % align) != 0) { top = top + (align - top % align); cont->addOffset(top); top += tam; } else { cont->addOffset(top); top += tam; }
+
+  _offsets.push_back(top);
+
+  _dicc.insert(std::make_pair( nombre, cont ) );
+}
+
 unsigned int TablaSimbolos::add_symbol( std::string nombre
                                       , Type* tipo
                                       , Categorias categoria
@@ -200,18 +215,7 @@ unsigned int TablaSimbolos::add_symbol( std::string nombre
                                       )
 {
   Contenido *cont = new Contenido( tipo, categoria, _pila.back(), linea, columna, mut );
-
-  unsigned int top = _offsets.back(); _offsets.pop_back();
-  cont->addOffset(top);
-
-  _dicc.insert(std::make_pair( nombre, cont ) );
-
-  unsigned int tam = tipo->getAlign();
-
-  top = top + tam;
-
-  _offsets.push_back(top);
-
+  insert_symbol(nombre, cont);
   return _alcance;
 }
 
@@ -226,7 +230,7 @@ unsigned int TablaSimbolos::add_symbol( std::string nombre
                                       )
 {
   Contenido *cont = new Contenido( tipo, categoria, _pila.back(), lineaDec, columnaDec, lineaDef, columnaDef, mut );
-  _dicc.insert(std::make_pair( nombre, cont ) );
+  insert_symbol(nombre, cont);
   return _alcance;
 }
 
@@ -258,7 +262,8 @@ unsigned int TablaSimbolos::add_function  (
   return _alcance;
 }
 
-unsigned int TablaSimbolos::get_actual_scope() { return _alcance; }
+unsigned int TablaSimbolos::get_actual_scope() { return _pila.back();    }
+unsigned int TablaSimbolos::get_actual_tam() { return _offsets.back(); }
 
 Funcion* TablaSimbolos::get_function(std::string nombre)
 {
