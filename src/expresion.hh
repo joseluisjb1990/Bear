@@ -16,6 +16,11 @@ class Expression : public Node
     virtual void check() {};
     virtual std::string to_string(int nesting);
     std::string to_string() { return "expression"; };
+    void setNoMut() { mutID = false; }
+    bool getMut() { return mutID; }
+
+  private :
+    bool mutID = true;
 };
 
 class Constant : public Expression

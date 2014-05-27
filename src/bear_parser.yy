@@ -504,11 +504,23 @@ instrucciones: instruccion                { $$ = new std::vector<Statement*>(); 
 instruccion: defvariable                                                 { $$ = $1;                      }
            | defconstante                                                { $$ = $1;                      }
            | error ";"                                                   { $$ = new EmptyDef(); yyerrok; }
-           | lvalues "=" expresiones ";"                                 { if (!($1->size() == $3->size())) {
+           | lvalues "=" expresiones ";"                                 {
+                                                                           if (!($1->size() == $3->size())) {
                                                                              driver.error(@1, @3, "The number of l-values and expressions is not the same.");
+                                                                             $$ = new EmptyDef();
+                                                                           } else
+                                                                           {
+                                                                             $$ = new Assign($1, $3);
+                                                                             $$->set_location(@1.begin.line, @1.begin.column, @4.end.line, @4.end.column);
+                                                                             for(std::vector<Expression*>::iterator it = $1->begin(); it != $1->end(); ++it)
+                                                                             {
+                                                                               if(!(*it)->getMut())
+                                                                               {
+                                                                                 driver.error(@1, @3,"attempt to modify a unmutable variable");
+                                                                                 $$ = new EmptyDef();
+                                                                               }
+                                                                             }
                                                                            }
-                                                                           $$ = new Assign($1, $3);
-                                                                           $$->set_location(@1.begin.line, @1.begin.column, @4.end.line, @4.end.column);
                                                                          }
            | lvalues error expresiones ";"                               { $$ = new Empty(); yyerrok; }
            | LEER "(" lvalue ")" ";"                                     { $$ = new Read($3);
@@ -690,6 +702,7 @@ lvalue: ID maybecueva             {
                                     if(c) {
                                       if(nullptr == $2) {
                                         $$ = new IDExpr($1);
+                                        if(!c->getMutabilidad()) $$->setNoMut();
                                         $$->set_location(@1.begin.line, @1.begin.column, @1.end.line, @1.end.column);
                                         $$->set_type(c->getTipo());
                                         if (!c->getTipo()->isSimple()) {

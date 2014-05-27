@@ -281,7 +281,7 @@ GrizzliType::GrizzliType(std::vector<Type*>* campos, std::string nombre)
   : Type(0,1)
   , _campos ( campos )
   , _nombre ( nombre )
-  {}
+  { Type* maxType = max(); setSize(maxType->getSize()); setAlign(maxType->getAlign()); }
 
 GrizzliType::GrizzliType(std::string nombre)
   : Type(0,1)
@@ -295,12 +295,24 @@ std::string GrizzliType::to_string()
 
 int GrizzliType::getSize()
 {
-  int max = 0;
+  return Type::getSize();
+}
+
+Type* GrizzliType::max()
+{
+  int   max = 0;
+  Type* maxType;
+  Type* auxType;
+
   for (unsigned int i=0; i < _campos->size(); ++i) {
-    if (max < _campos->at(i)->getSize() )
-      max = _campos->at(i)->getSize();
+    auxType = _campos->at(i);
+
+    if (max < auxType->getSize())
+      max     = auxType->getSize();
+      maxType = auxType;
+
   }
-  return max;
+  return maxType;
 }
 
 bool GrizzliType::isSimple()

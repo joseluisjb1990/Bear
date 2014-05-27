@@ -56,7 +56,9 @@ class Type
      *   Ninguno.
      */
     virtual int getSize();
+    virtual void setSize(int size) { _tam = size; };
     virtual unsigned int getAlign();
+    virtual void setAlign(unsigned int align) { _align = align; };
 
     /**
      * Retorna true si el tipo es simple y
@@ -282,6 +284,7 @@ class GrizzliType : public Type
   private:
     std::vector<Type*>* _campos; // Lista de campos del tipo grizzli.
     std::string         _nombre; // Nombre del tipo grizzli.
+    Type* max();
 
   public:
 
