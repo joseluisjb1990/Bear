@@ -18,6 +18,8 @@
 # include <iostream>
 # include <string>
 # include "Contenido.hh"
+# include "type.hh"
+# include "definition.hh"
 
 using namespace std;
 
@@ -143,7 +145,7 @@ std::string return_category(Categorias cat)
 }
 std::string Contenido::to_string()
 {
-  std::string tipo        = "";
+  std::string tipo        = std::string(_tipo->to_string());
   std::string categoria   = std::to_string(_categoria);
   std::string alcance     = std::to_string(_alcance);
   std::string lineaDec    = std::to_string(_lineaDec);
@@ -168,6 +170,8 @@ std::string Contenido::to_string()
           +               std::string(SMALL_WIDTH                         , ' ') + SEPARADOR
           + def         + std::string(SMALL_WIDTH   - def.length()        , ' ') + SEPARADOR
           + cat         + std::string(SMALL_WIDTH   - cat.length()        , ' ') + SEPARADOR
+          +               std::string(BIG_WIDTH / 2                       , ' ') + SEPARADOR
+          + offset      + std::string(SMALL_WIDTH   - offset.length()     , ' ') + SEPARADOR
           ;
   }
   else
@@ -182,6 +186,7 @@ std::string Contenido::to_string()
           +               std::string(SMALL_WIDTH                         , ' ') + SEPARADOR
           + def         + std::string(SMALL_WIDTH   - def.length()        , ' ') + SEPARADOR
           + cat         + std::string(SMALL_WIDTH   - cat.length()        , ' ') + SEPARADOR
+          +               std::string(BIG_WIDTH / 2                       , ' ') + SEPARADOR
           + offset      + std::string(SMALL_WIDTH   - offset.length()     , ' ') + SEPARADOR
           ;
 
@@ -191,7 +196,11 @@ std::string Contenido::to_string()
 std::string Contenedor::to_string()
 {
 
-  std::string tipo = "";
+  std::string tipo;
+
+  if      (dynamic_cast<GrizzliType*>(getTipo())) { tipo = "grizzli"; }
+  else if (dynamic_cast<PardoType*>  (getTipo())) { tipo = "pardo";   }
+
   std::string categoria     = std::to_string(getCategoria()         );
   std::string alcance       = std::to_string(getAlcance()           );
   std::string lineaDec      = std::to_string(getLineaDec()          );
@@ -216,6 +225,8 @@ std::string Contenedor::to_string()
           + alcanceCampos + std::string(SMALL_WIDTH   - alcanceCampos.length()  , ' ') + SEPARADOR
           + def           + std::string(SMALL_WIDTH   - def.length()            , ' ') + SEPARADOR
           + cat           + std::string(SMALL_WIDTH   - cat.length()            , ' ') + SEPARADOR
+          +                 std::string(BIG_WIDTH / 2                           , ' ') + SEPARADOR
+          +                 std::string(SMALL_WIDTH                             , ' ') + SEPARADOR
           ;
   }
   else
@@ -230,6 +241,8 @@ std::string Contenedor::to_string()
           + alcanceCampos + std::string(SMALL_WIDTH   - alcanceCampos.length()  , ' ') + SEPARADOR
           + def           + std::string(SMALL_WIDTH   - def.length()            , ' ') + SEPARADOR
           + cat           + std::string(SMALL_WIDTH   - cat.length()            , ' ') + SEPARADOR
+          +                 std::string(BIG_WIDTH / 2                           , ' ') + SEPARADOR
+          +                 std::string(SMALL_WIDTH                             , ' ') + SEPARADOR
           ;
 
   }
@@ -237,7 +250,7 @@ std::string Contenedor::to_string()
 
 std::string Funcion::to_string()
 {
-  std::string tipo          = "";
+  std::string tipo          = std::string   (getTipo()->to_string() );
   std::string categoria     = std::to_string(getCategoria()         );
   std::string alcance       = std::to_string(getAlcance()           );
   std::string lineaDec      = std::to_string(getLineaDec()          );
@@ -247,8 +260,14 @@ std::string Funcion::to_string()
   std::string mutab         = std::to_string(getMutabilidad()       );
   std::string def           = std::to_string(getDef()               );
   std::string cat           = return_category(getCategoria());
+  std::string param = "";
 
-   if(getDef())
+  for(std::vector<Parameter*>::iterator it = _parametros->begin(); it != _parametros->end(); ++it)
+  {
+    param += (*it)->to_string() + SEPARADOR;
+  }
+
+  if(getDef())
   {
     return  tipo          + std::string(BIG_WIDTH / 2 - tipo.size()             , ' ') + SEPARADOR
           + alcance       + std::string(SMALL_WIDTH   - alcance.length()        , ' ') + SEPARADOR
@@ -260,6 +279,8 @@ std::string Funcion::to_string()
           +                 std::string(SMALL_WIDTH                             , ' ') + SEPARADOR
           + def           + std::string(SMALL_WIDTH   - def.length()            , ' ') + SEPARADOR
           + cat           + std::string(SMALL_WIDTH   - cat.length()            , ' ') + SEPARADOR
+          + param         + std::string(BIG_WIDTH /2                            , ' ') + SEPARADOR
+          +                 std::string(SMALL_WIDTH                             , ' ') + SEPARADOR
           ;
   }
   else
@@ -274,6 +295,8 @@ std::string Funcion::to_string()
           +                 std::string(SMALL_WIDTH                             , ' ') + SEPARADOR
           + def           + std::string(SMALL_WIDTH   - def.length()            , ' ') + SEPARADOR
           + cat           + std::string(SMALL_WIDTH   - cat.length()            , ' ') + SEPARADOR
+          + param         + std::string(BIG_WIDTH /2                            , ' ') + SEPARADOR
+          +                 std::string(SMALL_WIDTH                             , ' ') + SEPARADOR
           ;
 
   }

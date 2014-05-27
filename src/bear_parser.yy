@@ -340,7 +340,7 @@ parametrocueva: CUEVA "[" "]" DE                             { $$ = new std::vec
               ;
 
 defconstante: CONST tipo identificadores "=" expresiones ";"   { if ($3->size() == $5->size()) {
-                                                                   driver.agregarConInicializacion($3, Var, $2, false);
+                                                                   driver.agregarConInicializacion($3, Var, $2, false, $5);
                                                                    std::vector<string>* l = extraerIds($3);
                                                                    $$ = new ConstDef($2, l, $5);
                                                                  } else {
@@ -355,7 +355,7 @@ defconstante: CONST tipo identificadores "=" expresiones ";"   { if ($3->size() 
 
 
 defvariable: tipo identificadores "=" expresiones ";"   { if ($2->size() == $4->size()) {
-                                                            driver.agregarConInicializacion($2, Var, $1, true);
+                                                            driver.agregarConInicializacion($2, Var, $1, true, $4);
                                                             std::vector<string>* l = extraerIds($2);
                                                             $$ = new DefVar($1, l, $4);
                                                             $$->set_location(@1.begin.line, @1.begin.column, @5.end.line, @5.end.column);
@@ -696,7 +696,6 @@ lvalues: lvalue             { $$ = new std::vector<Expression*>(); $$->push_back
        | lvalues "," lvalue { $$ = $1; $$->push_back($3);                             }
        ;
 
-          /*CAMBIE ESTO PORQUE CUANDO SE HACE UNA LLAMDA A FUNCION SOLO SE PASA EL NOMBRE DE LA CUEVA Y NO TIENE CORCHETES*/
 lvalue: ID maybecueva             {
                                     Contenido* c = driver.tabla.find_symbol($1, Var);
                                     if(c) {
@@ -887,6 +886,7 @@ expresion: CONSTPOLAR                            { $$ = new PolarExpr($1);
                                                    $$->set_location(@1.begin.line, @1.begin.column, @1.end.line, @1.end.column);
                                                  }
          | CONSTHORMIGUERO                       { $$ = new HormigueroExpr($1);
+                                                   $$->setTam($1.size() - 2);
                                                    $$->set_location(@1.begin.line, @1.begin.column, @1.end.line, @1.end.column);
                                                  }
          | CONSTMALAYO                           { $$ = new MalayoExpr($1);
