@@ -71,18 +71,29 @@ bear_driver::warning (const std::string& m)
   std::cout << "Warning: " << m << std::endl;
 }
 
-void bear_driver::agregarConInicializacion(std::vector<elementoLista>* ids, Categorias categoria, Type* tipo, bool mut)
+void bear_driver::agregarConInicializacion(std::vector<elementoLista>* ids, Categorias categoria, Type* tipo, bool mut, std::vector<Expression*>* listExpr)
 {
+  Type* auxTipo;
   elementoLista e;
-  if(tipo->isHormiguero()) mut = false;
+  Expression* auxExpr;
+
+  if(tipo->isHormiguero()) { mut = false; }
   for (unsigned int i = 0; i < ids->size(); ++i)
   {
+    auxExpr = listExpr->at(i);
     e = ids->at(i);
+
     if (tabla.check_scope(e.nombre)) {
       Contenido* c = tabla.find_symbol(e.nombre, categoria);
       error(e.lineaI, e.columnaI, e.lineaF, e.columnaF, "Attempt to redefine variable " + e.nombre + " already declared in " + std::to_string(c->getLineaDec()) + "." + std::to_string(c->getColumnaDec()) + ".");
     } else {
-      tabla.add_symbol(e.nombre, tipo, categoria, e.lineaI, e.columnaI, e.lineaF, e.columnaF, mut);
+      if(tipo->isHormiguero())
+      {
+        auxTipo = new HormigueroType();
+        auxTipo->setSize(auxExpr->getTam());
+        tabla.add_symbol(e.nombre, auxTipo, categoria, e.lineaI, e.columnaI, e.lineaF, e.columnaF, mut);
+      } else
+        tabla.add_symbol(e.nombre, tipo, categoria, e.lineaI, e.columnaI, e.lineaF, e.columnaF, mut);
     }
   }
 }
@@ -90,6 +101,9 @@ void bear_driver::agregarConInicializacion(std::vector<elementoLista>* ids, Cate
 void bear_driver::agregarSinInicializacion(std::vector<elementoLista>* ids, Categorias categoria, Type* tipo)
 {
   elementoLista e;
+  bool mut;
+  if(tipo->isHormiguero()) mut = false; else mut = true;
+
   for (unsigned int i = 0; i < ids->size(); ++i)
   {
     e = ids->at(i);
@@ -97,7 +111,7 @@ void bear_driver::agregarSinInicializacion(std::vector<elementoLista>* ids, Cate
       Contenido* c = tabla.find_symbol(e.nombre, categoria);
       error(e.lineaI, e.columnaI, e.lineaF, e.columnaF, "Attempt to redefine variable " + e.nombre + " already declared in " + std::to_string(c->getLineaDec()) + "." + std::to_string(c->getColumnaDec()) + ".");
     } else {
-      tabla.add_symbol(e.nombre, tipo, categoria, e.lineaI, e.columnaI, true);
+      tabla.add_symbol(e.nombre, tipo, categoria, e.lineaI, e.columnaI, mut);
     }
   }
 }
@@ -119,5 +133,4 @@ bool bear_driver::compare_parameters(std::vector<Parameter*>* list1, std::vector
     ok = p1->compareParameters(p2) and ok;
   }
   return ok;
-  //Aqui va la comparacion de tipos y nombres de los parametros
 }

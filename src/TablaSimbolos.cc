@@ -135,13 +135,13 @@ bool compare_pairs(pair_str_cont pair1, pair_str_cont pair2)
 
 void print_header(std::ostream& os)
 {
-  os  << std::setw(BIG_WIDTH)     << "V"    << SEPARADOR  << std::setw(BIG_WIDTH / 2) << "T[DIM]" << SEPARADOR
-      << std::setw(SMALL_WIDTH)   << "A"    << SEPARADOR  << std::setw(SMALL_WIDTH)   << "LDEC"   << SEPARADOR
-      << std::setw(SMALL_WIDTH)   << "CDEC" << SEPARADOR  << std::setw(SMALL_WIDTH)   << "LDEF"   << SEPARADOR
-      << std::setw(SMALL_WIDTH)   << "CDEF" << SEPARADOR  << std::setw(SMALL_WIDTH)   << "M"      << SEPARADOR
-      << std::setw(SMALL_WIDTH)   << "AC"   << SEPARADOR  << std::setw(SMALL_WIDTH)   << "D"      << SEPARADOR
-      << std::setw(SMALL_WIDTH)   << "C"    << SEPARADOR  << std::setw(BIG_WIDTH / 2) << "P"
-
+  os  << std::setw(BIG_WIDTH / 2) << "V"      << SEPARADOR  << std::setw(BIG_WIDTH / 2) << "T[DIM]" << SEPARADOR
+      << std::setw(SMALL_WIDTH)   << "A"      << SEPARADOR  << std::setw(SMALL_WIDTH)   << "LDEC"   << SEPARADOR
+      << std::setw(SMALL_WIDTH)   << "CDEC"   << SEPARADOR  << std::setw(SMALL_WIDTH)   << "LDEF"   << SEPARADOR
+      << std::setw(SMALL_WIDTH)   << "CDEF"   << SEPARADOR  << std::setw(SMALL_WIDTH)   << "M"      << SEPARADOR
+      << std::setw(SMALL_WIDTH)   << "AC"     << SEPARADOR  << std::setw(SMALL_WIDTH)   << "D"      << SEPARADOR
+      << std::setw(SMALL_WIDTH)   << "C"      << SEPARADOR  << std::setw(BIG_WIDTH / 2) << "P"      << SEPARADOR
+      << std::setw(SMALL_WIDTH)   << "Offset" << SEPARADOR
       << std::endl;
 }
 
@@ -184,7 +184,7 @@ std::ostream& operator<<(std::ostream& os, TablaSimbolos &ts)
       print_actual_scope(os, alcance_actual);
       print_header(os);
     }
-    os << std::setw(BIG_WIDTH) << pos->first << SEPARADOR << pos->second->to_string() << '\n';
+    os << std::setw(BIG_WIDTH / 2) << pos->first << SEPARADOR << pos->second->to_string() << '\n';
   }
 
   print_leyend(os);
@@ -199,8 +199,14 @@ void TablaSimbolos::insert_symbol(std::string nombre, Contenido* cont)
   unsigned int align = tipo->getAlign();
   unsigned int tam   = tipo->getSize();
 
-  if((top % align) != 0) { top = top + (align - top % align); cont->addOffset(top); top += tam; } else { cont->addOffset(top); top += tam; }
+  if((top % align) != 0)
+  {
+    top = top + (align - top % align);
+    cont->addOffset(top);
+  }
+  else cont->addOffset(top);
 
+  top += tam;
   _offsets.push_back(top);
 
   _dicc.insert(std::make_pair( nombre, cont ) );

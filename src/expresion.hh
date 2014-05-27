@@ -15,12 +15,15 @@ class Expression : public Node
     Expression();
     virtual void check() {};
     virtual std::string to_string(int nesting);
-    std::string to_string() { return "expression"; };
-    void setNoMut() { mutID = false; }
-    bool getMut() { return mutID; }
+    std::string to_string()         { return "expression"; };
+    void setNoMut()                 { _mutID = false; }
+    void setTam(unsigned int tam)   { _tam = tam; }
+    bool getMut()                   { return _mutID; }
+    unsigned int getTam()           { return _tam; }
 
   private :
-    bool mutID = true;
+    bool         _mutID = true;
+    unsigned int _tam   = 0;
 };
 
 class Constant : public Expression

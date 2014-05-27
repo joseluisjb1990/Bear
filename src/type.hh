@@ -26,7 +26,7 @@ using namespace std;
 class Type
 {
   private:
-    int _tam; // Guarda el tamaño en bytes del tipo.
+    unsigned int _tam; // Guarda el tamaño en bytes del tipo.
     unsigned int _align;
 
   public:
@@ -55,9 +55,9 @@ class Type
      *  Parámetros:
      *   Ninguno.
      */
-    virtual int getSize();
-    virtual void setSize(int size) { _tam = size; };
-    virtual unsigned int getAlign();
+    virtual unsigned int getSize()            { return _tam;    };
+    virtual unsigned int getAlign()           { return _align;  };
+    virtual void setSize (unsigned int size)  { _tam = size;    };
     virtual void setAlign(unsigned int align) { _align = align; };
 
     /**
@@ -203,7 +203,7 @@ class CuevaType : public Type
      */
     CuevaType(Type* tipo, int longitud);
     bool isSimple();
-    int getSize();
+    unsigned int getSize();
     std::string to_string();
     int getLongitud();
     bool isArray() { return true; };
@@ -236,7 +236,7 @@ class CampoType : public Type
      */
     CampoType(Type* tipo, std::string nombre);
     std::string to_string();
-    int getSize();
+    unsigned int getSize();
     bool isSimple();
     bool compareTypes(Type* t2);
 };
@@ -266,7 +266,7 @@ class PardoType : public Type
      */
     PardoType(std::string nombre);
     std::string to_string();
-    int getSize();
+    unsigned int getSize();
     bool isSimple();
     bool compareTypes(Type* t2);
 
@@ -305,7 +305,7 @@ class GrizzliType : public Type
      */
     GrizzliType(std::string nombre);
     std::string to_string();
-    int getSize();
+    unsigned int getSize();
     bool isSimple();
     bool compareTypes(Type* t2);
 

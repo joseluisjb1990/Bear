@@ -31,16 +31,6 @@ std::string Type::to_string()
   return "tipo";
 }
 
-int Type::getSize()
-{
-  return _tam;
-}
-
-unsigned int Type::getAlign()
-{
-  return _align;
-}
-
 PandaType::PandaType()
   : Type(1, 2)
   {}
@@ -147,7 +137,7 @@ bool ExtintoType::compareTypes (Type* t2)
 }
 
 HormigueroType::HormigueroType()
-  : Type(0,1)
+  : Type(1,2)
   {}
 
 std::string HormigueroType::to_string()
@@ -173,7 +163,7 @@ CuevaType::CuevaType(Type* tipo, int longitud)
   , _longitud ( longitud )
   {}
 
-int CuevaType::getSize()
+unsigned int CuevaType::getSize()
 {
   return Type::getSize();
 }
@@ -226,7 +216,7 @@ std::string CampoType::to_string()
   return _tipo->to_string() + " " + _nombre;
 }
 
-int CampoType::getSize()
+unsigned int CampoType::getSize()
 {
   return Type::getSize();
 }
@@ -257,7 +247,7 @@ std::string PardoType::to_string()
   return "pardo " + _nombre;
 }
 
-int PardoType::getSize()
+unsigned int PardoType::getSize()
 {
   return Type::getSize();
 }
@@ -293,14 +283,14 @@ std::string GrizzliType::to_string()
   return "grizzli " + _nombre;
 }
 
-int GrizzliType::getSize()
+unsigned int GrizzliType::getSize()
 {
   return Type::getSize();
 }
 
 Type* GrizzliType::max()
 {
-  int   max = 0;
+  unsigned int max = 0;
   Type* maxType;
   Type* auxType;
 
