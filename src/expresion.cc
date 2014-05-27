@@ -123,7 +123,7 @@ Sum::Sum(Expression* izq, Expression* der)
 std::string Sum::to_string(int nesting)
 {
   std::string padding(nesting*2, ' ');
-  return izq->to_string(nesting+1) + padding + "+\n" + der->to_string(nesting+1);
+  return padding + "Suma\n" + padding + "Operando izquierdo:\n" + izq->to_string(nesting+1) + padding + "Operando derecho:\n" + der->to_string(nesting+1);
 }
 
 void Sum::check()
@@ -151,7 +151,7 @@ Substraction::Substraction(Expression* izq, Expression* der)
 std::string Substraction::to_string(int nesting)
 {
   std::string padding(nesting*2, ' ');
-  return izq->to_string(nesting+1) + padding + "-\n" + der->to_string(nesting+1);
+  return padding + "Resta\n" + padding + "Operando izquerdo: " + izq->to_string(nesting+1) + padding + "Operando derecho:\n" + der->to_string(nesting+1);
 }
 
 void Substraction::check()
@@ -179,7 +179,7 @@ Multiplication::Multiplication(Expression* izq, Expression* der)
 std::string Multiplication::to_string(int nesting)
 {
   std::string padding(nesting*2, ' ');
-  return izq->to_string(nesting+1) + padding + "*\n" + der->to_string(nesting+1);
+  return padding + "Multiplicación\n" + padding + "Operando izquerdo: " + izq->to_string(nesting+1) + padding + "Operando derecho:\n" + der->to_string(nesting+1);
 }
 
 void Multiplication::check()
@@ -207,7 +207,7 @@ Division::Division(Expression* izq, Expression* der)
 std::string Division::to_string(int nesting)
 {
   std::string padding(nesting*2, ' ');
-  return izq->to_string(nesting+1) + padding + "/\n" + der->to_string(nesting+1);
+  return padding + "División\n" + padding + "Operando izquerdo: " + izq->to_string(nesting+1) + padding + "Operando derecho:\n" + der->to_string(nesting+1);
 }
 
 void Division::check()
@@ -235,7 +235,7 @@ Remainder::Remainder(Expression* izq, Expression* der)
 std::string Remainder::to_string(int nesting)
 {
   std::string padding(nesting*2, ' ');
-  return izq->to_string(nesting+1) + padding + "%\n" + der->to_string(nesting+1);
+  return padding + "Resto\n" + padding + "Operando izquerdo: " + izq->to_string(nesting+1) + padding + "Operando derecho:\n" + der->to_string(nesting+1);
 }
 
 void Remainder::check()
@@ -263,7 +263,7 @@ Power::Power(Expression* izq, Expression* der)
 std::string Power::to_string(int nesting)
 {
   std::string padding(nesting*2, ' ');
-  return izq->to_string(nesting+1) + padding + "**\n" + der->to_string(nesting+1);
+  return padding + "Potenciación\n" + padding + "Operando izquerdo: " + izq->to_string(nesting+1) + padding + "Operando derecho:\n" + der->to_string(nesting+1);
 }
 
 void Power::check()
@@ -290,7 +290,7 @@ Minus::Minus(Expression* operando)
 std::string Minus::to_string(int nesting)
 {
   std::string padding(nesting*2, ' ');
-  return padding + "-\n" + operando->to_string(nesting+1);
+  return padding + "Menos unario\n" + padding + "Operando:\n" + operando->to_string(nesting+1);
 }
 
 void Minus::check()
@@ -314,7 +314,7 @@ Less::Less(Expression* izq, Expression* der)
 std::string Less::to_string(int nesting)
 {
   std::string padding(nesting*2, ' ');
-  return izq->to_string(nesting+1) + padding + "<\n" + der->to_string(nesting+1);
+  return padding + "Menor que\n" + padding + "Operando izquerdo: " + izq->to_string(nesting+1) + padding + "Operando derecho:\n" + der->to_string(nesting+1);
 }
 
 void Less::check()
@@ -342,7 +342,7 @@ LessEqual::LessEqual(Expression* izq, Expression* der)
 std::string LessEqual::to_string(int nesting)
 {
   std::string padding(nesting*2, ' ');
-  return izq->to_string(nesting+1) + padding + "=<\n" + der->to_string(nesting+1);
+  return padding + "Menor o igual que\n" + padding + "Operando izquerdo: " + izq->to_string(nesting+1) + padding + "Operando derecho:\n" + der->to_string(nesting+1);
 }
 
 void LessEqual::check()
@@ -371,7 +371,7 @@ Greater::Greater(Expression* izq, Expression* der)
 std::string Greater::to_string(int nesting)
 {
   std::string padding(nesting*2, ' ');
-  return izq->to_string(nesting+1) + padding + ">\n" + der->to_string(nesting+1);
+  return padding + "Mayor que\n" + padding + "Operando izquerdo: " + izq->to_string(nesting+1) + padding + "Operando derecho:\n" + der->to_string(nesting+1);
 }
 
 void Greater::check()
@@ -400,7 +400,7 @@ GreaterEqual::GreaterEqual(Expression* izq, Expression* der)
 std::string GreaterEqual::to_string(int nesting)
 {
   std::string padding(nesting*2, ' ');
-  return izq->to_string(nesting+1) + padding + ">=\n" + der->to_string(nesting+1);
+  return padding + "Mayor o igual que\n" + padding + "Operando izquerdo: " + izq->to_string(nesting+1) + padding + "Operando derecho:\n" + der->to_string(nesting+1);
 }
 
 void GreaterEqual::check()
@@ -429,7 +429,7 @@ Equal::Equal(Expression* izq, Expression* der)
 std::string Equal::to_string(int nesting)
 {
   std::string padding(nesting*2, ' ');
-  return izq->to_string(nesting+1) + padding + "==\n" + der->to_string(nesting+1);
+  return padding + "Equivalencia\n" + padding + "Operando izquerdo: " + izq->to_string(nesting+1) + padding + "Operando derecho:\n" + der->to_string(nesting+1);
 }
 
 void Equal::check()
@@ -458,7 +458,7 @@ NotEqual::NotEqual(Expression* izq, Expression* der)
 std::string NotEqual::to_string(int nesting)
 {
   std::string padding(nesting*2, ' ');
-  return izq->to_string(nesting+1) + padding + "=/=\n" + der->to_string(nesting+1);
+  return padding + "Inequivalencia\n" + padding + "Operando izquerdo: " + izq->to_string(nesting+1) + padding + "Operando derecho:\n" + der->to_string(nesting+1);
 }
 
 void NotEqual::check()
@@ -487,7 +487,7 @@ And::And(Expression* izq, Expression* der)
 std::string And::to_string(int nesting)
 {
   std::string padding(nesting*2, ' ');
-  return izq->to_string(nesting+1) + padding + "&\n" + der->to_string(nesting+1);
+  return padding + "Y\n" + padding + "Operando izquerdo: " + izq->to_string(nesting+1) + padding + "Operando derecho:\n" + der->to_string(nesting+1);
 }
 
 void And::check()
@@ -516,7 +516,7 @@ Or::Or(Expression* izq, Expression* der)
 std::string Or::to_string(int nesting)
 {
   std::string padding(nesting*2, ' ');
-  return izq->to_string(nesting+1) + padding + "|\n" + der->to_string(nesting+1);
+  return padding + "O\n" + padding + "Operando izquerdo: " + izq->to_string(nesting+1) + padding + "Operando derecho:\n" + der->to_string(nesting+1);
 }
 
 void Or::check()
@@ -544,7 +544,7 @@ Not::Not(Expression* operando)
 std::string Not::to_string(int nesting)
 {
   std::string padding(nesting*2, ' ');
-  return padding + "no\n" + operando->to_string(nesting+1);
+  return padding + "no\n" + padding + "Operando:\n" + operando->to_string(nesting+1);
 }
 
 void Not::check()
@@ -570,7 +570,7 @@ SelectorExpr::SelectorExpr(Expression* condicion, Expression* brazoTrue, Express
 std::string SelectorExpr::to_string(int nesting)
 {
   std::string padding(nesting*2, ' ');
-  return _condicion->to_string(nesting+1) + padding + "?\n" + _brazoTrue->to_string(nesting+1) + padding + ":\n" + _brazoFalse->to_string(nesting+1);
+  return padding + "Expresión condicional\n" + padding + "Condición:\n" + _condicion->to_string(nesting+1) + padding + "Brazo true:\n" + _brazoTrue->to_string(nesting+1) + padding + "Brazo false:\n" + _brazoFalse->to_string(nesting+1);
 }
 
 IDExpr::IDExpr(std::string nombre)
@@ -581,7 +581,7 @@ IDExpr::IDExpr(std::string nombre)
 std::string IDExpr::to_string(int nesting)
 {
   std::string padding(nesting*2, ' ');
-  return padding + _nombre;
+  return padding + _nombre + "\n";
 }
 
 void IDExpr::check(){};
@@ -597,7 +597,7 @@ FunctionExpr::FunctionExpr(std::string name, std::vector<Type*>* parameterTypes,
 std::string FunctionExpr::to_string(int nesting)
 {
   std::string padding(nesting*2, ' ');
-  std::string str = padding + "Nombre: " + _name + "\n" + padding + "Parametros: \n";
+  std::string str = padding + "Función\n" + padding + "Nombre: " + _name + "\n" + padding + "Parametros:\n";
   for (unsigned int i=0; i < _parameters->size(); ++i)
     str += _parameters->at(i)->to_string(nesting+1);
   return str;
@@ -639,7 +639,7 @@ PardoExpr::PardoExpr(LValueExpr* pardo, CuevaExpr* campo)
 std::string PardoExpr::to_string(int nesting)
 {
   std::string padding(nesting*2, ' ');
-  return _pardo->to_string(nesting+1) + padding + "->\n" + _campo->to_string(nesting+1);
+  return padding + "Acceso a un pardo\n" + padding + _pardo->to_string(nesting+1) + padding + "->\n" + padding + _campo->to_string(nesting+1);
 }
 
 void PardoExpr::check()
@@ -670,7 +670,7 @@ GrizzliExpr::GrizzliExpr(LValueExpr* grizzli, CuevaExpr* campo)
 std::string GrizzliExpr::to_string(int nesting)
 {
   std::string padding(nesting*2, ' ');
-  return _grizzli->to_string(nesting+1) + padding + ".\n" + _campo->to_string(nesting+1);
+  return padding + "Acceso a un grizzli\n" + padding + _grizzli->to_string(nesting+1) + padding + ".\n" + padding + _campo->to_string(nesting+1);
 }
 
 void GrizzliExpr::check()
@@ -695,7 +695,7 @@ CuevaExpr::CuevaExpr(std::string cueva, std::vector<Expression*>* dimensions)
 std::string CuevaExpr::to_string(int nesting)
 {
   std::string padding(nesting*2, ' ');
-  std::string str = padding + _cueva + "\n";
+  std::string str = padding + "Acceso a cueva\n" + padding + "Nombre: " + _cueva + "\n";
   for (unsigned int i=0; i < _dimensions->size(); ++i) {
     str += padding + "[\n" + _dimensions->at(i)->to_string(nesting+1) + padding + "]\n";
   }

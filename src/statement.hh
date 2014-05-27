@@ -14,8 +14,8 @@ public :
     Statement(){};
     Statement(Type* type) : Node( type ) {}
     static bool checkFunction;
-    static bool checkIter    ;
-    virtual std::string to_string()      { return "INSTRUCCIÓN:"; };
+    static bool checkIter;
+    virtual std::string to_string(int nesting) = 0;
     virtual bool isReturn()              { return false;          };
     virtual bool isBody()                { return false;          };
     virtual bool checkReturn(Type* type) { return true;           };

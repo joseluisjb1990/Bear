@@ -20,7 +20,7 @@ public:
   Node(Type* type) : _type( type ) {}
   Type* get_type() { return _type; }
   void set_type(Type* type) { _type = type; }
-  virtual std::string to_string() = 0;
+  virtual std::string to_string(int nesting) = 0;
   virtual void check() { }
   void set_location(unsigned int filaI, unsigned int columnaI, unsigned int filaF, unsigned int columnaF) { _filaI = filaI; _columnaI = columnaI; _filaF = filaF; _columnaF = columnaF; }
   unsigned int get_first_line()   { return _filaI;    }

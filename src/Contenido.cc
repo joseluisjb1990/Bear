@@ -264,7 +264,7 @@ std::string Funcion::to_string()
 
   for(std::vector<Parameter*>::iterator it = _parametros->begin(); it != _parametros->end(); ++it)
   {
-    param += (*it)->to_string() + SEPARADOR;
+    param += (*it)->to_string(0) + SEPARADOR;
   }
 
   if(getDef())

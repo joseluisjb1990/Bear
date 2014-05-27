@@ -594,7 +594,7 @@ BreakID::BreakID(std::string id)
 std::string BreakID::to_string(int nesting)
 {
   std::string padding(nesting*2, ' ');
-  return padding + "roloePea\n" + padding + "Etiqueta:\n" + padding + _id + "\n"
+  return padding + "roloePea\n" + padding + "Etiqueta:\n" + padding + _id + "\n";
 }
 
 void BreakID::check()

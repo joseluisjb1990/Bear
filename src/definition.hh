@@ -15,14 +15,14 @@ class Definition : public Statement
 public :
 
     Definition(){};
-    virtual std::string to_string(){ return "DEFINICIÓN:"; };
+    virtual std::string to_string(int nesting){ return "DEFINICIÓN:"; };
 };
 
 class EmptyDef : public Definition
 {
   public:
     EmptyDef(){};
-    std::string to_string() { return "Empty definition"; };
+    std::string to_string(int nesting) { return "Empty definition"; };
 
 };
 
@@ -30,7 +30,7 @@ class DefWithInit : public Definition
 {
   public:
     DefWithInit(Type* tipo, std::vector<std::string>* ids, std::vector<Expression*>* expr);
-    std::string to_string();
+    std::string to_string(int nesting);
     void check();
 
   private:
@@ -56,7 +56,7 @@ class DefVarNoInit : public Definition
 {
   public:
     DefVarNoInit(Type* tipo, std::vector<std::string>* ids);
-    std::string to_string();
+    std::string to_string(int nesting);
     void check();
 
   private:
@@ -69,7 +69,7 @@ class DefArray : public Definition
 {
   public:
     DefArray(Type* tipo, std::string id);
-    std::string to_string();
+    std::string to_string(int nesting);
     void check();
 
   private:
@@ -87,7 +87,7 @@ class Parameter : public Definition
     Parameter(){};
     bool compareTypes(Type* tipo);
 
-    std::string to_string();
+    std::string to_string(int nesting);
     std::string get_id();
     Type*       get_tipo();
     bool        get_ref();
@@ -104,7 +104,7 @@ class EmptyParam : public Parameter
 {
   public:
     EmptyParam(){};
-    std::string to_string() { return "No parameters"; };
+    std::string to_string(int nesting) { return "No parameters"; };
     void check() { set_type(ExtintoType::getInstance()); }
 
 };
@@ -122,7 +122,7 @@ class DecFunction : public Definition
                 , Type*                     tipoRetorno
                 );
 
-    std::string to_string();
+    std::string to_string(int nesting);
     void check();
 
 };
@@ -136,7 +136,7 @@ class DefFunction : public Definition
                , Statement*                statements
                );
 
-    std::string to_string();
+    std::string to_string(int nesting);
     void check();
 
   private:

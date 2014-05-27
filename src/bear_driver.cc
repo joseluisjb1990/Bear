@@ -11,7 +11,7 @@ int bear_driver::parse (const std::string &f)
   int res = parser.parse ();
     cout << tabla;
   if (0 == errores) {
-    cout << AST->to_string();
+    cout << AST->to_string(0);
     AST->check();
   }
   scan_end();

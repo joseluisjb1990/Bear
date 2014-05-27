@@ -11,11 +11,12 @@ DefWithInit::DefWithInit(Type* tipo, std::vector<std::string>* ids, std::vector<
   , _expr ( expr )
 {}
 
-std::string DefWithInit::to_string()
+std::string DefWithInit::to_string(int nesting)
 {
-  std::string str = "tipo: " + _tipo->to_string() + " inicializaciones:\n";
+  std::string padding(nesting*2, ' ');
+  std::string str = padding + "Definición con Inicialización\n" + padding + "Tipo:\n" + padding + _tipo->to_string() + "\n" + padding + "Variables:\n";
   for (unsigned int i=0; i < _ids->size(); ++i) {
-    str += "nombre: " + _ids->at(i) + " Valor: " + _expr->at(i)->to_string() + "\n";
+    str += padding + "Nombre: " + _ids->at(i) + "\n" + padding + "Valor:\n" + _expr->at(i)->to_string(nesting+1);
   }
   return str;
 }
@@ -31,7 +32,7 @@ void DefWithInit::check()
     {
       errortype = true;
       if (exp->get_type() != ErrorType::getInstance()) {
-        error("expression " + exp->to_string() + " is not of type " + _tipo->to_string());
+        error("expression " + exp->to_string(0) + " is not of type " + _tipo->to_string());
       }
     }
   }
@@ -53,11 +54,12 @@ DefVarNoInit::DefVarNoInit(Type* tipo, std::vector<std::string>* ids)
   , _ids( ids )
   {}
 
-std::string DefVarNoInit::to_string()
+std::string DefVarNoInit::to_string(int nesting)
 {
-  std::string str = "tipo: " + _tipo->to_string() + " Variables sin incializacion :\n";
+  std::string padding(nesting*2, ' ');
+  std::string str = padding + "Definición sin inicializar\n" + padding + "Tipo: " + _tipo->to_string() + "\n" + padding + "Variables:\n";
   for (unsigned int i=0; i < _ids->size(); ++i) {
-    str += "nombre: " + _ids->at(i) + "\n";
+    str += padding + "Nombre: " + _ids->at(i) + "\n";
   }
   return str;
 }
@@ -69,9 +71,10 @@ DefArray::DefArray(Type* tipo, std::string id)
   , _id( id )
   {}
 
-std::string DefArray::to_string()
+std::string DefArray::to_string(int nesting)
 {
-  return "Definicion de cueva : \n Nombre: " + _id + ", Tipo : " + _tipo->to_string();
+  std::string padding(nesting*2, ' ');
+  return padding + "Definición de cueva:\n" + padding + "Nombre: " + _id + "\n" + padding + "Tipo : " + _tipo->to_string() + "\n";
 }
 
 void DefArray::check() { set_type(_tipo); }
@@ -86,14 +89,14 @@ DecFunction::DecFunction ( std::string         name
   , _tipoRetorno( tipoRetorno )
   {}
 
-std::string DecFunction::to_string()
+std::string DecFunction::to_string(int nesting)
 {
-  std::string str =  "Nodo Funcion\nNombre de la funcion " + _name + "\nParametros : ";
-
+  std::string padding(nesting*2, ' ');
+  std::string str =  padding + "Declaración de función\n" + padding + "Nombre: " + _name + "\n" + padding + "Parametros:\n";
   for (unsigned int i=0; i<_parametros->size(); ++i)
-    str += _parametros->at(i)->to_string() + " ";
+    str += _parametros->at(i)->to_string(nesting+1);
 
-  str = str + '\n' + _tipoRetorno->to_string();
+  str += padding + "Retorna: " + _tipoRetorno->to_string();
   return str;
 }
 
@@ -115,11 +118,12 @@ Parameter::Parameter ( std::string id
   , _ref      ( ref   )
   {}
 
-std::string Parameter::to_string()
+std::string Parameter::to_string(int nesting)
 {
+  std::string padding(nesting*2, ' ');
   std::string str;
-  if (_ref) str = "*"; else str = " ";
-  str += _id + " " + _tipo->to_string() + " ";
+  if (_ref) str = padding + "*"; else str = padding;
+  str += _id + " : " + _tipo->to_string();
   return str;
 }
 
@@ -132,7 +136,7 @@ bool        Parameter::compareParameters(Parameter* p2)
 {
   if (!_tipo->compareTypes(p2->get_tipo()) or !(_id == p2->get_id()))
   {
-    error("parameter " + to_string() + " in function definition don't match parameter " + p2->to_string() + " in function declaration");
+    error("parameter " + to_string(0) + " in function definition don't match parameter " + p2->to_string(0) + " in function declaration");
     return false;
   }
   return true;
@@ -160,9 +164,16 @@ DefFunction::DefFunction ( std::string               id
   , _statements ( statements )
   {}
 
-std::string DefFunction::to_string()
+std::string DefFunction::to_string(int nesting)
 {
-  return "Defincion de funcion\nNombre: " + _id + "\nParametros: " + "CICLO DE LOS PARAMETROS" + "\nTipo: " + _type->to_string() + "\nInstrucciones: " + _statements->to_string();
+  std::string padding(nesting*2, ' ');
+  std::string str = padding + "Definción de funcion\n" + padding + "Nombre: " + _id + "\n" + padding + "Parametros:\n";
+  for (unsigned int i=0; i< _parameters->size(); ++i)
+    str +=  _parameters->at(i)->to_string(nesting+1);
+
+  str += padding + "Retorna: " + _type->to_string();
+  str += padding + "Instrucción:\n" + _statements->to_string(nesting+1);
+  return str;
 }
 
 void DefFunction::check()
