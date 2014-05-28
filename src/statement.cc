@@ -157,7 +157,7 @@ void IfElse::check()
   _brazoTrue->check();
   _brazoFalse->check();
 
-  if (_brazoTrue->get_type() == ErrorType::getInstance() or _brazoFalse->get_type() == ErrorType::getInstance()) {
+  if (_brazoTrue->get_type() == ErrorType::getInstance() or _brazoFalse->get_type() == ErrorType::getInstance() or t != PandaType::getInstance()) {
     this->set_type(ErrorType::getInstance());
   } else {
     this->set_type(ExtintoType::getInstance());
@@ -227,6 +227,8 @@ void Read::check()
       dynamic_cast<GrizzliType*>(t))
   {
     error("Error in function 'leer' cannot read a variable of type '" + t->to_string() + "'");
+    this->set_type(ErrorType::getInstance());
+    return;
   }
 
   this->set_type(ExtintoType::getInstance());
@@ -309,6 +311,7 @@ void ComplexFor::check()
 
   if (tbegin != PolarType::getInstance() and tbegin != ErrorType::getInstance()) {
     error("Lower bound for 'para' must be of type 'polar' instead of '" + tbegin->to_string() + "'");
+    tbegin = ErrorType::getInstance();
   }
 
   _end->check();
@@ -316,6 +319,7 @@ void ComplexFor::check()
 
   if (tend != PolarType::getInstance() and tend != ErrorType::getInstance()) {
     error("Higher bound for 'para' must be of type 'polar' instead of '" + tend->to_string() + "'");
+    tend = ErrorType::getInstance();
   }
 
   _step->check();
@@ -323,6 +327,7 @@ void ComplexFor::check()
 
   if (tstep != PolarType::getInstance() and tstep != ErrorType::getInstance()) {
     error("step for 'para' must be of type 'polar' instead of '" + tstep->to_string() + "'");
+    tstep = ErrorType::getInstance();
   }
 
   Statement::checkIter = true; _body->check(); Statement::checkIter = false;
@@ -371,11 +376,13 @@ void SimpleFor::check()
   if( tb != PolarType::getInstance() && tb != errortype)
   {
     error("initial expression inside 'para' is of type '" + tb->to_string() + "' instead of type 'polar'");
+    tb = ErrorType::getInstance();
   }
 
   if( te != PolarType::getInstance() && te != errortype)
   {
     error("ending expression inside 'para' is of type '" + tb->to_string() + "' instead of type 'polar'");
+    te = ErrorType::getInstance();
   }
 
   Statement::checkIter = true; _body->check(); Statement::checkIter = false;
@@ -440,7 +447,7 @@ bool Return::checkReturn(Type* type)
 {
   if(!type->compareTypes(get_type()))
   {
-    error("type of return statement does not match the function type");
+    error("type '" + get_type()->to_string() + "' of return statement does not match the function return type '" + type->to_string() + "'");
     return false;
   } else return true;
 }
@@ -471,8 +478,8 @@ void ReturnExpr::check()
 bool ReturnExpr::checkReturn(Type* type)
 {
   if(!type->compareTypes(get_type()))
-  {
-    error("type of return statement does not match the function type");
+    {
+    error("type '" + get_type()->to_string() + "' of return statement does not match the function return type '" + type->to_string() + "'");
     return false;
   } else return true;
 }
@@ -630,6 +637,7 @@ void While::check()
 
   if (texp != PandaType::getInstance() and texp != ErrorType::getInstance()) {
     error("Condition for 'mientras' must be a 'panda' type instead of '" + texp->to_string() + "'");
+    texp = ErrorType::getInstance();
   }
 
   Statement::checkIter = true; _body->check(); Statement::checkIter = false;
@@ -668,6 +676,7 @@ void TagWhile::check()
 
   if (texp != PandaType::getInstance() and texp != ErrorType::getInstance()) {
     error("Condition for 'mientras' must be a 'panda' type instead of '" + texp->to_string() + "'");
+    texp = ErrorType::getInstance();
   }
 
   Statement::checkIter = true; _body->check(); Statement::checkIter = false;

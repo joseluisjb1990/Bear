@@ -6,12 +6,12 @@
 class Program : public Node
 {
   public:
-    Program(std::vector<Definition*>* definitions, Definition* statement);
+    Program(std::vector<Definition*>* definitions, Statement* statement);
     Program() {};
     std::string to_string(int nesting);
     void check();
   private:
     std::vector<Definition*>* _definitions;
-    Definition* _statement;
+    Statement* _statement;
 };
 #endif
