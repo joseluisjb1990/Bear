@@ -135,13 +135,13 @@ bool compare_pairs(pair_str_cont pair1, pair_str_cont pair2)
 
 void print_header(std::ostream& os)
 {
-  os  << std::setw(BIG_WIDTH / 2) << "V"      << SEPARADOR  << std::setw(BIG_WIDTH / 2) << "T[DIM]" << SEPARADOR
-      << std::setw(SMALL_WIDTH)   << "A"      << SEPARADOR  << std::setw(SMALL_WIDTH)   << "LDEC"   << SEPARADOR
-      << std::setw(SMALL_WIDTH)   << "CDEC"   << SEPARADOR  << std::setw(SMALL_WIDTH)   << "LDEF"   << SEPARADOR
-      << std::setw(SMALL_WIDTH)   << "CDEF"   << SEPARADOR  << std::setw(SMALL_WIDTH)   << "M"      << SEPARADOR
-      << std::setw(SMALL_WIDTH)   << "AC"     << SEPARADOR  << std::setw(SMALL_WIDTH)   << "D"      << SEPARADOR
-      << std::setw(SMALL_WIDTH)   << "C"      << SEPARADOR  << std::setw(BIG_WIDTH / 2) << "P"      << SEPARADOR
-      << std::setw(SMALL_WIDTH)   << "Offset" << SEPARADOR
+  os  << std::setw(BIG_WIDTH / 3) << "V"      << SEPARADOR  << std::setw(BIG_WIDTH)     << "T[DIM]" << SEPARADOR
+      << std::setw(SMALL_WIDTH / 2)   << "A"      << SEPARADOR  << std::setw(SMALL_WIDTH / 2)   << "LDEC"   << SEPARADOR
+      << std::setw(SMALL_WIDTH / 2)   << "CDEC"   << SEPARADOR  << std::setw(SMALL_WIDTH / 2)   << "LDEF"   << SEPARADOR
+      << std::setw(SMALL_WIDTH / 2)   << "CDEF"   << SEPARADOR  << std::setw(SMALL_WIDTH / 2)   << "M"      << SEPARADOR
+      << std::setw(SMALL_WIDTH / 2)   << "AC"     << SEPARADOR  << std::setw(SMALL_WIDTH / 2)   << "D"      << SEPARADOR
+      << std::setw(SMALL_WIDTH)       << "C"      << SEPARADOR  << std::setw(SMALL_WIDTH / 2)   << "Off" << SEPARADOR
+      << std::setw(BIG_WIDTH / 2)     << "P"
       << std::endl;
 }
 
@@ -151,8 +151,10 @@ void print_leyend(std::ostream& os)
       << "V     : Variable                         T[DIM]  : Tipo y Dimensiones(arreglo)  A     : Alcance de la variable        \n"
       << "LDEC  : Linea de declaración             CDEC    : Columna de declaración       LDEF  : Linea de definición           \n"
       << "CDEF  : Columna de definición            M       : Mutabilidad (1 Si, 0 No)     AC    : Alcance de campos (registros) \n"
-      << "D     : Si V esta definida (1 Si, 0 No)  C       : Categoria                    P     : Parametros (* por referencia) \n";
+      << "D     : Si V esta definida (1 Si, 0 No)  C       : Categoria                    Off   : Offset                        \n"
+      << "P     : Parametros (* por referencia) \n";
 }
+
 void print_actual_scope(std::ostream& os, int scope)
 {
   os << std::endl  << std::setw(50)  << ' ' << std::setw(15) << "ALCANCE " + std::to_string(scope)  << std::endl;
@@ -184,7 +186,7 @@ std::ostream& operator<<(std::ostream& os, TablaSimbolos &ts)
       print_actual_scope(os, alcance_actual);
       print_header(os);
     }
-    os << std::setw(BIG_WIDTH / 2) << pos->first << SEPARADOR << pos->second->to_string() << '\n';
+    os << std::setw(BIG_WIDTH / 3) << pos->first << SEPARADOR << pos->second->to_string() << '\n';
   }
 
   print_leyend(os);

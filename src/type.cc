@@ -31,6 +31,12 @@ std::string Type::to_string()
   return "tipo";
 }
 
+std::string Type::to_string(int nesting)
+{
+  std::string padding(nesting*2, ' ');
+  return padding + "type";
+}
+
 PandaType::PandaType()
   : Type(1, 2)
   {}
@@ -47,6 +53,12 @@ std::string PandaType::to_string()
   return "panda";
 }
 
+std::string PandaType::to_string(int nesting)
+{
+  std::string padding(nesting*2, ' ');
+  return padding + "panda";
+}
+
 bool PandaType::isSimple()
 {
   return true;
@@ -59,6 +71,12 @@ PolarType::PolarType()
 std::string PolarType::to_string()
 {
   return "polar";
+}
+
+std::string PolarType::to_string(int nesting)
+{
+  std::string padding(nesting*2, ' ');
+  return padding + "polar";
 }
 
 bool PolarType::isSimple()
@@ -82,6 +100,12 @@ std::string KodiakType::to_string()
   return "kodiak";
 }
 
+std::string KodiakType::to_string(int nesting)
+{
+  std::string padding(nesting*2, ' ');
+  return padding + "kodiak";
+}
+
 bool KodiakType::isSimple()
 {
   return true;
@@ -101,6 +125,12 @@ MalayoType::MalayoType()
 std::string MalayoType::to_string()
 {
   return "malayo";
+}
+
+std::string MalayoType::to_string(int nesting)
+{
+  std::string padding(nesting*2, ' ');
+  return padding + "malayo";
 }
 
 bool MalayoType::isSimple()
@@ -124,6 +154,12 @@ std::string ExtintoType::to_string()
   return "extinto";
 }
 
+std::string ExtintoType::to_string(int nesting)
+{
+  std::string padding(nesting*2, ' ');
+  return padding + "extinto";
+}
+
 ExtintoType* ExtintoType::_instance = 0;
 
 bool ExtintoType::isSimple()
@@ -145,6 +181,11 @@ std::string HormigueroType::to_string()
   return "hormiguero";
 }
 
+std::string HormigueroType::to_string(int nesting)
+{
+  std::string padding(nesting*2, ' ');
+  return padding + "hormiguero";
+}
 bool HormigueroType::isSimple()
 {
   return true;
@@ -175,10 +216,16 @@ bool CuevaType::compareTypes (Type* t2)
 
 std::string CuevaType::to_string()
 {
-  std::string str = "cueva [" + std::to_string(_longitud) + "]";
-  str += " de " + _tipo->to_string();
+  std::string str = _tipo->to_string() + "[" + std::to_string(_longitud) + "]";
   return str;
 }
+
+std::string CuevaType::to_string(int nesting)
+{
+  std::string padding(nesting*2, ' ');
+  return padding + "cueva [" + std::to_string(_longitud) + "] de " + _tipo->to_string();
+}
+
 bool CuevaType::compareStructure(Type* type)
 {
   if(type->isArray())
@@ -216,6 +263,12 @@ std::string CampoType::to_string()
   return _tipo->to_string() + " " + _nombre;
 }
 
+std::string CampoType::to_string(int nesting)
+{
+  std::string padding(nesting*2, ' ');
+  return padding + _tipo->to_string() + " " + _nombre;
+}
+
 unsigned int CampoType::getSize()
 {
   return Type::getSize();
@@ -247,6 +300,11 @@ std::string PardoType::to_string()
   return "pardo " + _nombre;
 }
 
+std::string PardoType::to_string(int nesting)
+{
+  std::string padding(nesting*2, ' ');
+  return padding + "pardo" + _nombre;
+}
 unsigned int PardoType::getSize()
 {
   return Type::getSize();
@@ -283,6 +341,11 @@ std::string GrizzliType::to_string()
   return "grizzli " + _nombre;
 }
 
+std::string GrizzliType::to_string(int nesting)
+{
+  std::string padding(nesting*2, ' ');
+  return padding + "grizzli " + _nombre;
+}
 unsigned int GrizzliType::getSize()
 {
   return Type::getSize();
@@ -329,6 +392,12 @@ std::string ErrorType::to_string()
   return "error";
 }
 
+std::string ErrorType::to_string(int nesting)
+{
+  std::string padding(nesting*2, ' ');
+  return padding + "error";
+}
+
 bool ErrorType::isSimple()
 {
   return true;
@@ -351,6 +420,11 @@ std::string TagType::to_string()
   return "etiqueta";
 }
 
+std::string TagType::to_string(int nesting)
+{
+  std::string padding(nesting*2, ' ');
+  return padding + "etiqueta";
+}
 bool TagType::isSimple()
 {
   return true;
@@ -360,11 +434,4 @@ bool TagType::compareTypes (Type* t2)
 {
   return dynamic_cast<TagType*> (t2);
 }
-
-
-Tuple::Tuple(Type* izq, Type* der)
-  : Type(0,1)
-  , _izq( izq )
-  , _der( der )
-  {}
 #endif

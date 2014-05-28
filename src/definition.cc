@@ -105,20 +105,25 @@ DecFunction::DecFunction ( std::string         name
 std::string DecFunction::to_string(int nesting)
 {
   std::string padding(nesting*2, ' ');
-  std::string str =  padding + "Declaración de función\n" + padding + "Nombre:\n" + padding + _name + "\n" + padding + "Parametros:\n";
+  std::string str =  padding + "Declaración de función\n" + padding + "Nombre:\n" + padding + "  " + _name + "\n" + padding + "Parametros:\n";
   for (unsigned int i=0; i<_parametros->size(); ++i)
-    str += _parametros->at(i)->to_string(nesting+1);
+    str += _parametros->at(i)->to_string(nesting+1) + '\n';
 
-  str += padding + "Retorna: " + _tipoRetorno->to_string();
+  str += padding + "Retorna:\n" + _tipoRetorno->to_string(nesting + 1) + '\n';
   return str;
 }
 
 void DecFunction::check()
 {
+  bool ok = true;
   for(std::vector<Parameter*>::iterator it = _parametros->begin(); it != _parametros->end(); ++it)
+  {
     (*it)->check();
+    if((*it)->get_type() == ErrorType::getInstance()) ok = false;
+  }
 
-  set_type(_tipoRetorno);
+  if(ok) set_type(_tipoRetorno);
+  else   set_type(ErrorType::getInstance());
 }
 
 Parameter::Parameter ( std::string id
@@ -147,7 +152,7 @@ void        Parameter::check()    { set_type(_tipo); }
 
 bool        Parameter::compareParameters(Parameter* p2)
 {
-  if (!_tipo->compareTypes(p2->get_tipo()) or !(_id == p2->get_id()))
+  if (!_tipo->compareStructure(p2->get_tipo()) or !(_id == p2->get_id()))
   {
     error("parameter " + to_string(0) + " in function definition don't match parameter " + p2->to_string(0) + " in function declaration");
     return false;
@@ -180,12 +185,12 @@ DefFunction::DefFunction ( std::string               id
 std::string DefFunction::to_string(int nesting)
 {
   std::string padding(nesting*2, ' ');
-  std::string str = padding + "Definción de funcion\n" + padding + "Nombre:\n" + padding + _id + "\n" + padding + "Parametros:\n";
+  std::string str = padding + "Definición de funcion\n" + padding + "Nombre:\n" + padding + "  " + _id + "\n" + padding + "Parametros:\n";
   for (unsigned int i=0; i< _parameters->size(); ++i)
-    str +=  _parameters->at(i)->to_string(nesting+1);
+    str += _parameters->at(i)->to_string(nesting+1) + '\n';
 
-  str += padding + "Retorna: " + _type->to_string();
-  str += padding + "Instrucción:\n" + _statements->to_string(nesting+1);
+  str += padding + "Retorna:\n" + _type->to_string(nesting + 1)  + '\n';
+  str += padding + "Instrucción:\n" + _statements->to_string(nesting+1) + '\n';
   return str;
 }
 

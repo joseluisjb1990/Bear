@@ -33,6 +33,7 @@ class Type
     virtual bool isArray() { return false; };
     virtual bool compareStructure(Type* type) { return compareTypes(type); };
     virtual bool isHormiguero() { return false; };
+    virtual std::string to_string(int nesting) = 0;
     /**
      * Constructor para la clase.
      *
@@ -84,6 +85,7 @@ class PandaType : public Type
 {
   public:
     std::string to_string();
+    std::string to_string(int nesting);
     bool isSimple();
     static PandaType* getInstance()
     {
@@ -103,6 +105,7 @@ class PolarType : public Type
 {
   public:
     std::string to_string();
+    std::string to_string(int nesting);
     bool isSimple();
     static PolarType* getInstance()
     {
@@ -123,6 +126,7 @@ class KodiakType : public Type
 {
   public:
     std::string to_string();
+    std::string to_string(int nesting);
     bool isSimple();
     static KodiakType*getInstance()
     {
@@ -142,6 +146,7 @@ class MalayoType : public Type
 {
   public:
     std::string to_string();
+    std::string to_string(int nesting);
     bool isSimple();
     static MalayoType* getInstance()
     {
@@ -161,6 +166,7 @@ class ExtintoType : public Type
 {
   public:
     std::string to_string();
+    std::string to_string(int nesting);
     bool isSimple();
     static ExtintoType* getInstance()
     {
@@ -180,6 +186,7 @@ class HormigueroType : public Type
 {
   public:
     std::string to_string();
+    std::string to_string(int nesting);
     bool isSimple();
     HormigueroType();
     bool compareTypes(Type* t2);
@@ -205,6 +212,7 @@ class CuevaType : public Type
     bool isSimple();
     unsigned int getSize();
     std::string to_string();
+    std::string to_string(int nesting);
     int getLongitud();
     bool isArray() { return true; };
     bool compareStructure(Type* type);
@@ -236,6 +244,7 @@ class CampoType : public Type
      */
     CampoType(Type* tipo, std::string nombre);
     std::string to_string();
+    std::string to_string(int nesting);
     unsigned int getSize();
     bool isSimple();
     bool compareTypes(Type* t2);
@@ -266,6 +275,7 @@ class PardoType : public Type
      */
     PardoType(std::string nombre);
     std::string to_string();
+    std::string to_string(int nesting);
     unsigned int getSize();
     bool isSimple();
     bool compareTypes(Type* t2);
@@ -305,6 +315,7 @@ class GrizzliType : public Type
      */
     GrizzliType(std::string nombre);
     std::string to_string();
+    std::string to_string(int nesting);
     unsigned int getSize();
     bool isSimple();
     bool compareTypes(Type* t2);
@@ -326,6 +337,7 @@ class ErrorType : public Type
 {
   public:
     std::string to_string();
+    std::string to_string(int nesting);
     bool isSimple();
     static ErrorType* getInstance()
     {
@@ -349,17 +361,8 @@ class TagType : public Type
   public:
     TagType();
     std::string to_string();
+    std::string to_string(int nesting);
     bool isSimple();
     bool compareTypes(Type* t2);
 };
-
-class Tuple : public Type
-{
-  public:
-    Tuple(Type* izq, Type* der);
-  private:
-    Type* _izq;
-    Type* _der;
-};
-
 #endif

@@ -160,34 +160,34 @@ std::string Contenido::to_string()
   if(_definido)
   {
 
-    return  tipo        + std::string(BIG_WIDTH / 2 - tipo.size()         , ' ') + SEPARADOR
-          + alcance     + std::string(SMALL_WIDTH   - alcance.length()    , ' ') + SEPARADOR
-          + lineaDec    + std::string(SMALL_WIDTH   - lineaDec.length()   , ' ') + SEPARADOR
-          + columnaDec  + std::string(SMALL_WIDTH   - columnaDec.length() , ' ') + SEPARADOR
-          + lineaDef    + std::string(SMALL_WIDTH   - lineaDef.length()   , ' ') + SEPARADOR
-          + columnaDef  + std::string(SMALL_WIDTH   - columnaDef.length() , ' ') + SEPARADOR
-          + mutab       + std::string(SMALL_WIDTH   - mutab.length()      , ' ') + SEPARADOR
-          +               std::string(SMALL_WIDTH                         , ' ') + SEPARADOR
-          + def         + std::string(SMALL_WIDTH   - def.length()        , ' ') + SEPARADOR
-          + cat         + std::string(SMALL_WIDTH   - cat.length()        , ' ') + SEPARADOR
-          +               std::string(BIG_WIDTH / 2                       , ' ') + SEPARADOR
-          + offset      + std::string(SMALL_WIDTH   - offset.length()     , ' ') + SEPARADOR
+    return  tipo        + std::string(BIG_WIDTH     - tipo.size()         , ' ') + SEPARADOR
+          + alcance     + std::string(SMALL_WIDTH / 2   - alcance.length()    , ' ') + SEPARADOR
+          + lineaDec    + std::string(SMALL_WIDTH / 2   - lineaDec.length()   , ' ') + SEPARADOR
+          + columnaDec  + std::string(SMALL_WIDTH / 2   - columnaDec.length() , ' ') + SEPARADOR
+          + lineaDef    + std::string(SMALL_WIDTH / 2   - lineaDef.length()   , ' ') + SEPARADOR
+          + columnaDef  + std::string(SMALL_WIDTH / 2   - columnaDef.length() , ' ') + SEPARADOR
+          + mutab       + std::string(SMALL_WIDTH / 2   - mutab.length()      , ' ') + SEPARADOR
+          +               std::string(SMALL_WIDTH / 2                         , ' ') + SEPARADOR
+          + def         + std::string(SMALL_WIDTH / 2   - def.length()        , ' ') + SEPARADOR
+          + cat         + std::string(SMALL_WIDTH   - cat.length()            , ' ') + SEPARADOR
+          + offset      + std::string(SMALL_WIDTH / 2   - offset.length()     , ' ') + SEPARADOR
+          +               std::string(BIG_WIDTH / 2                           , ' ')
           ;
   }
   else
   {
-    return  tipo        + std::string(BIG_WIDTH / 2 - tipo.size()       , ' ') + SEPARADOR
-          + alcance     + std::string(SMALL_WIDTH   - alcance.length()    , ' ') + SEPARADOR
-          + lineaDec    + std::string(SMALL_WIDTH   - lineaDec.length()   , ' ') + SEPARADOR
-          + columnaDec  + std::string(SMALL_WIDTH   - columnaDec.length() , ' ') + SEPARADOR
-          +               std::string(SMALL_WIDTH                         , ' ') + SEPARADOR
-          +               std::string(SMALL_WIDTH                         , ' ') + SEPARADOR
-          + mutab       + std::string(SMALL_WIDTH   - mutab.length()      , ' ') + SEPARADOR
-          +               std::string(SMALL_WIDTH                         , ' ') + SEPARADOR
-          + def         + std::string(SMALL_WIDTH   - def.length()        , ' ') + SEPARADOR
-          + cat         + std::string(SMALL_WIDTH   - cat.length()        , ' ') + SEPARADOR
-          +               std::string(BIG_WIDTH / 2                       , ' ') + SEPARADOR
-          + offset      + std::string(SMALL_WIDTH   - offset.length()     , ' ') + SEPARADOR
+    return  tipo        + std::string(BIG_WIDTH     - tipo.size()             , ' ') + SEPARADOR
+          + alcance     + std::string(SMALL_WIDTH / 2   - alcance.length()    , ' ') + SEPARADOR
+          + lineaDec    + std::string(SMALL_WIDTH / 2   - lineaDec.length()   , ' ') + SEPARADOR
+          + columnaDec  + std::string(SMALL_WIDTH / 2   - columnaDec.length() , ' ') + SEPARADOR
+          +               std::string(SMALL_WIDTH / 2                         , ' ') + SEPARADOR
+          +               std::string(SMALL_WIDTH / 2                         , ' ') + SEPARADOR
+          + mutab       + std::string(SMALL_WIDTH / 2   - mutab.length()      , ' ') + SEPARADOR
+          +               std::string(SMALL_WIDTH / 2                         , ' ') + SEPARADOR
+          + def         + std::string(SMALL_WIDTH / 2   - def.length()        , ' ') + SEPARADOR
+          + cat         + std::string(SMALL_WIDTH   - cat.length()            , ' ') + SEPARADOR
+          + offset      + std::string(SMALL_WIDTH / 2   - offset.length()     , ' ') + SEPARADOR
+          +               std::string(BIG_WIDTH / 2                           , ' ')
           ;
 
   }
@@ -215,34 +215,34 @@ std::string Contenedor::to_string()
   if(getDef())
   {
 
-    return  tipo          + std::string(BIG_WIDTH / 2 - tipo.size()             , ' ') + SEPARADOR
-          + alcance       + std::string(SMALL_WIDTH   - alcance.length()        , ' ') + SEPARADOR
-          + lineaDec      + std::string(SMALL_WIDTH   - lineaDec.length()       , ' ') + SEPARADOR
-          + columnaDec    + std::string(SMALL_WIDTH   - columnaDec.length()     , ' ') + SEPARADOR
-          + lineaDef      + std::string(SMALL_WIDTH   - lineaDef.length()       , ' ') + SEPARADOR
-          + columnaDef    + std::string(SMALL_WIDTH   - columnaDef.length()     , ' ') + SEPARADOR
-          + mutab         + std::string(SMALL_WIDTH   - mutab.length()          , ' ') + SEPARADOR
-          + alcanceCampos + std::string(SMALL_WIDTH   - alcanceCampos.length()  , ' ') + SEPARADOR
-          + def           + std::string(SMALL_WIDTH   - def.length()            , ' ') + SEPARADOR
-          + cat           + std::string(SMALL_WIDTH   - cat.length()            , ' ') + SEPARADOR
-          +                 std::string(BIG_WIDTH / 2                           , ' ') + SEPARADOR
-          +                 std::string(SMALL_WIDTH                             , ' ') + SEPARADOR
+    return  tipo          + std::string(BIG_WIDTH     - tipo.size()                 , ' ') + SEPARADOR
+          + alcance       + std::string(SMALL_WIDTH / 2   - alcance.length()        , ' ') + SEPARADOR
+          + lineaDec      + std::string(SMALL_WIDTH / 2   - lineaDec.length()       , ' ') + SEPARADOR
+          + columnaDec    + std::string(SMALL_WIDTH / 2   - columnaDec.length()     , ' ') + SEPARADOR
+          + lineaDef      + std::string(SMALL_WIDTH / 2   - lineaDef.length()       , ' ') + SEPARADOR
+          + columnaDef    + std::string(SMALL_WIDTH / 2   - columnaDef.length()     , ' ') + SEPARADOR
+          + mutab         + std::string(SMALL_WIDTH / 2   - mutab.length()          , ' ') + SEPARADOR
+          + alcanceCampos + std::string(SMALL_WIDTH / 2   - alcanceCampos.length()  , ' ') + SEPARADOR
+          + def           + std::string(SMALL_WIDTH / 2   - def.length()            , ' ') + SEPARADOR
+          + cat           + std::string(SMALL_WIDTH   - cat.length()                , ' ') + SEPARADOR
+          +                 std::string(SMALL_WIDTH / 2                             , ' ') + SEPARADOR
+          +                 std::string(BIG_WIDTH / 2                               , ' ')
           ;
   }
   else
   {
-    return  tipo          + std::string(BIG_WIDTH / 2 - tipo.size()             , ' ') + SEPARADOR
-          + alcance       + std::string(SMALL_WIDTH   - alcance.length()        , ' ') + SEPARADOR
-          + lineaDec      + std::string(SMALL_WIDTH   - lineaDec.length()       , ' ') + SEPARADOR
-          + columnaDec    + std::string(SMALL_WIDTH   - columnaDec.length()     , ' ') + SEPARADOR
-          +                 std::string(SMALL_WIDTH                             , ' ') + SEPARADOR
-          +                 std::string(SMALL_WIDTH                             , ' ') + SEPARADOR
-          + mutab         + std::string(SMALL_WIDTH   - mutab.length()          , ' ') + SEPARADOR
-          + alcanceCampos + std::string(SMALL_WIDTH   - alcanceCampos.length()  , ' ') + SEPARADOR
-          + def           + std::string(SMALL_WIDTH   - def.length()            , ' ') + SEPARADOR
-          + cat           + std::string(SMALL_WIDTH   - cat.length()            , ' ') + SEPARADOR
-          +                 std::string(BIG_WIDTH / 2                           , ' ') + SEPARADOR
-          +                 std::string(SMALL_WIDTH                             , ' ') + SEPARADOR
+    return  tipo          + std::string(BIG_WIDTH         - tipo.size()             , ' ') + SEPARADOR
+          + alcance       + std::string(SMALL_WIDTH / 2   - alcance.length()        , ' ') + SEPARADOR
+          + lineaDec      + std::string(SMALL_WIDTH / 2   - lineaDec.length()       , ' ') + SEPARADOR
+          + columnaDec    + std::string(SMALL_WIDTH / 2   - columnaDec.length()     , ' ') + SEPARADOR
+          +                 std::string(SMALL_WIDTH / 2                             , ' ') + SEPARADOR
+          +                 std::string(SMALL_WIDTH / 2                             , ' ') + SEPARADOR
+          + mutab         + std::string(SMALL_WIDTH / 2   - mutab.length()          , ' ') + SEPARADOR
+          + alcanceCampos + std::string(SMALL_WIDTH / 2   - alcanceCampos.length()  , ' ') + SEPARADOR
+          + def           + std::string(SMALL_WIDTH / 2   - def.length()            , ' ') + SEPARADOR
+          + cat           + std::string(SMALL_WIDTH       - cat.length()            , ' ') + SEPARADOR
+          +                 std::string(SMALL_WIDTH / 2                             , ' ') + SEPARADOR
+          +                 std::string(BIG_WIDTH / 2                               , ' ')
           ;
 
   }
@@ -261,42 +261,43 @@ std::string Funcion::to_string()
   std::string def           = std::to_string(getDef()               );
   std::string cat           = return_category(getCategoria());
   std::string param = "";
+  std::string auxParam = "";
 
   for(std::vector<Parameter*>::iterator it = _parametros->begin(); it != _parametros->end(); ++it)
   {
-    param += (*it)->to_string(0) + SEPARADOR;
+    param += (*it)->to_string(0) + ", ";
   }
 
   if(getDef())
   {
-    return  tipo          + std::string(BIG_WIDTH / 2 - tipo.size()             , ' ') + SEPARADOR
-          + alcance       + std::string(SMALL_WIDTH   - alcance.length()        , ' ') + SEPARADOR
-          + lineaDec      + std::string(SMALL_WIDTH   - lineaDec.length()       , ' ') + SEPARADOR
-          + columnaDec    + std::string(SMALL_WIDTH   - columnaDec.length()     , ' ') + SEPARADOR
-          + lineaDef      + std::string(SMALL_WIDTH   - lineaDef.length()       , ' ') + SEPARADOR
-          + columnaDef    + std::string(SMALL_WIDTH   - columnaDef.length()     , ' ') + SEPARADOR
-          + mutab         + std::string(SMALL_WIDTH   - mutab.length()          , ' ') + SEPARADOR
-          +                 std::string(SMALL_WIDTH                             , ' ') + SEPARADOR
-          + def           + std::string(SMALL_WIDTH   - def.length()            , ' ') + SEPARADOR
+    return  tipo          + std::string(BIG_WIDTH     - tipo.size()             , ' ') + SEPARADOR
+          + alcance       + std::string(SMALL_WIDTH / 2   - alcance.length()        , ' ') + SEPARADOR
+          + lineaDec      + std::string(SMALL_WIDTH / 2   - lineaDec.length()       , ' ') + SEPARADOR
+          + columnaDec    + std::string(SMALL_WIDTH / 2   - columnaDec.length()     , ' ') + SEPARADOR
+          + lineaDef      + std::string(SMALL_WIDTH / 2   - lineaDef.length()       , ' ') + SEPARADOR
+          + columnaDef    + std::string(SMALL_WIDTH / 2   - columnaDef.length()     , ' ') + SEPARADOR
+          + mutab         + std::string(SMALL_WIDTH / 2   - mutab.length()          , ' ') + SEPARADOR
+          +                 std::string(SMALL_WIDTH / 2                             , ' ') + SEPARADOR
+          + def           + std::string(SMALL_WIDTH / 2   - def.length()            , ' ') + SEPARADOR
           + cat           + std::string(SMALL_WIDTH   - cat.length()            , ' ') + SEPARADOR
-          + param         + std::string(BIG_WIDTH /2                            , ' ') + SEPARADOR
-          +                 std::string(SMALL_WIDTH                             , ' ') + SEPARADOR
+          +                 std::string(SMALL_WIDTH / 2                             , ' ') + SEPARADOR
+          + param         + std::string(BIG_WIDTH /2                            , ' ')
           ;
   }
   else
   {
-    return  tipo          + std::string(BIG_WIDTH / 2 - tipo.size()             , ' ') + SEPARADOR
-          + alcance       + std::string(SMALL_WIDTH   - alcance.length()        , ' ') + SEPARADOR
-          + lineaDec      + std::string(SMALL_WIDTH   - lineaDec.length()       , ' ') + SEPARADOR
-          + columnaDec    + std::string(SMALL_WIDTH   - columnaDec.length()     , ' ') + SEPARADOR
-          +                 std::string(SMALL_WIDTH                             , ' ') + SEPARADOR
-          +                 std::string(SMALL_WIDTH                             , ' ') + SEPARADOR
-          + mutab         + std::string(SMALL_WIDTH   - mutab.length()          , ' ') + SEPARADOR
-          +                 std::string(SMALL_WIDTH                             , ' ') + SEPARADOR
-          + def           + std::string(SMALL_WIDTH   - def.length()            , ' ') + SEPARADOR
+    return  tipo          + std::string(BIG_WIDTH     - tipo.size()             , ' ') + SEPARADOR
+          + alcance       + std::string(SMALL_WIDTH / 2   - alcance.length()        , ' ') + SEPARADOR
+          + lineaDec      + std::string(SMALL_WIDTH / 2   - lineaDec.length()       , ' ') + SEPARADOR
+          + columnaDec    + std::string(SMALL_WIDTH / 2   - columnaDec.length()     , ' ') + SEPARADOR
+          +                 std::string(SMALL_WIDTH / 2                             , ' ') + SEPARADOR
+          +                 std::string(SMALL_WIDTH / 2                             , ' ') + SEPARADOR
+          + mutab         + std::string(SMALL_WIDTH / 2   - mutab.length()          , ' ') + SEPARADOR
+          +                 std::string(SMALL_WIDTH / 2                             , ' ') + SEPARADOR
+          + def           + std::string(SMALL_WIDTH / 2   - def.length()            , ' ') + SEPARADOR
           + cat           + std::string(SMALL_WIDTH   - cat.length()            , ' ') + SEPARADOR
-          + param         + std::string(BIG_WIDTH /2                            , ' ') + SEPARADOR
-          +                 std::string(SMALL_WIDTH                             , ' ') + SEPARADOR
+          +                 std::string(SMALL_WIDTH / 2                             , ' ') + SEPARADOR
+          + param         + std::string(BIG_WIDTH /2                            , ' ')
           ;
 
   }
