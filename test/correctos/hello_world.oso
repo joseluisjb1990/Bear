@@ -1,12 +1,8 @@
 --<3 Este programa se encarga de imprimir en la
      salida estándar "¡Hola, Mundo! <3"
 <3->
+
 oso() => extinto
 {
-  escribir("¡Hola, Mundo! <3");
-  si (42) {
-    escribir("aychamo");
-  } sino {
-    escribir("blah");
-  }
+  escribir("Hola Mundo! :D <3");
 }
