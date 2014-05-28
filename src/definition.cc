@@ -32,7 +32,7 @@ void DefWithInit::check()
     {
       errortype = true;
       if (exp->get_type() != ErrorType::getInstance()) {
-        error("expression " + exp->to_string(0) + " is not of type " + _tipo->to_string());
+        error("expression " + exp->to_string() + " is not of type " + _tipo->to_string());
       }
     }
   }

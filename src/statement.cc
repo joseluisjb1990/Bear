@@ -195,7 +195,7 @@ void Write::check()
       t != ErrorType::getInstance()
     )
   {
-    error("error in function 'escribir' expression is of type " + t->to_string() + " instead of an escalar type");
+    error("error in function 'escribir' expression is of type '" + t->to_string() + "' instead of an escalar type");
     set_type(ErrorType::getInstance());
   } else
   {

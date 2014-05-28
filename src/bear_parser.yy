@@ -408,12 +408,11 @@ defcueva: cuevas tipo { Type* tipo = $2;
                           tipo = new CuevaType(tipo, $1->at(i));
                         }
                         $$ = new CuevaType(tipo,$1->at(0));
-                        cout << $$->to_string() << std::endl;
                       }
         ;
 
 cuevas: CUEVA        "[" CONSTPOLAR "]" DE { $$ = new std::vector<int>; $$->push_back(std::stoi($3)); }
-      | cuevas CUEVA "[" CONSTPOLAR "]" DE { $$ = $1; $$->push_back(std::stoi($4));                           }
+      | cuevas CUEVA "[" CONSTPOLAR "]" DE { $$ = $1; $$->push_back(std::stoi($4));                   }
       ;
 
 
