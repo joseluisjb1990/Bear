@@ -14,9 +14,9 @@ DefWithInit::DefWithInit(Type* tipo, std::vector<std::string>* ids, std::vector<
 std::string DefWithInit::to_string(int nesting)
 {
   std::string padding(nesting*2, ' ');
-  std::string str = padding + "Definición con Inicialización\n" + padding + "Tipo:\n" + padding + _tipo->to_string() + "\n" + padding + "Variables:\n";
+  std::string str = padding + "Definición con Inicialización\n" + padding + "Tipo:\n" + padding + padding + _tipo->to_string() + "\n" + padding + "Variables:\n";
   for (unsigned int i=0; i < _ids->size(); ++i) {
-    str += padding + "Nombre:\n" + padding + _ids->at(i) + "\n" + padding + "Valor:\n" + _expr->at(i)->to_string(nesting+1);
+    str += padding + "Nombre:\n" + padding + padding + _ids->at(i) + "\n" + padding + "Valor:\n" + _expr->at(i)->to_string(nesting+1);
   }
   return str;
 }
@@ -32,7 +32,7 @@ void DefWithInit::check()
     {
       errortype = true;
       if (exp->get_type() != ErrorType::getInstance()) {
-        error("expression " + exp->to_string() + " is not of type " + _tipo->to_string());
+        error("expression " + exp->to_string(0) + " is not of type " + _tipo->to_string());
       }
     }
   }
@@ -57,9 +57,9 @@ DefVarNoInit::DefVarNoInit(Type* tipo, std::vector<std::string>* ids)
 std::string DefVarNoInit::to_string(int nesting)
 {
   std::string padding(nesting*2, ' ');
-  std::string str = padding + "Definición sin inicializar\n" + padding + "Tipo: " + _tipo->to_string() + "\n" + padding + "Variables:\n";
+  std::string str = padding + "Definición sin inicializar\n" + padding + "Tipo:\n" + padding + padding + _tipo->to_string() + "\n" + padding + "Variables:\n";
   for (unsigned int i=0; i < _ids->size(); ++i) {
-    str += padding + "Nombre:\n" + padding + _ids->at(i) + "\n";
+    str += padding + "Nombre:\n" + padding + padding + _ids->at(i) + "\n";
   }
   return str;
 }
@@ -74,7 +74,7 @@ DefType::DefType(std::string nombre, Type* tipo)
 std::string DefType::to_string(int nesting)
 {
   std::string padding(nesting*2, ' ');
-  return padding + "Definición de tipo\n" + padding + "Nombre:\n" + padding + _nombre + "\n" + padding + "Tipo:\n" + padding + _tipo->to_string() + "\n";
+  return padding + "Definición de tipo\n" + padding + "Nombre:\n" + padding + padding + _nombre + "\n" + padding + "Tipo:\n" + padding + padding + _tipo->to_string() + "\n";
 }
 
 void DefType::check() { set_type(_tipo); }
@@ -87,7 +87,7 @@ DefArray::DefArray(Type* tipo, std::string id)
 std::string DefArray::to_string(int nesting)
 {
   std::string padding(nesting*2, ' ');
-  return padding + "Definición de cueva:\n" + padding + "Nombre:\n" + padding + _id + "\n" + padding + "Tipo : " + _tipo->to_string() + "\n";
+  return padding + "Definición de cueva:\n" + padding + "Nombre:\n" + padding + padding + _id + "\n" + padding + "Tipo : " + padding + padding + _tipo->to_string() + "\n";
 }
 
 void DefArray::check() { set_type(_tipo); }
@@ -105,11 +105,11 @@ DecFunction::DecFunction ( std::string         name
 std::string DecFunction::to_string(int nesting)
 {
   std::string padding(nesting*2, ' ');
-  std::string str =  padding + "Declaración de función\n" + padding + "Nombre:\n" + padding + _name + "\n" + padding + "Parametros:\n";
+  std::string str =  padding + "Declaración de función\n" + padding + "Nombre:\n" + padding + padding + _name + "\n" + padding + "Parametros:\n";
   for (unsigned int i=0; i<_parametros->size(); ++i)
     str += _parametros->at(i)->to_string(nesting+1);
 
-  str += padding + "Retorna: " + _tipoRetorno->to_string();
+  str += padding + "Retorna:\n" + padding + padding + _tipoRetorno->to_string() + "\n";
   return str;
 }
 
@@ -180,12 +180,12 @@ DefFunction::DefFunction ( std::string               id
 std::string DefFunction::to_string(int nesting)
 {
   std::string padding(nesting*2, ' ');
-  std::string str = padding + "Definción de funcion\n" + padding + "Nombre:\n" + padding + _id + "\n" + padding + "Parametros:\n";
+  std::string str = padding + "Definción de funcion\n" + padding + "Nombre:\n" + padding + padding + _id + "\n" + padding + "Parametros:\n";
   for (unsigned int i=0; i< _parameters->size(); ++i)
     str +=  _parameters->at(i)->to_string(nesting+1);
 
-  str += padding + "Retorna: " + _type->to_string();
-  str += padding + "Instrucción:\n" + _statements->to_string(nesting+1);
+  str += padding + "Retorna:\n" + padding + padding + _type->to_string() + "\n";
+  str += padding + "Cuerpo:\n" + _statements->to_string(nesting+1);
   return str;
 }
 

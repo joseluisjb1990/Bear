@@ -151,7 +151,7 @@ Substraction::Substraction(Expression* izq, Expression* der)
 std::string Substraction::to_string(int nesting)
 {
   std::string padding(nesting*2, ' ');
-  return padding + "Resta\n" + padding + "Operando izquerdo: " + izq->to_string(nesting+1) + padding + "Operando derecho:\n" + der->to_string(nesting+1);
+  return padding + "Resta\n" + padding + "Operando izquerdo:\n" + izq->to_string(nesting+1) + padding + "Operando derecho:\n" + der->to_string(nesting+1);
 }
 
 void Substraction::check()
@@ -179,7 +179,7 @@ Multiplication::Multiplication(Expression* izq, Expression* der)
 std::string Multiplication::to_string(int nesting)
 {
   std::string padding(nesting*2, ' ');
-  return padding + "Multiplicación\n" + padding + "Operando izquerdo: " + izq->to_string(nesting+1) + padding + "Operando derecho:\n" + der->to_string(nesting+1);
+  return padding + "Multiplicación\n" + padding + "Operando izquerdo:\n" + izq->to_string(nesting+1) + padding + "Operando derecho:\n" + der->to_string(nesting+1);
 }
 
 void Multiplication::check()
@@ -207,7 +207,7 @@ Division::Division(Expression* izq, Expression* der)
 std::string Division::to_string(int nesting)
 {
   std::string padding(nesting*2, ' ');
-  return padding + "División\n" + padding + "Operando izquerdo: " + izq->to_string(nesting+1) + padding + "Operando derecho:\n" + der->to_string(nesting+1);
+  return padding + "División\n" + padding + "Operando izquerdo:\n" + izq->to_string(nesting+1) + padding + "Operando derecho:\n" + der->to_string(nesting+1);
 }
 
 void Division::check()
@@ -235,7 +235,7 @@ Remainder::Remainder(Expression* izq, Expression* der)
 std::string Remainder::to_string(int nesting)
 {
   std::string padding(nesting*2, ' ');
-  return padding + "Resto\n" + padding + "Operando izquerdo: " + izq->to_string(nesting+1) + padding + "Operando derecho:\n" + der->to_string(nesting+1);
+  return padding + "Resto\n" + padding + "Operando izquerdo:\n" + izq->to_string(nesting+1) + padding + "Operando derecho:\n" + der->to_string(nesting+1);
 }
 
 void Remainder::check()
@@ -263,7 +263,7 @@ Power::Power(Expression* izq, Expression* der)
 std::string Power::to_string(int nesting)
 {
   std::string padding(nesting*2, ' ');
-  return padding + "Potenciación\n" + padding + "Operando izquerdo: " + izq->to_string(nesting+1) + padding + "Operando derecho:\n" + der->to_string(nesting+1);
+  return padding + "Potenciación\n" + padding + "Operando izquerdo:\n" + izq->to_string(nesting+1) + padding + "Operando derecho:\n" + der->to_string(nesting+1);
 }
 
 void Power::check()
@@ -314,7 +314,7 @@ Less::Less(Expression* izq, Expression* der)
 std::string Less::to_string(int nesting)
 {
   std::string padding(nesting*2, ' ');
-  return padding + "Menor que\n" + padding + "Operando izquerdo: " + izq->to_string(nesting+1) + padding + "Operando derecho:\n" + der->to_string(nesting+1);
+  return padding + "Menor que\n" + padding + "Operando izquerdo:\n" + izq->to_string(nesting+1) + padding + "Operando derecho:\n" + der->to_string(nesting+1);
 }
 
 void Less::check()
@@ -342,7 +342,7 @@ LessEqual::LessEqual(Expression* izq, Expression* der)
 std::string LessEqual::to_string(int nesting)
 {
   std::string padding(nesting*2, ' ');
-  return padding + "Menor o igual que\n" + padding + "Operando izquerdo: " + izq->to_string(nesting+1) + padding + "Operando derecho:\n" + der->to_string(nesting+1);
+  return padding + "Menor o igual que\n" + padding + "Operando izquerdo:\n" + izq->to_string(nesting+1) + padding + "Operando derecho:\n" + der->to_string(nesting+1);
 }
 
 void LessEqual::check()
@@ -371,7 +371,7 @@ Greater::Greater(Expression* izq, Expression* der)
 std::string Greater::to_string(int nesting)
 {
   std::string padding(nesting*2, ' ');
-  return padding + "Mayor que\n" + padding + "Operando izquerdo: " + izq->to_string(nesting+1) + padding + "Operando derecho:\n" + der->to_string(nesting+1);
+  return padding + "Mayor que\n" + padding + "Operando izquerdo:\n" + izq->to_string(nesting+1) + padding + "Operando derecho:\n" + der->to_string(nesting+1);
 }
 
 void Greater::check()
@@ -400,7 +400,7 @@ GreaterEqual::GreaterEqual(Expression* izq, Expression* der)
 std::string GreaterEqual::to_string(int nesting)
 {
   std::string padding(nesting*2, ' ');
-  return padding + "Mayor o igual que\n" + padding + "Operando izquerdo: " + izq->to_string(nesting+1) + padding + "Operando derecho:\n" + der->to_string(nesting+1);
+  return padding + "Mayor o igual que\n" + padding + "Operando izquerdo:\n" + izq->to_string(nesting+1) + padding + "Operando derecho:\n" + der->to_string(nesting+1);
 }
 
 void GreaterEqual::check()
@@ -429,7 +429,7 @@ Equal::Equal(Expression* izq, Expression* der)
 std::string Equal::to_string(int nesting)
 {
   std::string padding(nesting*2, ' ');
-  return padding + "Equivalencia\n" + padding + "Operando izquerdo: " + izq->to_string(nesting+1) + padding + "Operando derecho:\n" + der->to_string(nesting+1);
+  return padding + "Equivalencia\n" + padding + "Operando izquerdo:\n" + izq->to_string(nesting+1) + padding + "Operando derecho:\n" + der->to_string(nesting+1);
 }
 
 void Equal::check()
@@ -458,7 +458,7 @@ NotEqual::NotEqual(Expression* izq, Expression* der)
 std::string NotEqual::to_string(int nesting)
 {
   std::string padding(nesting*2, ' ');
-  return padding + "Inequivalencia\n" + padding + "Operando izquerdo: " + izq->to_string(nesting+1) + padding + "Operando derecho:\n" + der->to_string(nesting+1);
+  return padding + "Inequivalencia\n" + padding + "Operando izquerdo:\n" + izq->to_string(nesting+1) + padding + "Operando derecho:\n" + der->to_string(nesting+1);
 }
 
 void NotEqual::check()
@@ -487,7 +487,7 @@ And::And(Expression* izq, Expression* der)
 std::string And::to_string(int nesting)
 {
   std::string padding(nesting*2, ' ');
-  return padding + "Y\n" + padding + "Operando izquerdo: " + izq->to_string(nesting+1) + padding + "Operando derecho:\n" + der->to_string(nesting+1);
+  return padding + "Y\n" + padding + "Operando izquerdo:\n" + izq->to_string(nesting+1) + padding + "Operando derecho:\n" + der->to_string(nesting+1);
 }
 
 void And::check()
@@ -516,7 +516,7 @@ Or::Or(Expression* izq, Expression* der)
 std::string Or::to_string(int nesting)
 {
   std::string padding(nesting*2, ' ');
-  return padding + "O\n" + padding + "Operando izquerdo: " + izq->to_string(nesting+1) + padding + "Operando derecho:\n" + der->to_string(nesting+1);
+  return padding + "O\n" + padding + "Operando izquerdo:\n" + izq->to_string(nesting+1) + padding + "Operando derecho:\n" + der->to_string(nesting+1);
 }
 
 void Or::check()
@@ -597,7 +597,7 @@ FunctionExpr::FunctionExpr(std::string name, std::vector<Type*>* parameterTypes,
 std::string FunctionExpr::to_string(int nesting)
 {
   std::string padding(nesting*2, ' ');
-  std::string str = padding + "Función\n" + padding + "Nombre: " + _name + "\n" + padding + "Parametros:\n";
+  std::string str = padding + "Función\n" + padding + "Nombre:\n" + padding + padding + _name + "\n" + padding + "Parametros:\n";
   for (unsigned int i=0; i < _parameters->size(); ++i)
     str += _parameters->at(i)->to_string(nesting+1);
   return str;
@@ -819,7 +819,7 @@ CuevaExpr::CuevaExpr(std::string cueva, std::vector<Expression*>* dimensions)
 std::string CuevaExpr::to_string(int nesting)
 {
   std::string padding(nesting*2, ' ');
-  std::string str = padding + "Acceso a cueva\n" + padding + "Nombre:\n" + padding + _cueva + "\n";
+  std::string str = padding + "Acceso a cueva\n" + padding + "Nombre:\n" + padding + padding + _cueva + "\n";
   for (unsigned int i=0; i < _dimensions->size(); ++i) {
     str += padding + "[\n" + _dimensions->at(i)->to_string(nesting+1) + padding + "]\n";
   }

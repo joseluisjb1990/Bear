@@ -23,11 +23,11 @@ std::string Assign::to_string(int nesting)
   std::string str = padding + "Asignación\n";
   str += padding + "L-values:\n";
   for (unsigned int i=0; i < _ids->size(); ++i) {
-    str += padding + _ids->at(i)->to_string(nesting+1);
+    str += _ids->at(i)->to_string(nesting+1);
   }
   str += padding + "Expresiones:\n";
   for (unsigned int i=0; i < _ids->size(); ++i) {
-    str += padding + _expr->at(i)->to_string(nesting+1);
+    str += _expr->at(i)->to_string(nesting+1);
   }
   return str;
 }
@@ -53,7 +53,7 @@ void Assign::check()
 
     if(tauxid != ErrorType::getInstance() and tauxex != ErrorType::getInstance() and !tauxid->compareTypes(tauxex))
     {
-       error("types in asignment " + auxid->to_string() + " = " + auxex->to_string() + " don't match");
+       error("types in asignment " + auxid->to_string(0) + " = " + auxex->to_string(0) + " don't match");
        ok = false;
     }
   }
@@ -73,7 +73,7 @@ Function::Function(std::string name, std::vector<Type*>* parameterTypes, std::ve
 std::string Function::to_string(int nesting)
 {
   std::string padding(nesting*2, ' ');
-  std::string str = padding + "Función:\n" + padding + _name + "\n" + padding + "Parametros:\n";
+  std::string str = padding + "Función\n" + padding + "Nombre:\n" + padding + padding + _name + "\n" + padding + "Parametros:\n";
   for (unsigned int i=0; i < _parameters->size(); ++i)
     str += _parameters->at(i)->to_string(nesting+1);
   return str;
@@ -212,7 +212,7 @@ Read::Read(Expression* id)
 std::string Read::to_string(int nesting)
 {
   std::string padding(nesting*2, ' ');
-  return padding + "Leer:\n" + padding + "Expresión:\n" + _id->to_string() + '\n';
+  return padding + "Leer:\n" + padding + "Expresión:\n" + padding + padding +_id->to_string() + '\n';
 }
 
 void Read::check()
@@ -294,7 +294,7 @@ std::string ComplexFor::to_string(int nesting)
 {
   std::string padding(nesting*2, ' ');
   return  padding + std::string("Iteracion Acotada con salto :\n")
-        + padding + "Variable de iteracion:\n" + padding + _id + "\n"
+        + padding + "Variable de iteracion:\n" + padding + padding + _id + "\n"
         + padding + "Expresion de Inicio:\n"   + _begin->to_string(nesting+1)
         + padding + "Expresion Final:\n"       + _end->to_string(nesting+1)
         + padding + "Paso:\n"                  + _step->to_string(nesting+1)
