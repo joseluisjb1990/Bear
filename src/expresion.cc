@@ -439,12 +439,12 @@ void Equal::check()
   Type* t1 = izq->get_type();
   Type* t2 = der->get_type();
 
-  if ( t1 == t2 and (t1 == PolarType::getInstance() or t1 == KodiakType::getInstance() or t1 == MalayoType::getInstance()) ) {
+  if ( t1 == t2 and (t1 == PolarType::getInstance() or t1 == KodiakType::getInstance() or t1 == MalayoType::getInstance() or t1 == PandaType::getInstance()) ) {
     this->set_type(PandaType::getInstance());
   } else if ( t1 == ErrorType::getInstance() or t2 == ErrorType::getInstance() ) {
     this->set_type(ErrorType::getInstance());
   } else {
-    error("Cannot apply operator '==' between " + t1->to_string() + " and " + t2->to_string() + "types\n");
+    error("Cannot apply operator '==' between " + t1->to_string() + " and " + t2->to_string() + " types\n");
     this->set_type(ErrorType::getInstance());
   }
 }
@@ -468,7 +468,7 @@ void NotEqual::check()
   Type* t1 = izq->get_type();
   Type* t2 = der->get_type();
 
-  if ( t1 == t2 and (t1 == PolarType::getInstance() or t1 == KodiakType::getInstance() or t1 == MalayoType::getInstance()) ) {
+  if ( t1 == t2 and (t1 == PolarType::getInstance() or t1 == KodiakType::getInstance() or t1 == MalayoType::getInstance() or t1 == PandaType::getInstance()) ) {
     this->set_type(PandaType::getInstance());
   } else if ( t1 == ErrorType::getInstance() or t2 == ErrorType::getInstance() ) {
     this->set_type(ErrorType::getInstance());
@@ -623,6 +623,130 @@ void FunctionExpr::check()
   }
 }
 
+AKodiakExpr::AKodiakExpr(Expression* parameter)
+  : _parameter ( parameter     )
+  {}
+
+std::string AKodiakExpr::to_string(int nesting)
+{
+  std::string padding(nesting*2, ' ');
+  return padding + "Función predeterminada a_kodiak\n" + padding + "Parametro:\n" + _parameter->to_string(nesting+1);
+}
+
+void AKodiakExpr::check()
+{
+  _parameter->check();
+  Type* t = _parameter->get_type();
+
+  if ( t == PolarType::getInstance() or t == KodiakType::getInstance() ) {
+    this->set_type(KodiakType::getInstance());
+  } else if ( t == ErrorType::getInstance() ) {
+    this->set_type(ErrorType::getInstance());
+  } else {
+    error("Cannot apply function 'a_kodiak' to parameter of type '" + t->to_string() + "'");
+    this->set_type(ErrorType::getInstance());
+  }
+}
+
+APolarExpr::APolarExpr(Expression* parameter)
+  : _parameter ( parameter     )
+  {}
+
+std::string APolarExpr::to_string(int nesting)
+{
+  std::string padding(nesting*2, ' ');
+  return padding + "Función predeterminada a_panda\n" + padding + "Parametro:\n" + _parameter->to_string(nesting+1);
+}
+
+void APolarExpr::check()
+{
+  _parameter->check();
+  Type* t = _parameter->get_type();
+
+  if ( t == KodiakType::getInstance() or t == MalayoType::getInstance() or t == PolarType::getInstance() ) {
+    this->set_type(PolarType::getInstance());
+  } else if ( t == ErrorType::getInstance() ) {
+    this->set_type(ErrorType::getInstance());
+  } else {
+    error("Cannot apply function 'a_panda' to parameter of type '" + t->to_string() + "'");
+    this->set_type(ErrorType::getInstance());
+  }
+}
+
+AMalayoExpr::AMalayoExpr(Expression* parameter)
+  : _parameter ( parameter     )
+  {}
+
+std::string AMalayoExpr::to_string(int nesting)
+{
+  std::string padding(nesting*2, ' ');
+  return padding + "Función predeterminada a_malayo\n" + padding + "Parametro:\n" + _parameter->to_string(nesting+1);
+}
+
+void AMalayoExpr::check()
+{
+  _parameter->check();
+  Type* t = _parameter->get_type();
+
+  if ( t == MalayoType::getInstance() or t == PolarType::getInstance() ) {
+    this->set_type(MalayoType::getInstance());
+  } else if ( t == ErrorType::getInstance() ) {
+    this->set_type(ErrorType::getInstance());
+  } else {
+    error("Cannot apply function 'a_malayo' to parameter of type '" + t->to_string() + "'");
+    this->set_type(ErrorType::getInstance());
+  }
+}
+
+APandaExpr::APandaExpr(Expression* parameter)
+  : _parameter ( parameter     )
+  {}
+
+std::string APandaExpr::to_string(int nesting)
+{
+  std::string padding(nesting*2, ' ');
+  return padding + "Función predeterminada a_panda\n" + padding + "Parametro:\n" + _parameter->to_string(nesting+1);
+}
+
+void APandaExpr::check()
+{
+  _parameter->check();
+  Type* t = _parameter->get_type();
+
+  if ( t == PandaType::getInstance() or t == PolarType::getInstance() ) {
+    this->set_type(PandaType::getInstance());
+  } else if ( t == ErrorType::getInstance() ) {
+    this->set_type(ErrorType::getInstance());
+  } else {
+    error("Cannot apply function 'a_panda' to parameter of type '" + t->to_string() + "'");
+    this->set_type(ErrorType::getInstance());
+  }
+}
+
+LonExpr::LonExpr(Expression* parameter)
+  : _parameter ( parameter     )
+  {}
+
+std::string LonExpr::to_string(int nesting)
+{
+  std::string padding(nesting*2, ' ');
+  return padding + "Función predeterminada lon\n" + padding + "Parametro:\n" + _parameter->to_string(nesting+1);
+}
+
+void LonExpr::check()
+{
+  _parameter->check();
+  Type* t = _parameter->get_type();
+
+  if ( t->isArray() or t->isHormiguero() ) {
+    this->set_type(PolarType::getInstance());
+  } else if ( t == ErrorType::getInstance() ) {
+    this->set_type(ErrorType::getInstance());
+  } else {
+    error("Cannot apply function 'lon' to parameter of type '" + t->to_string() + "'");
+    this->set_type(ErrorType::getInstance());
+  }
+}
 
 PardoExpr::PardoExpr(LValueExpr* pardo, IDExpr* campo)
   : LValueExpr()

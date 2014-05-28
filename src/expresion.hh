@@ -352,6 +352,61 @@ class FunctionExpr : public Expression
     Type*                     _return;
 };
 
+class AKodiakExpr : public Expression
+{
+  public:
+    AKodiakExpr(Expression* parameter);
+    std::string to_string(int nesting);
+    void check();
+
+  private:
+    Expression* _parameter;
+};
+
+class APolarExpr : public Expression
+{
+  public:
+    APolarExpr(Expression* parameter);
+    std::string to_string(int nesting);
+    void check();
+
+  private:
+    Expression* _parameter;
+};
+
+class AMalayoExpr : public Expression
+{
+  public:
+    AMalayoExpr(Expression* parameter);
+    std::string to_string(int nesting);
+    void check();
+
+  private:
+    Expression* _parameter;
+};
+
+class APandaExpr : public Expression
+{
+  public:
+    APandaExpr(Expression* parameter);
+    std::string to_string(int nesting);
+    void check();
+
+  private:
+    Expression* _parameter;
+};
+
+class LonExpr : public Expression
+{
+  public:
+    LonExpr(Expression* parameter);
+    std::string to_string(int nesting);
+    void check();
+
+  private:
+    Expression* _parameter;
+};
+
 class CuevaExpr : public LValueExpr
 {
   public:

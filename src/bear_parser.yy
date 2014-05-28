@@ -975,16 +975,36 @@ expresion: CONSTPOLAR                            { $$ = new PolarExpr($1);
 
 
 
-funcionpredef: APANDA  "(" expresion ")" { $$ = nullptr; /* $$ = new UnaryExpr($1, $3);*/ }
-             | APANDA  "(" error     ")" { $$ = nullptr; /* $$ = new EmptyExpr();      */ }
-             | AKODIAK "(" expresion ")" { $$ = nullptr; /* $$ = new UnaryExpr($1, $3);*/ }
-             | AKODIAK "(" error     ")" { $$ = nullptr; /* $$ = new EmptyExpr();      */ }
-             | AMALAYO "(" expresion ")" { $$ = nullptr; /* $$ = new UnaryExpr($1, $3);*/ }
-             | AMALAYO "(" error     ")" { $$ = nullptr; /* $$ = new EmptyExpr();      */ }
-             | APOLAR  "(" expresion ")" { $$ = nullptr; /* $$ = new UnaryExpr($1, $3);*/ }
-             | APOLAR  "(" error     ")" { $$ = nullptr; /* $$ = new EmptyExpr();      */ }
-             | LON     "(" expresion ")" { $$ = nullptr; /* $$ = new UnaryExpr($1, $3);*/ }
-             | LON     "(" error     ")" { $$ = nullptr; /* $$ = new EmptyExpr();      */ }
+funcionpredef: APANDA  "(" expresion ")" { $$ = new APandaExpr($3);
+                                           $$->set_location(@1.begin.line, @1.begin.column, @4.end.line, @4.end.column);
+                                         }
+             | APANDA  "(" error     ")" { $$ = new EmptyExpr();
+                                           $$->set_location(@1.begin.line, @1.begin.column, @4.end.line, @4.end.column);
+                                         }
+             | AKODIAK "(" expresion ")" { $$ = new AKodiakExpr($3);
+                                           $$->set_location(@1.begin.line, @1.begin.column, @4.end.line, @4.end.column);
+                                         }
+             | AKODIAK "(" error     ")" { $$ = new EmptyExpr();
+                                           $$->set_location(@1.begin.line, @1.begin.column, @4.end.line, @4.end.column);
+                                         }
+             | AMALAYO "(" expresion ")" { $$ = new AMalayoExpr($3);
+                                           $$->set_location(@1.begin.line, @1.begin.column, @4.end.line, @4.end.column);
+                                         }
+             | AMALAYO "(" error     ")" { $$ = new EmptyExpr();
+                                           $$->set_location(@1.begin.line, @1.begin.column, @4.end.line, @4.end.column);
+                                         }
+             | APOLAR  "(" expresion ")" { $$ = new APolarExpr($3);
+                                           $$->set_location(@1.begin.line, @1.begin.column, @4.end.line, @4.end.column);
+                                         }
+             | APOLAR  "(" error     ")" { $$ = new EmptyExpr();
+                                           $$->set_location(@1.begin.line, @1.begin.column, @4.end.line, @4.end.column);
+                                         }
+             | LON     "(" expresion ")" { $$ = new LonExpr($3);
+                                           $$->set_location(@1.begin.line, @1.begin.column, @4.end.line, @4.end.column);
+                                         }
+             | LON     "(" error     ")" { $$ = new EmptyExpr();
+                                           $$->set_location(@1.begin.line, @1.begin.column, @4.end.line, @4.end.column);
+                                         }
              ;
 
 %%
