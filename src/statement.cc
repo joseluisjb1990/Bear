@@ -86,9 +86,9 @@ void Function::check()
     _parameters->at(i)->check();
     Type* tipo = _parameterTypes->at(i);
     Type* tipoParam = _parameters->at(i)->get_type();
-    if ( tipo != tipoParam ) {
-      ok = false;
+    if (!tipo->compareStructure(tipoParam)) {
       if (tipoParam != ErrorType::getInstance())
+        ok = false;
         error("Trying to pass a parameter of type '" + tipoParam->to_string() + "' to function '" + _name + "' instead of '" + tipo->to_string() + "'");
     }
   }
@@ -212,7 +212,7 @@ Read::Read(Expression* id)
 std::string Read::to_string(int nesting)
 {
   std::string padding(nesting*2, ' ');
-  return padding + "Leer:\n" + padding + "Expresión:\n" + padding + padding +_id->to_string() + '\n';
+  return padding + "Leer:\n" + padding + "Expresión:\n" + _id->to_string(nesting + 1) + '\n';
 }
 
 void Read::check()
