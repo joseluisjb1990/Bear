@@ -588,14 +588,15 @@ instruccion: defvariable                                                 { $$ = 
            | PARA ID EN ID                                               { Contenido* c = driver.tabla.find_symbol($4, Cueva);
                                                                            if (!c) {
                                                                              driver.error(@4,"Cueva " + $4 + " is not declared.");
-                                                                           }
-                                                                           CuevaType* cuevita = (CuevaType*) c->getTipo();
-                                                                           Type* tipo = cuevita->getTipo();
-                                                                           driver.tabla.enter_scope();
-                                                                           if(tipo->isArray()) {
-                                                                             driver.tabla.add_symbol($2, tipo, Cueva, @2.begin.line, @2.begin.column, @2.end.line, @2.end.column, false);
                                                                            } else {
-                                                                             driver.tabla.add_symbol($2, tipo, Var, @2.begin.line, @2.begin.column, @2.end.line, @2.end.column, false);
+                                                                             CuevaType* cuevita = (CuevaType*) c->getTipo();
+                                                                             Type* tipo = cuevita->getTipo();
+                                                                             driver.tabla.enter_scope();
+                                                                             if(tipo->isArray()) {
+                                                                               driver.tabla.add_symbol($2, tipo, Cueva, @2.begin.line, @2.begin.column, @2.end.line, @2.end.column, false);
+                                                                             } else {
+                                                                               driver.tabla.add_symbol($2, tipo, Var, @2.begin.line, @2.begin.column, @2.end.line, @2.end.column, false);
+                                                                             }
                                                                            }
                                                                          }
             bloqueespecial                                               { driver.tabla.exit_scope();

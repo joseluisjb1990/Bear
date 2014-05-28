@@ -9,8 +9,8 @@ int bear_driver::parse (const std::string &f)
   scan_begin ();
   yy::bear_parser parser (*this);
   int res = parser.parse ();
+  AST->check();
   if (0 == errores) {
-    AST->check();
     if(AST->get_type() != ErrorType::getInstance()) { cout << AST->to_string(0) << std::endl << tabla << std::endl; }
   }
   scan_end();
