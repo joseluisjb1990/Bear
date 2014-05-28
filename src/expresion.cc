@@ -639,7 +639,7 @@ PardoExpr::PardoExpr(LValueExpr* pardo, CuevaExpr* campo)
 std::string PardoExpr::to_string(int nesting)
 {
   std::string padding(nesting*2, ' ');
-  return padding + "Acceso a un pardo\n" + padding + _pardo->to_string(nesting+1) + padding + "->\n" + padding + _campo->to_string(nesting+1);
+  return padding + "Acceso a un pardo\n" + padding + "Pardo:\n" + _pardo->to_string(nesting+1) + padding + "Campo:\n" + _campo->to_string(nesting+1);
 }
 
 void PardoExpr::check()
@@ -670,7 +670,7 @@ GrizzliExpr::GrizzliExpr(LValueExpr* grizzli, CuevaExpr* campo)
 std::string GrizzliExpr::to_string(int nesting)
 {
   std::string padding(nesting*2, ' ');
-  return padding + "Acceso a un grizzli\n" + padding + _grizzli->to_string(nesting+1) + padding + ".\n" + padding + _campo->to_string(nesting+1);
+  return padding + "Acceso a un grizzli\n" + padding + "Grizzli:\n" + _grizzli->to_string(nesting+1) + padding + "Campo:\n" + _campo->to_string(nesting+1);
 }
 
 void GrizzliExpr::check()
@@ -695,7 +695,7 @@ CuevaExpr::CuevaExpr(std::string cueva, std::vector<Expression*>* dimensions)
 std::string CuevaExpr::to_string(int nesting)
 {
   std::string padding(nesting*2, ' ');
-  std::string str = padding + "Acceso a cueva\n" + padding + "Nombre: " + _cueva + "\n";
+  std::string str = padding + "Acceso a cueva\n" + padding + "Nombre:\n" + padding + _cueva + "\n";
   for (unsigned int i=0; i < _dimensions->size(); ++i) {
     str += padding + "[\n" + _dimensions->at(i)->to_string(nesting+1) + padding + "]\n";
   }

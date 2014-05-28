@@ -16,7 +16,7 @@ std::string DefWithInit::to_string(int nesting)
   std::string padding(nesting*2, ' ');
   std::string str = padding + "Definición con Inicialización\n" + padding + "Tipo:\n" + padding + _tipo->to_string() + "\n" + padding + "Variables:\n";
   for (unsigned int i=0; i < _ids->size(); ++i) {
-    str += padding + "Nombre: " + _ids->at(i) + "\n" + padding + "Valor:\n" + _expr->at(i)->to_string(nesting+1);
+    str += padding + "Nombre:\n" + padding + _ids->at(i) + "\n" + padding + "Valor:\n" + _expr->at(i)->to_string(nesting+1);
   }
   return str;
 }
@@ -59,12 +59,25 @@ std::string DefVarNoInit::to_string(int nesting)
   std::string padding(nesting*2, ' ');
   std::string str = padding + "Definición sin inicializar\n" + padding + "Tipo: " + _tipo->to_string() + "\n" + padding + "Variables:\n";
   for (unsigned int i=0; i < _ids->size(); ++i) {
-    str += padding + "Nombre: " + _ids->at(i) + "\n";
+    str += padding + "Nombre:\n" + padding + _ids->at(i) + "\n";
   }
   return str;
 }
 
 void DefVarNoInit::check() { set_type(_tipo); }
+
+DefType::DefType(std::string nombre, Type* tipo)
+  : _nombre ( nombre )
+  , _tipo   ( tipo   )
+  {}
+
+std::string DefType::to_string(int nesting)
+{
+  std::string padding(nesting*2, ' ');
+  return padding + "Definición de tipo\n" + padding + "Nombre:\n" + padding + _nombre + "\n" + padding + "Tipo:\n" + padding + _tipo->to_string() + "\n";
+}
+
+void DefType::check() { set_type(_tipo); }
 
 DefArray::DefArray(Type* tipo, std::string id)
   : _tipo( tipo )
@@ -74,7 +87,7 @@ DefArray::DefArray(Type* tipo, std::string id)
 std::string DefArray::to_string(int nesting)
 {
   std::string padding(nesting*2, ' ');
-  return padding + "Definición de cueva:\n" + padding + "Nombre: " + _id + "\n" + padding + "Tipo : " + _tipo->to_string() + "\n";
+  return padding + "Definición de cueva:\n" + padding + "Nombre:\n" + padding + _id + "\n" + padding + "Tipo : " + _tipo->to_string() + "\n";
 }
 
 void DefArray::check() { set_type(_tipo); }
@@ -92,7 +105,7 @@ DecFunction::DecFunction ( std::string         name
 std::string DecFunction::to_string(int nesting)
 {
   std::string padding(nesting*2, ' ');
-  std::string str =  padding + "Declaración de función\n" + padding + "Nombre: " + _name + "\n" + padding + "Parametros:\n";
+  std::string str =  padding + "Declaración de función\n" + padding + "Nombre:\n" + padding + _name + "\n" + padding + "Parametros:\n";
   for (unsigned int i=0; i<_parametros->size(); ++i)
     str += _parametros->at(i)->to_string(nesting+1);
 
@@ -167,7 +180,7 @@ DefFunction::DefFunction ( std::string               id
 std::string DefFunction::to_string(int nesting)
 {
   std::string padding(nesting*2, ' ');
-  std::string str = padding + "Definción de funcion\n" + padding + "Nombre: " + _id + "\n" + padding + "Parametros:\n";
+  std::string str = padding + "Definción de funcion\n" + padding + "Nombre:\n" + padding + _id + "\n" + padding + "Parametros:\n";
   for (unsigned int i=0; i< _parameters->size(); ++i)
     str +=  _parameters->at(i)->to_string(nesting+1);
 

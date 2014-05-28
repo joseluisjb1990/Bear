@@ -431,7 +431,7 @@ defcompleja: PARDO ID "{"   { driver.tabla.enter_scope(); }
                               } else {
                                 driver.tabla.add_container($2, p, Compuesto, @1.begin.line, @1.begin.column, @1.begin.line, @1.begin.column, alcanceCampos);
                               }
-                              $$ = new EmptyDef();
+                              $$ = new DefType($2, p);
                             }
 
            | GRIZZLI ID "{" { driver.tabla.enter_scope(); }
@@ -448,7 +448,7 @@ defcompleja: PARDO ID "{"   { driver.tabla.enter_scope(); }
                               } else {
                                 driver.tabla.add_container($2, g, Compuesto, @1.begin.line, @1.begin.column, @1.begin.line, @1.begin.column, alcanceCampos);
                               }
-                              $$ = new EmptyDef();
+                              $$ = new DefType($2, g);
                             }
            ;
 

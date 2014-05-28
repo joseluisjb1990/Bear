@@ -52,6 +52,18 @@ class DefVar : public DefWithInit
     DefVar(Type* tipo, std::vector<std::string>* ids, std::vector<Expression*>* expr);
 };
 
+class DefType : public Definition
+{
+  public:
+    DefType(std::string nombre, Type* tipo);
+    std::string to_string(int nesting);
+    void check();
+
+  private:
+    std::string _nombre;
+    Type* _tipo;
+};
+
 class DefVarNoInit : public Definition
 {
   public:

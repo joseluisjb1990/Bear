@@ -73,7 +73,7 @@ Function::Function(std::string name, std::vector<Type*>* parameterTypes, std::ve
 std::string Function::to_string(int nesting)
 {
   std::string padding(nesting*2, ' ');
-  std::string str = padding + "Función: " + _name + "\n" + padding + "Parametros:\n";
+  std::string str = padding + "Función:\n" + padding + _name + "\n" + padding + "Parametros:\n";
   for (unsigned int i=0; i < _parameters->size(); ++i)
     str += _parameters->at(i)->to_string(nesting+1);
   return str;
