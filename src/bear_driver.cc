@@ -9,10 +9,9 @@ int bear_driver::parse (const std::string &f)
   scan_begin ();
   yy::bear_parser parser (*this);
   int res = parser.parse ();
-    cout << tabla;
   if (0 == errores) {
-    cout << AST->to_string(0);
     AST->check();
+    if(AST->get_type() != ErrorType::getInstance()) { cout << AST->to_string(0) << std::endl << tabla << std::endl; }
   }
   scan_end();
   return res;

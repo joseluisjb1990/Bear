@@ -24,11 +24,17 @@ std::string Program::to_string(int nesting)
 
 void Program::check()
 {
+  bool ok = true;
   if(_definitions) {
     for(std::vector<Definition*>::iterator it = _definitions->begin(); it != _definitions->end(); ++it)
+    {
       (*it)->check();
+      if((*it)->get_type() == ErrorType::getInstance()) ok = false;
+    }
   }
 
   if(_statement) _statement->check();
+  if(_statement->get_type() != ErrorType::getInstance() and ok) set_type(ExtintoType::getInstance());
+  else set_type(ErrorType::getInstance());
 }
 #endif

@@ -593,7 +593,11 @@ instruccion: defvariable                                                 { $$ = 
                                                                            CuevaType* cuevita = (CuevaType*) c->getTipo();
                                                                            Type* tipo = cuevita->getTipo();
                                                                            driver.tabla.enter_scope();
-                                                                           driver.tabla.add_symbol($2, tipo, Var, @2.begin.line, @2.begin.column, @2.end.line, @2.end.column, false);
+                                                                           if(tipo->isArray()) {
+                                                                             driver.tabla.add_symbol($2, tipo, Cueva, @2.begin.line, @2.begin.column, @2.end.line, @2.end.column, false);
+                                                                           } else {
+                                                                             driver.tabla.add_symbol($2, tipo, Var, @2.begin.line, @2.begin.column, @2.end.line, @2.end.column, false);
+                                                                           }
                                                                          }
             bloqueespecial                                               { driver.tabla.exit_scope();
                                                                            $$ = new IdFor($2, $4, $6);
