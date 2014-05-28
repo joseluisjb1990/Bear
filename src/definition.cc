@@ -16,7 +16,7 @@ std::string DefWithInit::to_string(int nesting)
   std::string padding(nesting*2, ' ');
   std::string str = padding + "Definición con Inicialización\n" + padding + "Tipo:\n" + padding + padding + _tipo->to_string() + "\n" + padding + "Variables:\n";
   for (unsigned int i=0; i < _ids->size(); ++i) {
-    str += padding + "Nombre:\n" + padding + padding + _ids->at(i) + "\n" + padding + "Valor:\n" + _expr->at(i)->to_string(nesting+1);
+    str += padding + "Nombre:\n" + padding + padding + _ids->at(i) + "\n" + padding + "Valor:\n" + _expr->at(i)->to_string(nesting+1) + "\n";
   }
   return str;
 }
@@ -107,7 +107,7 @@ std::string DecFunction::to_string(int nesting)
   std::string padding(nesting*2, ' ');
   std::string str =  padding + "Declaración de función\n" + padding + "Nombre:\n" + padding + padding + _name + "\n" + padding + "Parametros:\n";
   for (unsigned int i=0; i<_parametros->size(); ++i)
-    str += _parametros->at(i)->to_string(nesting+1);
+    str += _parametros->at(i)->to_string(nesting+1) + "\n";
 
   str += padding + "Retorna:\n" + padding + padding + _tipoRetorno->to_string() + "\n";
   return str;
@@ -182,10 +182,10 @@ std::string DefFunction::to_string(int nesting)
   std::string padding(nesting*2, ' ');
   std::string str = padding + "Definción de funcion\n" + padding + "Nombre:\n" + padding + padding + _id + "\n" + padding + "Parametros:\n";
   for (unsigned int i=0; i< _parameters->size(); ++i)
-    str +=  _parameters->at(i)->to_string(nesting+1);
+    str +=  _parameters->at(i)->to_string(nesting+1) + "\n";
 
   str += padding + "Retorna:\n" + padding + padding + _type->to_string() + "\n";
-  str += padding + "Cuerpo:\n" + _statements->to_string(nesting+1);
+  str += padding + "Cuerpo:\n" + _statements->to_string(nesting+1) + "\n";
   return str;
 }
 
