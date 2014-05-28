@@ -846,4 +846,6 @@ void CuevaExpr::check()
   this->set_type(t);
 }
 
+void EmptyExpr::check() { this->set_type(ErrorType::getInstance()); }
+
 #endif

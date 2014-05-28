@@ -323,6 +323,7 @@ class EmptyExpr : public LValueExpr
 {
   public:
     EmptyExpr(){};
+    void check();
 };
 
 class IDExpr : public LValueExpr

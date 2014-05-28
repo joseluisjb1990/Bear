@@ -721,7 +721,7 @@ lvalue: ID maybecueva             {
                                           ALCANCE_LVALUE = -1;
                                         }
                                       } else {
-                                        driver.error("Variable " + $1 + " is not of type cueva, is of type" + c->getTipo()->to_string());
+                                        driver.error("Variable " + $1 + " is not of type cueva, is of type " + c->getTipo()->to_string());
                                         $$ = new EmptyExpr();
                                       }
                                     } else {
