@@ -15,9 +15,9 @@ std::string Program::to_string(int nesting)
 
   if(_definitions)
     for(std::vector<Definition*>::iterator it = _definitions->begin(); it != _definitions->end(); ++it)
-      cout << (*it)->to_string(nesting+1);
+      cout << (*it)->to_string(nesting+1) + "\n";
 
-  cout << _statement->to_string(nesting+1);
+  cout << _statement->to_string(nesting+1) + "\n";
 
   return "";
 }

@@ -23,11 +23,11 @@ std::string Assign::to_string(int nesting)
   std::string str = padding + "Asignación\n";
   str += padding + "L-values:\n";
   for (unsigned int i=0; i < _ids->size(); ++i) {
-    str += padding + _ids->at(i)->to_string(nesting+1);
+    str += _ids->at(i)->to_string(nesting+1) + "\n";
   }
   str += padding + "Expresiones:\n";
   for (unsigned int i=0; i < _ids->size(); ++i) {
-    str += padding + _expr->at(i)->to_string(nesting+1);
+    str += _expr->at(i)->to_string(nesting+1) + "\n";
   }
   return str;
 }
@@ -53,7 +53,7 @@ void Assign::check()
 
     if(tauxid != ErrorType::getInstance() and tauxex != ErrorType::getInstance() and !tauxid->compareTypes(tauxex))
     {
-       error("types in asignment " + auxid->to_string() + " = " + auxex->to_string() + " don't match");
+       error("types in asignment " + auxid->to_string(0) + " = " + auxex->to_string(0) + " don't match");
        ok = false;
     }
   }
@@ -73,9 +73,9 @@ Function::Function(std::string name, std::vector<Type*>* parameterTypes, std::ve
 std::string Function::to_string(int nesting)
 {
   std::string padding(nesting*2, ' ');
-  std::string str = padding + "Función:\n" + padding + _name + "\n" + padding + "Parametros:\n";
+  std::string str = padding + "Función\n" + padding + "Nombre:\n" + padding + padding + _name + "\n" + padding + "Parametros:\n";
   for (unsigned int i=0; i < _parameters->size(); ++i)
-    str += _parameters->at(i)->to_string(nesting+1);
+    str += _parameters->at(i)->to_string(nesting+1) + "\n";
   return str;
 }
 
@@ -108,7 +108,7 @@ If::If(Expression* condicion, Statement* instrucciones)
 std::string If::to_string(int nesting)
 {
   std::string padding(nesting*2, ' ');
-  return padding + "If\n" + padding + "Condición:\n" + _condicion->to_string(nesting+1) + padding + "Instrucciones:\n" + _instrucciones->to_string(nesting+1);
+  return padding + "If\n" + padding + "Condición:\n" + _condicion->to_string(nesting+1) + "\n" + padding + "Instrucciones:\n" + _instrucciones->to_string(nesting+1) + "\n";
 }
 
 void If::check()
@@ -142,7 +142,7 @@ IfElse::IfElse(Expression* condicion, Statement* brazoTrue, Statement* brazoFals
 std::string IfElse::to_string(int nesting)
 {
   std::string padding(nesting*2, ' ');
-  return padding + "IfElse\n" + padding + "Condición:\n" + _condicion->to_string(nesting+1) + padding + "Instrucciones True:\n" + _brazoTrue->to_string(nesting+1) + padding + "Instrucciones False:\n" + _brazoFalse->to_string(nesting+1);
+  return padding + "IfElse\n" + padding + "Condición:\n" + _condicion->to_string(nesting+1) + "\n" + padding + "Instrucciones True:\n" + _brazoTrue->to_string(nesting+1) + "\n" + padding + "Instrucciones False:\n" + _brazoFalse->to_string(nesting+1) + "\n";
 }
 
 void IfElse::check()
@@ -180,7 +180,7 @@ Write::Write(Expression* expr)
 std::string Write::to_string(int nesting)
 {
   std::string padding(nesting*2, ' ');
-  return padding + "Escribir:\n" + padding + "Expresión:\n" + _expr->to_string(nesting+1);
+  return padding + "Escribir:\n" + padding + "Expresión:\n" + _expr->to_string(nesting+1) + "\n";
 }
 
 void Write::check()
@@ -241,7 +241,7 @@ std::string Body::to_string(int nesting)
   std::string padding(nesting*2, ' ');
   std::string str = padding + "Bloque:\n";
   for (unsigned int i=0; i < _listSta->size(); ++i) {
-    str += _listSta->at(i)->to_string(nesting+1);
+    str += _listSta->at(i)->to_string(nesting+1) + "\n";
   }
   return str;
 }
@@ -294,7 +294,7 @@ std::string ComplexFor::to_string(int nesting)
 {
   std::string padding(nesting*2, ' ');
   return  padding + std::string("Iteracion Acotada con salto :\n")
-        + padding + "Variable de iteracion:\n" + padding + _id + "\n"
+        + padding + "Variable de iteracion:\n" + padding + padding + _id + "\n"
         + padding + "Expresion de Inicio:\n"   + _begin->to_string(nesting+1)
         + padding + "Expresion Final:\n"       + _end->to_string(nesting+1)
         + padding + "Paso:\n"                  + _step->to_string(nesting+1)
@@ -352,10 +352,10 @@ std::string SimpleFor::to_string(int nesting)
 {
   std::string padding(nesting*2, ' ');
   return  padding + std::string("Iteracion Acotada simple:\n")
-        + padding + "Variable de iteracion:\n"           + padding + _id
-        + padding + "Expresion de Inicio:\n"             + _begin->to_string(nesting+1)
-        + padding + "Expresion Final:\n"                 + _end->to_string(nesting+1)
-        + padding + "Cuerpo:\n"                          + _body->to_string(nesting+1)
+        + padding + "Variable de iteracion:\n"           + padding + _id + "\n"
+        + padding + "Expresion de Inicio:\n"             + _begin->to_string(nesting+1) + "\n"
+        + padding + "Expresion Final:\n"                 + _end->to_string(nesting+1) + "\n"
+        + padding + "Cuerpo:\n"                          + _body->to_string(nesting+1) + "\n"
         ;
 }
 
@@ -403,7 +403,7 @@ std::string IdFor::to_string(int nesting)
   return  padding + std::string("Iteracion Acotada simple:\n")
         + padding + "Variable de iteracion:\n"           + padding + _id + "\n"
         + padding + "Cueva de Iteracion:\n"              + padding + _iterVar + "\n"
-        + padding + "Cuerpo:\n"                          + _body->to_string(nesting+1)
+        + padding + "Cuerpo:\n"                          + _body->to_string(nesting+1) + "\n"
         ;
 }
 
@@ -428,7 +428,7 @@ Return::Return()
 std::string Return::to_string(int nesting)
 {
   std::string padding(nesting*2, ' ');
-  return padding + "Vomita sin etiqueta\n";
+  return padding + "Vomita sin etiqueta";
 }
 
 void Return::check()
@@ -453,7 +453,7 @@ ReturnExpr::ReturnExpr(Expression* expr)
 std::string ReturnExpr::to_string(int nesting)
 {
   std::string padding(nesting*2, ' ');
-  return padding + "Vomita\n" + padding + "Expresión:\n" + _expr->to_string(nesting+1);
+  return padding + "Vomita\n" + padding + "Expresión:\n" + _expr->to_string(nesting+1) + "\n";
 }
 
 void ReturnExpr::check()
@@ -485,7 +485,7 @@ Increase::Increase(std::string id)
 std::string Increase::to_string(int nesting)
 {
   std::string padding(nesting*2, ' ');
-  return padding + "Incremento:\n" + padding + "Variable:\n" + padding + _id + "\n";
+  return padding + "Incremento:\n" + padding + "Variable:\n" + padding + _id;
 }
 
 void Increase::check()
@@ -507,7 +507,7 @@ Decrement::Decrement(std::string id)
 std::string Decrement::to_string(int nesting)
 {
   std::string padding(nesting*2, ' ');
-  return padding + "Decremento:\n" + padding + "Variable:\n" + padding + _id + "\n";
+  return padding + "Decremento:\n" + padding + "Variable:\n" + padding + _id;
 }
 
 void Decrement::check()
@@ -529,7 +529,7 @@ Continue::Continue()
 std::string Continue::to_string(int nesting)
 {
   std::string padding(nesting*2, ' ');
-  return padding + "fondoBlanco sin etiqueta\n";
+  return padding + "fondoBlanco sin etiqueta";
 }
 
 void Continue::check()
@@ -551,7 +551,7 @@ ContinueID::ContinueID(std::string id)
 std::string ContinueID::to_string(int nesting)
 {
   std::string padding(nesting*2, ' ');
-  return padding + "fondoBlanco:\n" + padding + "Etiqueta:\n" + padding + _id + "\n";
+  return padding + "fondoBlanco:\n" + padding + "Etiqueta:\n" + padding + _id;
 }
 
 void ContinueID::check()
@@ -572,7 +572,7 @@ Break::Break()
 std::string Break::to_string(int nesting)
 {
   std::string padding(nesting*2, ' ');
-  return padding + "roloePea sin etiqueta\n";
+  return padding + "roloePea sin etiqueta";
 }
 
 void Break::check()
@@ -594,7 +594,7 @@ BreakID::BreakID(std::string id)
 std::string BreakID::to_string(int nesting)
 {
   std::string padding(nesting*2, ' ');
-  return padding + "roloePea\n" + padding + "Etiqueta:\n" + padding + _id + "\n";
+  return padding + "roloePea\n" + padding + "Etiqueta:\n" + padding + _id;
 }
 
 void BreakID::check()
@@ -617,9 +617,9 @@ std::string While::to_string(int nesting)
 {
   std::string padding(nesting*2, ' ');
   return  padding + "Iteracion Indeterminada\n" + padding + "Condicion:\n"
-        + _expr->to_string(nesting+1)
+        + _expr->to_string(nesting+1) + "\n"
         + padding + "Instrucción:\n"
-        + _body->to_string(nesting+1)
+        + _body->to_string(nesting+1) + "\n"
         ;
 }
 
@@ -656,8 +656,8 @@ std::string TagWhile::to_string(int nesting)
   std::string padding(nesting*2, ' ');
   return  padding + std::string("Iteracion Indeterminada con Etiqueta\n")
         + padding + "Etiqueta\n:"  + padding + _id + "\n"
-        + padding + "Condición:\n" + _expr->to_string(nesting+1)
-        + padding + "Cuerpo:\n"    + _body->to_string(nesting+1)
+        + padding + "Condición:\n" + _expr->to_string(nesting+1) + "\n"
+        + padding + "Cuerpo:\n"    + _body->to_string(nesting+1) + "\n"
         ;
 }
 
@@ -694,7 +694,7 @@ Empty::Empty(Type* type)
 std::string Empty::to_string(int nesting)
 {
   std::string padding(nesting*2, ' ');
-  return padding + "Instrucción vacia\n";
+  return padding + "Instrucción vacia";
 }
 
 void Empty::check()
