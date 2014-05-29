@@ -14,7 +14,7 @@ es_primo( polar n ) => panda
 
 oso() => extinto
 {
-  cueva [TAM] de cueva [TAM] de cueva[TAM] de polar numeros;
+  cueva [10] de cueva [10] de cueva[10] de polar numeros;
 
   polar n= 0;
 

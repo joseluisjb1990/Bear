@@ -54,7 +54,7 @@ imprimirFamilia( familia fam ) => extinto
 
 oso() => extinto
 {
-  cueva [CANT] de familia familias;
+  cueva [3] de familia familias;
   para fam en familias
   {
     escribir("\nPor favor introduzca la informacion sobre la familia\n");

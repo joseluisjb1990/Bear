@@ -3,7 +3,7 @@ oso() => extinto
 {
   polar N = 5;
   polar acc;
-  cueva [N] de polar numeros;
+  cueva [5] de polar numeros;
 
   <3 Llenamos la cueva.
 
