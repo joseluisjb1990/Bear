@@ -1,9 +1,8 @@
 <3 Caso de prueba para una cueva.
 oso() => extinto
 {
-  polar N = 5;
   polar acc;
-  cueva [N] de polar numeros;
+  cueva [5] de polar numeros;
 
   <3 Llenamos la cueva.
 
@@ -15,7 +14,7 @@ oso() => extinto
 
   <3 Hacemos la suma de los elementos de la cueva.
 
-  para i en (0;N) {
+  para i en (0;5) {
     acc = acc + numeros[i];
   }
 

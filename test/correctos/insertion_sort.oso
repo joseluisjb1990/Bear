@@ -1,16 +1,13 @@
 <3 Insertion sort
 
-buscar_menor(cueva [] de polar cueva_elem, polar min, polar max) => polar;
-
-cambiar(cueva [] de polar cueva_elem , polar i, polar j) => extinto;
-
-buscar_menor(cueva [] de polar cueva_elem , polar min, polar max) => polar
+buscar_menor(cueva [] de polar cueva_elem, polar min, polar max) => polar
 {
   min = cueva_elem[min];
 
   para i en (min + 1; max) {
     si (cueva_elem[i] < min) { min = cueva_elem[i]; }
   }
+  vomita min;
 }
 
 cambiar(cueva [] de polar cueva_elem, polar i, polar j) => extinto
@@ -28,7 +25,7 @@ oso () => extinto
 
   para i en (0;4)
   {
-    polar ind = buscar_menor(elementos,i);
+    polar ind = buscar_menor(elementos,i,4);
     cambiar(elementos, i, ind);
   }
 
@@ -36,4 +33,3 @@ oso () => extinto
 
   para i en (0;5)  { escribir(elementos[i]); }
 }
-
