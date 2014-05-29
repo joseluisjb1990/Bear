@@ -27,7 +27,8 @@ public:
   unsigned int get_first_column() { return _columnaI; }
   unsigned int get_last_line()    { return _filaF;    }
   unsigned int get_last_column()  { return _columnaF; }
-  void error(std::string msg) { cout << "Error between " << get_first_line() << "." << get_first_column() << " and " << get_last_line() << "." << get_last_column() << " : " << msg << std::endl; }
+  void error(std::string msg)     { cout << "Error between " << get_first_line() << "." << get_first_column() << " and " << get_last_line() << "." << get_last_column() << " : " << msg << std::endl; }
+  void warning(std::string msg)   { cout << "Warning between " << get_first_line() << "." << get_first_column() << " and " << get_last_line() << "." << get_last_column() << " : " << msg << std::endl; }
 
 private:
   Type* _type;
