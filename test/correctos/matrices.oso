@@ -12,16 +12,30 @@ es_primo( polar n ) => panda
   vomita negro;
 }
 
+pMat(cueva[] de cueva [10] de cueva [10] de polar numeros) => extinto
+{
+  para matriz en numeros
+  {
+     para arreglo en matriz
+     {
+       para elem en arreglo
+       {
+         escribir(elem);
+       }
+     }
+  }
+}
+
 oso() => extinto
 {
   cueva [10] de cueva [10] de cueva[10] de polar numeros;
 
   polar n= 0;
 
-  para i en (0;TAM) {
-    para j en (0;TAM) {
-      para k en (0;TAM) {
-        numeros[i][j][k] = (i + j + k) / TAM;
+  para i en (0;10) {
+    para j en (0;10) {
+      para k en (0;10) {
+        numeros[i][j][k] = (i + j + k) / 10;
       }
     }
   }
@@ -33,12 +47,12 @@ oso() => extinto
                   j = 0;
                   nivel_uno : mientras( j < 10 )
                               {
-                                k = ((i + j) / 3)%TAM;
+                                k = ((i + j) / 3)%10;
                                 si(es_primo(numeros[i][j][k])) { roloePea mas_lejano; }
                                 k = 0;
                                 mientras(k < 10)
                                 {
-                                  polar z = (i * j * k**2)%TAM;
+                                  polar z = (i * j * k**2)%10;
                                   si(es_primo(numeros[i][j][k])) { roloePea nivel_uno; }
                                   k++;
                                 }
@@ -47,4 +61,5 @@ oso() => extinto
                   i++;
                }
 
+  pMat(numeros);
 }

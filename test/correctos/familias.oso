@@ -13,7 +13,7 @@ pardo familia
   persona padre;
 }
 
-llenarPersona( persona per ) => extinto
+lPer( persona per ) => extinto
 {
   escribir("\nPor favor, introduzca la cedula de la persona\n");
   leer(per->cedula);
@@ -22,34 +22,34 @@ llenarPersona( persona per ) => extinto
   leer(per->edad);
 }
 
-imprimirPersona( persona per ) => extinto
+iPer( persona per ) => extinto
 {
   escribir("\nCedula : "); escribir ( per->cedula );
   escribir("\nEdad   : "); escribir ( per->cedula );
 }
 
-llenarFamilia( familia fam ) => extinto
+lFam( familia fam ) => extinto
 {
   escribir("\nPor favor, introduzca la informacion del hijo\n");
-  llenarPersona( fam->hijo );
+  lPer( fam->hijo );
 
   escribir("\nPor favor, introduzca la informacion del de la madre\n");
-  llenarPersona( fam->madre );
+  lPer( fam->madre );
 
   escribir("\nPor favor, introduzca la informacion del padre\n");
-  llenarPersona( fam->padre );
+  lPer( fam->padre );
 }
 
-imprimirFamilia( familia fam ) => extinto
+iFam( familia fam ) => extinto
 {
   escribir("\nHijo");
-  imprimirPersona( fam->hijo );
+  iPer( fam->hijo );
 
   escribir("\nMadre");
-  imprimirPersona( fam->madre );
+  iPer( fam->madre );
 
   escribir("\nPadre");
-  imprimirPersona( fam->padre );
+  iPer( fam->padre );
 }
 
 oso() => extinto
@@ -58,11 +58,11 @@ oso() => extinto
   para fam en familias
   {
     escribir("\nPor favor introduzca la informacion sobre la familia\n");
-    llenarFamilia( fam );
+    lFam( fam );
   }
 
-  para i en (0;CANT-1)
+  para i en (0;2)
   {
-    imprimirFamilia( familias[i] );
+    iFam( familias[i] );
   }
 }
